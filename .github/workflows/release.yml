@@ -15,8 +15,27 @@ permissions:
   contents: write
 
 jobs:
+  create-release:
+    name: Create GitHub Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Ensure GitHub Release exists
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TAG_NAME="${{ github.ref_name }}"
+          if [ -n "${{ github.event.inputs.version }}" ]; then
+            TAG_NAME="v${{ github.event.inputs.version }}"
+          fi
+          echo "Checking/creating release for tag: $TAG_NAME"
+          gh release view "$TAG_NAME" || gh release create "$TAG_NAME" --title "$TAG_NAME" --generate-notes
+
   release:
     name: Build & Publish (${{ matrix.os }})
+    needs: create-release
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -54,5 +73,6 @@ jobs:
       - name: Compile and package release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CSC_IDENTITY_AUTO_DISCOVERY: false
         run: npx electron-builder ${{ matrix.target }} --publish always

@@ -18,6 +18,7 @@ asarUnpack:
   - resources/**
 win:
   executableName: hesabdar
+  icon: build/icon.ico
   target:
     - target: nsis
       arch:
@@ -32,6 +33,7 @@ nsis:
   artifactName: ${name}-${version}-setup.${ext}
   differentialPackage: true
 mac:
+  icon: build/icon.icns
   entitlementsInherit: build/entitlements.mac.plist
   extendInfo:
     - NSCameraUsageDescription: Application requests access to the device's camera.
@@ -42,6 +44,7 @@ mac:
 dmg:
   artifactName: ${name}-${version}.${ext}
 linux:
+  icon: build/icons
   target:
     - AppImage
     - deb
