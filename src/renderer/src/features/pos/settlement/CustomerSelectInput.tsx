@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { User, Search, X, Plus, Phone, FileText } from 'lucide-react'
 import type { Customer } from '../../../core/types'
 import { formatCurrency } from '../../../core/utils/formatters'
@@ -21,6 +22,7 @@ export function CustomerSelectInput({
   onOpenAddCustomer,
   onOpenCustomerLedger,
 }: CustomerSelectInputProps) {
+  const { t } = useTranslation()
   const [isOpen, setIsOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   const containerRef = useRef<HTMLDivElement>(null)
@@ -80,10 +82,10 @@ export function CustomerSelectInput({
               }`}
             >
               {(selectedCustomer.balance || 0) > 0
-                ? `Debt: ${formatCurrency(selectedCustomer.balance)}`
+                ? `${t('customers.balance')}: ${formatCurrency(selectedCustomer.balance)}`
                 : (selectedCustomer.balance || 0) < 0
-                  ? `Credit: +${formatCurrency(Math.abs(selectedCustomer.balance))}`
-                  : 'No Debt (0)'}
+                  ? `${t('customers.creditCustomer')}: +${formatCurrency(Math.abs(selectedCustomer.balance))}`
+                  : `${t('customers.settled')} (0 AFN)`}
             </span>
           </div>
 
@@ -124,7 +126,7 @@ export function CustomerSelectInput({
               setIsOpen(true)
             }}
             onFocus={() => setIsOpen(true)}
-            placeholder="Search customer by name or phone..."
+            placeholder={t('customers.searchPlaceholder')}
             className="w-full h-7.5 ps-7 pe-14 text-xs border border-gray-300 rounded-[5px] bg-white text-gray-800 placeholder:text-gray-400 font-medium focus:outline-none focus:border-emerald-500"
           />
           <Search className="w-3.5 h-3.5 text-gray-400 absolute start-2 pointer-events-none" />
@@ -163,8 +165,8 @@ export function CustomerSelectInput({
             }}
             className="p-2 hover:bg-gray-50 cursor-pointer flex items-center justify-between text-xs transition-colors"
           >
-            <span className="text-gray-600 italic">Walk-in Customer (General)</span>
-            <span className="text-[10px] text-gray-400 font-mono">No profile linked</span>
+            <span className="text-gray-600 italic">{t('sold.walkIn')}</span>
+            <span className="text-[10px] text-gray-400 font-mono">Walk-in</span>
           </div>
 
           {filteredCustomers.length === 0 ? (
@@ -179,7 +181,7 @@ export function CustomerSelectInput({
                   }}
                   className="text-emerald-600 hover:underline text-[11px] font-semibold mt-1 flex items-center gap-1 cursor-pointer"
                 >
-                  <Plus className="w-3 h-3" /> Register new customer
+                  <Plus className="w-3 h-3" /> {t('customers.addCustomer')}
                 </button>
               )}
             </div>
@@ -206,15 +208,15 @@ export function CustomerSelectInput({
                 <div className="text-end shrink-0 ms-2">
                   {(c.balance || 0) > 0 ? (
                     <span className="text-[10px] font-mono font-bold text-amber-700 bg-amber-50 border border-amber-200 px-1.5 py-0.5 rounded">
-                      Debt: {formatCurrency(c.balance)}
+                      {t('customers.balance')}: {formatCurrency(c.balance)}
                     </span>
                   ) : (c.balance || 0) < 0 ? (
                     <span className="text-[10px] font-mono font-bold text-emerald-700 bg-emerald-50 border border-emerald-300 px-1.5 py-0.5 rounded">
-                      Credit: +{formatCurrency(Math.abs(c.balance))}
+                      {t('customers.creditCustomer')}: +{formatCurrency(Math.abs(c.balance))}
                     </span>
                   ) : (
                     <span className="text-[10px] font-mono text-gray-500 bg-gray-50 px-1.5 py-0.5 rounded">
-                      Clean (0 AFN)
+                      {t('customers.settled')} (0 AFN)
                     </span>
                   )}
                 </div>

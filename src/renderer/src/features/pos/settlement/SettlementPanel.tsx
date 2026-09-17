@@ -115,10 +115,10 @@ export function SettlementPanel({
         </div>
 
         {/* Row 3: Total Payable */}
-        <div className="flex items-center justify-between pt-1 border-t border-gray-200">
-          <span className="text-xs font-bold text-gray-900">{t('pos.totalPayable')}</span>
-          <span className="font-mono font-black text-xs text-emerald-700">
-            {formatCurrency(displayTotal)}
+        <div className="flex items-center justify-between pt-1.5 pb-0.5 border-t border-gray-200">
+          <span className="text-xs font-black text-gray-900">{t('pos.totalPayable')}</span>
+          <span className="font-mono font-black text-sm text-emerald-700">
+            {formatCurrency(displayTotal)} AFN
           </span>
         </div>
 
@@ -139,7 +139,7 @@ export function SettlementPanel({
               </button>
             )}
           </div>
-          <div className="w-32 h-7.5 flex items-center rounded-[4px] border border-gray-300 bg-white px-2 focus-within:border-emerald-500 shadow-2xs">
+          <div className="w-34 h-8 flex items-center rounded-[4px] border border-gray-300 bg-white px-2 focus-within:border-emerald-500 focus-within:ring-1 focus-within:ring-emerald-500 shadow-2xs">
             <input
               type="number"
               step="any"
@@ -151,9 +151,9 @@ export function SettlementPanel({
               }}
               disabled={isCard || isCheckoutComplete}
               placeholder={String(displayTotal || 0)}
-              className="w-full text-end text-xs font-mono font-black text-gray-900 bg-transparent focus:outline-none disabled:text-gray-500 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+              className="w-full text-end text-sm font-mono font-black text-gray-950 bg-transparent focus:outline-none disabled:text-gray-500 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
             />
-            <span className="text-[9px] text-gray-400 font-mono ms-1 select-none">
+            <span className="text-[10px] text-gray-400 font-mono font-bold ms-1 select-none">
               AFN
             </span>
           </div>
@@ -161,70 +161,89 @@ export function SettlementPanel({
 
         {/* Row 5: Status Banner (Change, Shortage Alert, Debt, or Checked Out) */}
         {isCheckoutComplete ? (
-          <div className="flex items-center justify-between px-2 py-1.5 rounded-[4px] border bg-emerald-50 border-emerald-300 text-emerald-950">
-            <span className="text-[11px] font-bold flex items-center gap-1 text-emerald-800">
-              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+          <div className="flex items-center justify-between px-3 py-2 rounded-[6px] border-2 bg-emerald-50 border-emerald-400 text-emerald-950 shadow-xs">
+            <span className="text-xs font-black flex items-center gap-1.5 text-emerald-900">
+              <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
               {t('pos.checkedOut')}
             </span>
             {completedInvoiceNo && (
-              <span className="font-mono font-bold text-xs text-emerald-700 bg-white border border-emerald-200 px-1.5 py-0.2 rounded">
+              <span className="font-mono font-black text-xs text-emerald-800 bg-white border border-emerald-300 px-2 py-0.5 rounded shadow-2xs">
                 {completedInvoiceNo}
               </span>
             )}
           </div>
         ) : displayTotal === 0 ? (
-          <div className="flex items-center justify-between px-2 py-1 rounded-[4px] border bg-gray-100/90 border-gray-200 text-gray-600">
+          <div className="flex items-center justify-between px-2.5 py-1.5 rounded-[4px] border bg-gray-100/90 border-gray-200 text-gray-600">
             <span className="text-[11px] font-medium">{t('pos.totalPayable')}</span>
             <span className="font-mono font-bold text-xs">0 AFN</span>
           </div>
         ) : isCredit ? (
           selectedCustomerId ? (
-            <div className="flex items-center justify-between px-2 py-1 rounded-[4px] border bg-amber-50 border-amber-300 text-amber-950">
-              <span className="text-[11px] font-bold">
-                {selectedCustomer ? `+${formatCurrency(displayTotal)} ${t('pos.addedToDebt')}` : t('pos.recordedAsCredit')}
-              </span>
-              <span className="font-mono font-bold text-xs text-amber-800">
-                {selectedCustomer?.name || 'Customer'}: {formatCurrency((selectedCustomer?.balance || 0) + displayTotal)}
-              </span>
+            <div className="flex items-center justify-between px-3 py-2 rounded-[6px] border-2 bg-amber-50 border-amber-300 text-amber-950 shadow-xs">
+              <div>
+                <span className="text-xs font-bold block text-amber-950">
+                  {selectedCustomer ? `+${formatCurrency(displayTotal)} AFN ${t('pos.addedToDebt')}` : t('pos.recordedAsCredit')}
+                </span>
+                <span className="text-[10px] text-amber-800 font-medium block mt-0.5">
+                  {selectedCustomer?.name}: Prior Debt {formatCurrency(selectedCustomer?.balance || 0)} ➔ New Debt: <strong className="font-mono font-bold text-amber-950">{formatCurrency((selectedCustomer?.balance || 0) + displayTotal)} AFN</strong>
+                </span>
+              </div>
             </div>
           ) : (
-            <div className="flex items-center justify-between px-2 py-1 rounded-[4px] border bg-rose-50 border-rose-200 text-rose-700">
-              <span className="text-[11px] font-bold flex items-center gap-1">
-                <AlertTriangle className="w-3 h-3 text-rose-600 shrink-0" />
+            <div className="flex items-center justify-between px-3 py-2 rounded-[6px] border-2 bg-rose-50 border-rose-300 text-rose-800 shadow-xs">
+              <span className="text-xs font-bold flex items-center gap-1.5 text-rose-900">
+                <AlertTriangle className="w-4 h-4 text-rose-600 shrink-0" />
                 {t('pos.selectCustomer')}
               </span>
-              <span className="text-[10px] text-rose-500 font-mono">{t('pos.credit')}</span>
+              <span className="text-[10px] bg-white border border-rose-200 px-1.5 py-0.5 rounded font-mono font-bold text-rose-600">
+                {t('pos.credit')}
+              </span>
             </div>
           )
         ) : change > 0 ? (
-          <div className="flex items-center justify-between px-2 py-1 rounded-[4px] border bg-emerald-50/90 border-emerald-300 text-emerald-950">
-            <span className="text-[11px] font-bold text-emerald-900">{t('pos.returnChange')}</span>
-            <span className="font-mono font-black text-xs text-emerald-800">
-              +{formatCurrency(change)}
+          <div className="flex items-center justify-between px-3 py-2 rounded-[6px] border-2 bg-gradient-to-r from-emerald-50 to-emerald-100/70 border-emerald-400 text-emerald-950 shadow-xs">
+            <div className="flex items-center gap-2">
+              <div className="w-6 h-6 rounded-full bg-emerald-600 text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-2xs">
+                ✓
+              </div>
+              <div>
+                <span className="text-xs font-black text-emerald-950 block leading-tight">
+                  {t('pos.returnChange')}
+                </span>
+                <span className="text-[10px] text-emerald-700 font-medium">Customer cash balance</span>
+              </div>
+            </div>
+            <span className="font-mono font-black text-sm text-emerald-800 bg-white px-2.5 py-1 rounded-[5px] border border-emerald-300 shadow-2xs">
+              +{formatCurrency(change)} AFN
             </span>
           </div>
         ) : hasPartialCash ? (
-          <div className="flex items-center justify-between px-2 py-1 rounded-[4px] border bg-red-50 border-red-200 text-red-700">
-            <span className="text-[11px] font-bold flex items-center gap-1">
-              <AlertTriangle className="w-3 h-3 text-red-600 shrink-0" />
-              {t('pos.cashShortage')}
-            </span>
-            <span className="font-mono font-bold text-xs text-red-600">
-              -{formatCurrency(shortage)}
+          <div className="flex items-center justify-between px-3 py-2 rounded-[6px] border-2 bg-red-50 border-red-300 text-red-950 shadow-xs">
+            <div className="flex items-center gap-1.5">
+              <AlertTriangle className="w-4 h-4 text-red-600 shrink-0" />
+              <div>
+                <span className="text-xs font-black text-red-900 block leading-tight">{t('pos.cashShortage')}</span>
+                <span className="text-[10px] text-red-600 font-medium">Underpaid amount</span>
+              </div>
+            </div>
+            <span className="font-mono font-black text-xs text-red-700 bg-white px-2 py-0.5 rounded-[5px] border border-red-200 shadow-2xs">
+              -{formatCurrency(shortage)} AFN
             </span>
           </div>
         ) : isExact ? (
-          <div className="flex items-center justify-between px-2 py-1 rounded-[4px] border bg-emerald-50/60 border-emerald-200 text-emerald-800">
-            <span className="text-[11px] font-bold flex items-center gap-1">
-              <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+          <div className="flex items-center justify-between px-3 py-1.5 rounded-[5px] border border-emerald-300 bg-emerald-50/80 text-emerald-900">
+            <span className="text-xs font-bold flex items-center gap-1.5">
+              <CheckCircle2 className="w-4 h-4 text-emerald-600" />
               {t('pos.exactSettlement')}
             </span>
-            <span className="font-mono font-bold text-xs text-emerald-700">0 AFN</span>
+            <span className="font-mono font-black text-xs text-emerald-800 bg-white px-2 py-0.5 rounded border border-emerald-200">
+              0 AFN
+            </span>
           </div>
         ) : (
-          <div className="flex items-center justify-between px-2 py-1 rounded-[4px] border bg-gray-100/90 border-gray-200 text-gray-600">
+          <div className="flex items-center justify-between px-2.5 py-1.5 rounded-[4px] border bg-gray-100/90 border-gray-200 text-gray-600">
             <span className="text-[11px] font-medium">{t('pos.totalPayable')}</span>
-            <span className="font-mono font-bold text-xs">{formatCurrency(displayTotal)}</span>
+            <span className="font-mono font-bold text-xs">{formatCurrency(displayTotal)} AFN</span>
           </div>
         )}
       </div>

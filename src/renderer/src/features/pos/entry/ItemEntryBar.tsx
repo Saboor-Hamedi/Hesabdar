@@ -158,6 +158,7 @@ export function ItemEntryBar({
           <div className="relative flex items-center">
             <input
               ref={searchInputRef}
+              data-testid="pos-item-search"
               type="text"
               value={searchQuery}
               onChange={(e) => {
@@ -172,7 +173,7 @@ export function ItemEntryBar({
                 }
               }}
               onKeyDown={handleSearchKeyDown}
-              placeholder="Scan barcode or type commodity name (روغن، برنج، sugar)..."
+              placeholder={`${t('pos.scanPlaceholder')} (F2)`}
               className="w-full h-10 ps-9 pe-8 text-xs rounded-[5px] border border-gray-300 bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:border-emerald-500 font-medium"
             />
             <Search className="w-4 h-4 text-gray-400 absolute start-3 pointer-events-none" />

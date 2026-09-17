@@ -129,12 +129,17 @@ export function POSView() {
     handleNewSale,
   ])
 
-  // Keyboard shortcut listener for F12 (Checkout)
+  // Keyboard shortcut listener for F12 (Checkout) and F2 (Focus item search)
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'F12') {
         e.preventDefault()
         handleCompleteSale()
+      } else if (e.key === 'F2') {
+        e.preventDefault()
+        const searchInput = document.querySelector<HTMLInputElement>('input[data-testid="pos-item-search"]')
+        searchInput?.focus()
+        searchInput?.select()
       }
     }
     window.addEventListener('keydown', handleKeyDown)
