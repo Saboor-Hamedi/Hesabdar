@@ -90,7 +90,7 @@ export function setupUpdater(): void {
   })
 
   ipcMain.handle('update:install', () => {
-    // isSilent = false, isForceRunAfter = true
-    autoUpdater.quitAndInstall(false, true)
+    // isSilent = true (silent background update, no wizard), isForceRunAfter = true (auto-restart app)
+    autoUpdater.quitAndInstall(true, true)
   })
 }
