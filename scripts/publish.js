@@ -27,7 +27,7 @@ function runSilent(cmd) {
   }
 }
 
-const arg = process.argv[2]; // e.g. 'patch', 'minor', 'major', or empty
+const arg = process.argv[2] || 'patch';
 
 try {
   console.log('🔍 Checking git status...');

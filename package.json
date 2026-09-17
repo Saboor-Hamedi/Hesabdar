@@ -1,6 +1,6 @@
 {
   "name": "hesabdar",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "An Electron application with React and TypeScript",
   "main": "./out/main/index.js",
   "author": "example.com",
@@ -19,11 +19,7 @@
     "build:win": "npm run build && electron-builder --win",
     "build:mac": "electron-vite build && electron-builder --mac",
     "build:linux": "electron-vite build && electron-builder --linux",
-    "publish": "node scripts/publish.js",
-    "publish:patch": "node scripts/publish.js patch",
-    "publish:minor": "node scripts/publish.js minor",
-    "publish:major": "node scripts/publish.js major",
-    "publish:local": "npm run build && electron-builder --win --publish always"
+    "publish": "node scripts/publish.js"
   },
   "dependencies": {
     "@electron-toolkit/preload": "^3.0.2",
