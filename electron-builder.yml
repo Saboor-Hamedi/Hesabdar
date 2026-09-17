@@ -37,11 +37,13 @@ dmg:
 linux:
   target:
     - AppImage
-    - snap
     - deb
-  maintainer: electronjs.org
-  category: Utility
+  maintainer: Saboor Hamedi <saboorhamedi49@gmail.com>
+  category: Office
+  syncDesktopName: true
 appImage:
+  artifactName: ${name}-${version}.${ext}
+deb:
   artifactName: ${name}-${version}.${ext}
 npmRebuild: false
 publish:
