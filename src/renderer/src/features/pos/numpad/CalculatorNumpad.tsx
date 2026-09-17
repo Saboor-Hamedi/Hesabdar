@@ -264,19 +264,19 @@ export function CalculatorNumpad({ onApplyToPaid, totalPayable = 0, resetKey }: 
   // Dynamic font sizing based on digit length to guarantee zero overflow
   const displayFontSize = useMemo(() => {
     const len = display.length
-    if (len > 12) return 'text-lg sm:text-xl'
-    if (len > 9) return 'text-xl sm:text-2xl'
-    if (len > 6) return 'text-2xl sm:text-3xl'
-    return 'text-3xl sm:text-4xl'
+    if (len > 12) return 'text-sm sm:text-base'
+    if (len > 9) return 'text-base sm:text-lg'
+    if (len > 6) return 'text-lg sm:text-xl'
+    return 'text-xl sm:text-2xl'
   }, [display])
 
   return (
-    <div className="bg-white border border-gray-200/90 rounded-[5px] p-3 shadow-xs flex flex-col gap-2 flex-1 min-h-0">
+    <div className="w-full bg-[#FAFAFA] border border-gray-200/60 rounded-[8px] p-2.5 shadow-[0_1px_3px_rgba(0,0,0,0.04)] flex flex-col gap-2 shrink-0">
       {/* 1. Header */}
-      <div className="flex items-center justify-between border-b border-gray-100 pb-1.5 shrink-0">
-        <div className="flex items-center gap-1.5 text-gray-700">
-          <Calculator className="w-4 h-4 text-emerald-600" />
-          <span className="text-xs font-bold">Cashier Calculator</span>
+      <div className="flex items-center justify-between border-b border-gray-200/50 pb-1 shrink-0">
+        <div className="flex items-center gap-1.5 text-[#4A7C6F]">
+          <Calculator className="w-3.5 h-3.5" />
+          <span className="text-xs font-semibold text-[#1F2937]">Cashier Calculator</span>
         </div>
         {totalPayable > 0 && (
           <button
@@ -289,7 +289,7 @@ export function CalculatorNumpad({ onApplyToPaid, totalPayable = 0, resetKey }: 
               setIsNewNumber(true)
               setHasCalculated(false)
             }}
-            className="text-[11px] text-emerald-700 hover:underline font-mono font-semibold transition-colors cursor-pointer"
+            className="text-[11px] text-[#4A7C6F] hover:underline font-mono font-medium transition-colors cursor-pointer"
             title="Load invoice total into calculator"
           >
             Load Total ({totalPayable.toLocaleString()})
@@ -297,11 +297,11 @@ export function CalculatorNumpad({ onApplyToPaid, totalPayable = 0, resetKey }: 
         )}
       </div>
 
-      {/* 2. Digital LCD Screen Display (Solid right alignment, no text shifting) */}
-      <div className="bg-gray-950 text-white rounded-[5px] px-3.5 py-2 flex flex-col justify-between font-mono shadow-inner min-h-[64px] border border-gray-800 shrink-0 overflow-hidden select-none">
+      {/* 2. Digital LCD Screen Display (Dark Slate #1E293B with White/Cream digits, solid right alignment) */}
+      <div className="w-full h-16 min-h-[60px] max-h-[64px] bg-[#1E293B] text-slate-100 rounded-[8px] px-3.5 py-2 flex flex-col justify-between font-mono shadow-inner border border-slate-700/40 shrink-0 overflow-hidden select-none">
         {/* Top Formula / Equation Line */}
-        <div className="w-full h-4.5 flex items-center justify-end overflow-hidden">
-          <span className="text-xs text-gray-400 font-mono tracking-wide truncate select-none">
+        <div className="w-full h-4 flex items-center justify-end overflow-hidden">
+          <span className="text-[11px] text-slate-400 font-mono tracking-wide truncate select-none leading-none">
             {expression || '\u00A0'}
           </span>
         </div>
@@ -309,20 +309,20 @@ export function CalculatorNumpad({ onApplyToPaid, totalPayable = 0, resetKey }: 
         {/* Main Value Display */}
         <div className="w-full flex items-baseline justify-end overflow-hidden">
           <span
-            className={`font-black tracking-wider text-emerald-400 font-mono leading-none truncate ${displayFontSize}`}
+            className={`font-mono font-semibold tracking-wider text-slate-100 leading-none truncate ${displayFontSize}`}
           >
             {display}
           </span>
         </div>
       </div>
 
-      {/* 3. Button Matrix */}
-      <div className="grid grid-cols-4 grid-rows-5 gap-1.5 flex-1 min-h-0 select-none">
+      {/* 3. Keypad Matrix (Stretched ~15px taller for optimal touch & click feel) */}
+      <div className="w-full grid grid-cols-4 gap-1.5 select-none">
         {/* Row 1: Clear, Backspace, %, ÷ */}
         <button
           type="button"
           onClick={handleClear}
-          className="h-full min-h-[38px] rounded-[5px] bg-red-50 hover:bg-red-100 active:scale-[0.98] border border-red-200 text-red-700 font-black text-sm flex items-center justify-center transition-all shadow-2xs cursor-pointer"
+          className="w-full h-[40px] xl:h-[42px] min-h-[38px] rounded-[8px] bg-rose-50 hover:bg-rose-100/80 active:scale-[0.98] text-rose-700 font-bold text-xs flex items-center justify-center transition-all cursor-pointer border-0 shadow-[0_1px_2px_rgba(0,0,0,0.02)]"
           title="Clear"
         >
           C
@@ -330,166 +330,166 @@ export function CalculatorNumpad({ onApplyToPaid, totalPayable = 0, resetKey }: 
         <button
           type="button"
           onClick={handleBackspace}
-          className="h-full min-h-[38px] rounded-[5px] bg-gray-100 hover:bg-gray-200 active:scale-[0.98] border border-gray-200 text-gray-700 font-bold text-xs flex items-center justify-center transition-all shadow-2xs cursor-pointer"
+          className="w-full h-[40px] xl:h-[42px] min-h-[38px] rounded-[8px] bg-[#E5E7EB]/60 hover:bg-[#D1D5DB] active:scale-[0.98] text-[#374151] font-medium text-xs flex items-center justify-center transition-all cursor-pointer border-0 shadow-[0_1px_2px_rgba(0,0,0,0.02)]"
           title="Backspace"
         >
-          <Delete className="w-4 h-4" />
+          <Delete className="w-3.5 h-3.5" />
         </button>
         <button
           type="button"
           onClick={handlePercent}
-          className="h-full min-h-[38px] rounded-[5px] bg-gray-100 hover:bg-gray-200 active:scale-[0.98] border border-gray-200 text-gray-700 font-bold text-base flex items-center justify-center transition-all shadow-2xs cursor-pointer"
+          className="w-full h-[40px] xl:h-[42px] min-h-[38px] rounded-[8px] bg-[#E5E7EB]/60 hover:bg-[#D1D5DB] active:scale-[0.98] text-[#374151] font-medium text-xs flex items-center justify-center transition-all cursor-pointer border-0 shadow-[0_1px_2px_rgba(0,0,0,0.02)]"
         >
           %
         </button>
         <button
           type="button"
           onClick={() => handleOperator('÷')}
-          className={`h-full min-h-[38px] rounded-[5px] border active:scale-[0.98] font-black text-lg flex items-center justify-center transition-all shadow-2xs cursor-pointer ${
+          className={`w-full h-[40px] xl:h-[42px] min-h-[38px] rounded-[8px] font-medium text-sm flex items-center justify-center transition-all cursor-pointer border-0 shadow-[0_1px_2px_rgba(0,0,0,0.02)] active:scale-[0.98] ${
             operator === '÷'
-              ? 'bg-emerald-600 text-white border-emerald-700'
-              : 'bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border-emerald-200'
+              ? 'bg-[#5A8F7B]/20 text-[#3D665B] font-bold'
+              : 'bg-[#E5E7EB]/70 hover:bg-[#D1D5DB] text-[#374151]'
           }`}
         >
           ÷
         </button>
 
-        {/* Row 2 */}
+        {/* Row 2: 7, 8, 9, × */}
         <button
           type="button"
           onClick={() => handleDigit('7')}
-          className="h-full min-h-[38px] rounded-[5px] bg-white hover:bg-gray-50 active:scale-[0.98] active:bg-gray-100 border border-gray-300 text-gray-900 font-mono font-bold text-base sm:text-lg shadow-2xs transition-all flex items-center justify-center cursor-pointer"
+          className="w-full h-[40px] xl:h-[42px] min-h-[38px] rounded-[8px] bg-[#F3F4F6] hover:bg-[#E5E7EB] active:scale-[0.98] text-[#1F2937] font-mono font-medium text-sm shadow-[0_1px_2px_rgba(0,0,0,0.02)] transition-all flex items-center justify-center cursor-pointer border-0"
         >
           7
         </button>
         <button
           type="button"
           onClick={() => handleDigit('8')}
-          className="h-full min-h-[38px] rounded-[5px] bg-white hover:bg-gray-50 active:scale-[0.98] active:bg-gray-100 border border-gray-300 text-gray-900 font-mono font-bold text-base sm:text-lg shadow-2xs transition-all flex items-center justify-center cursor-pointer"
+          className="w-full h-[40px] xl:h-[42px] min-h-[38px] rounded-[8px] bg-[#F3F4F6] hover:bg-[#E5E7EB] active:scale-[0.98] text-[#1F2937] font-mono font-medium text-sm shadow-[0_1px_2px_rgba(0,0,0,0.02)] transition-all flex items-center justify-center cursor-pointer border-0"
         >
           8
         </button>
         <button
           type="button"
           onClick={() => handleDigit('9')}
-          className="h-full min-h-[38px] rounded-[5px] bg-white hover:bg-gray-50 active:scale-[0.98] active:bg-gray-100 border border-gray-300 text-gray-900 font-mono font-bold text-base sm:text-lg shadow-2xs transition-all flex items-center justify-center cursor-pointer"
+          className="w-full h-[40px] xl:h-[42px] min-h-[38px] rounded-[8px] bg-[#F3F4F6] hover:bg-[#E5E7EB] active:scale-[0.98] text-[#1F2937] font-mono font-medium text-sm shadow-[0_1px_2px_rgba(0,0,0,0.02)] transition-all flex items-center justify-center cursor-pointer border-0"
         >
           9
         </button>
         <button
           type="button"
           onClick={() => handleOperator('×')}
-          className={`h-full min-h-[38px] rounded-[5px] border active:scale-[0.98] font-black text-lg flex items-center justify-center transition-all shadow-2xs cursor-pointer ${
+          className={`w-full h-[40px] xl:h-[42px] min-h-[38px] rounded-[8px] font-medium text-sm flex items-center justify-center transition-all cursor-pointer border-0 shadow-[0_1px_2px_rgba(0,0,0,0.02)] active:scale-[0.98] ${
             operator === '×'
-              ? 'bg-emerald-600 text-white border-emerald-700'
-              : 'bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border-emerald-200'
+              ? 'bg-[#5A8F7B]/20 text-[#3D665B] font-bold'
+              : 'bg-[#E5E7EB]/70 hover:bg-[#D1D5DB] text-[#374151]'
           }`}
         >
           ×
         </button>
 
-        {/* Row 3 */}
+        {/* Row 3: 4, 5, 6, - */}
         <button
           type="button"
           onClick={() => handleDigit('4')}
-          className="h-full min-h-[38px] rounded-[5px] bg-white hover:bg-gray-50 active:scale-[0.98] active:bg-gray-100 border border-gray-300 text-gray-900 font-mono font-bold text-base sm:text-lg shadow-2xs transition-all flex items-center justify-center cursor-pointer"
+          className="w-full h-[40px] xl:h-[42px] min-h-[38px] rounded-[8px] bg-[#F3F4F6] hover:bg-[#E5E7EB] active:scale-[0.98] text-[#1F2937] font-mono font-medium text-sm shadow-[0_1px_2px_rgba(0,0,0,0.02)] transition-all flex items-center justify-center cursor-pointer border-0"
         >
           4
         </button>
         <button
           type="button"
           onClick={() => handleDigit('5')}
-          className="h-full min-h-[38px] rounded-[5px] bg-white hover:bg-gray-50 active:scale-[0.98] active:bg-gray-100 border border-gray-300 text-gray-900 font-mono font-bold text-base sm:text-lg shadow-2xs transition-all flex items-center justify-center cursor-pointer"
+          className="w-full h-[40px] xl:h-[42px] min-h-[38px] rounded-[8px] bg-[#F3F4F6] hover:bg-[#E5E7EB] active:scale-[0.98] text-[#1F2937] font-mono font-medium text-sm shadow-[0_1px_2px_rgba(0,0,0,0.02)] transition-all flex items-center justify-center cursor-pointer border-0"
         >
           5
         </button>
         <button
           type="button"
           onClick={() => handleDigit('6')}
-          className="h-full min-h-[38px] rounded-[5px] bg-white hover:bg-gray-50 active:scale-[0.98] active:bg-gray-100 border border-gray-300 text-gray-900 font-mono font-bold text-base sm:text-lg shadow-2xs transition-all flex items-center justify-center cursor-pointer"
+          className="w-full h-[40px] xl:h-[42px] min-h-[38px] rounded-[8px] bg-[#F3F4F6] hover:bg-[#E5E7EB] active:scale-[0.98] text-[#1F2937] font-mono font-medium text-sm shadow-[0_1px_2px_rgba(0,0,0,0.02)] transition-all flex items-center justify-center cursor-pointer border-0"
         >
           6
         </button>
         <button
           type="button"
           onClick={() => handleOperator('-')}
-          className={`h-full min-h-[38px] rounded-[5px] border active:scale-[0.98] font-black text-lg flex items-center justify-center transition-all shadow-2xs cursor-pointer ${
+          className={`w-full h-[40px] xl:h-[42px] min-h-[38px] rounded-[8px] font-medium text-base flex items-center justify-center transition-all cursor-pointer border-0 shadow-[0_1px_2px_rgba(0,0,0,0.02)] active:scale-[0.98] ${
             operator === '-'
-              ? 'bg-emerald-600 text-white border-emerald-700'
-              : 'bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border-emerald-200'
+              ? 'bg-[#5A8F7B]/20 text-[#3D665B] font-bold'
+              : 'bg-[#E5E7EB]/70 hover:bg-[#D1D5DB] text-[#374151]'
           }`}
         >
           -
         </button>
 
-        {/* Row 4 */}
+        {/* Row 4: 1, 2, 3, + */}
         <button
           type="button"
           onClick={() => handleDigit('1')}
-          className="h-full min-h-[38px] rounded-[5px] bg-white hover:bg-gray-50 active:scale-[0.98] active:bg-gray-100 border border-gray-300 text-gray-900 font-mono font-bold text-base sm:text-lg shadow-2xs transition-all flex items-center justify-center cursor-pointer"
+          className="w-full h-[40px] xl:h-[42px] min-h-[38px] rounded-[8px] bg-[#F3F4F6] hover:bg-[#E5E7EB] active:scale-[0.98] text-[#1F2937] font-mono font-medium text-sm shadow-[0_1px_2px_rgba(0,0,0,0.02)] transition-all flex items-center justify-center cursor-pointer border-0"
         >
           1
         </button>
         <button
           type="button"
           onClick={() => handleDigit('2')}
-          className="h-full min-h-[38px] rounded-[5px] bg-white hover:bg-gray-50 active:scale-[0.98] active:bg-gray-100 border border-gray-300 text-gray-900 font-mono font-bold text-base sm:text-lg shadow-2xs transition-all flex items-center justify-center cursor-pointer"
+          className="w-full h-[40px] xl:h-[42px] min-h-[38px] rounded-[8px] bg-[#F3F4F6] hover:bg-[#E5E7EB] active:scale-[0.98] text-[#1F2937] font-mono font-medium text-sm shadow-[0_1px_2px_rgba(0,0,0,0.02)] transition-all flex items-center justify-center cursor-pointer border-0"
         >
           2
         </button>
         <button
           type="button"
           onClick={() => handleDigit('3')}
-          className="h-full min-h-[38px] rounded-[5px] bg-white hover:bg-gray-50 active:scale-[0.98] active:bg-gray-100 border border-gray-300 text-gray-900 font-mono font-bold text-base sm:text-lg shadow-2xs transition-all flex items-center justify-center cursor-pointer"
+          className="w-full h-[40px] xl:h-[42px] min-h-[38px] rounded-[8px] bg-[#F3F4F6] hover:bg-[#E5E7EB] active:scale-[0.98] text-[#1F2937] font-mono font-medium text-sm shadow-[0_1px_2px_rgba(0,0,0,0.02)] transition-all flex items-center justify-center cursor-pointer border-0"
         >
           3
         </button>
         <button
           type="button"
           onClick={() => handleOperator('+')}
-          className={`h-full min-h-[38px] rounded-[5px] border active:scale-[0.98] font-black text-lg flex items-center justify-center transition-all shadow-2xs cursor-pointer ${
+          className={`w-full h-[40px] xl:h-[42px] min-h-[38px] rounded-[8px] font-medium text-sm flex items-center justify-center transition-all cursor-pointer border-0 shadow-[0_1px_2px_rgba(0,0,0,0.02)] active:scale-[0.98] ${
             operator === '+'
-              ? 'bg-emerald-600 text-white border-emerald-700'
-              : 'bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border-emerald-200'
+              ? 'bg-[#5A8F7B]/20 text-[#3D665B] font-bold'
+              : 'bg-[#E5E7EB]/70 hover:bg-[#D1D5DB] text-[#374151]'
           }`}
         >
           +
         </button>
 
-        {/* Row 5 */}
+        {/* Row 5: 0, 00, ., = */}
         <button
           type="button"
           onClick={() => handleDigit('0')}
-          className="h-full min-h-[38px] rounded-[5px] bg-white hover:bg-gray-50 border border-gray-300 text-gray-900 font-mono font-bold text-base sm:text-lg shadow-2xs transition-all flex items-center justify-center cursor-pointer"
+          className="w-full h-[40px] xl:h-[42px] min-h-[38px] rounded-[8px] bg-[#F3F4F6] hover:bg-[#E5E7EB] text-[#1F2937] font-mono font-medium text-sm shadow-[0_1px_2px_rgba(0,0,0,0.02)] transition-all flex items-center justify-center cursor-pointer border-0"
         >
           0
         </button>
         <button
           type="button"
           onClick={() => handleDigit('00')}
-          className="h-full min-h-[38px] rounded-[5px] bg-white hover:bg-gray-50 border border-gray-300 text-gray-900 font-mono font-bold text-base sm:text-lg shadow-2xs transition-all flex items-center justify-center cursor-pointer"
+          className="w-full h-[40px] xl:h-[42px] min-h-[38px] rounded-[8px] bg-[#F3F4F6] hover:bg-[#E5E7EB] text-[#1F2937] font-mono font-medium text-sm shadow-[0_1px_2px_rgba(0,0,0,0.02)] transition-all flex items-center justify-center cursor-pointer border-0"
         >
           00
         </button>
         <button
           type="button"
           onClick={handleDot}
-          className="h-full min-h-[38px] rounded-[5px] bg-white hover:bg-gray-50 border border-gray-300 text-gray-900 font-mono font-bold text-base sm:text-lg shadow-2xs transition-all flex items-center justify-center cursor-pointer"
+          className="w-full h-[40px] xl:h-[42px] min-h-[38px] rounded-[8px] bg-[#F3F4F6] hover:bg-[#E5E7EB] text-[#1F2937] font-mono font-medium text-sm shadow-[0_1px_2px_rgba(0,0,0,0.02)] transition-all flex items-center justify-center cursor-pointer border-0"
         >
           .
         </button>
         <button
           type="button"
           onClick={handleEquals}
-          className="h-full min-h-[38px] rounded-[5px] bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] text-white font-black text-xl shadow-xs flex items-center justify-center transition-all cursor-pointer"
+          className="w-full h-[40px] xl:h-[42px] min-h-[38px] rounded-[8px] bg-[#5A8F7B] hover:bg-[#4A7C6F] active:scale-[0.98] text-white font-medium text-base shadow-xs flex items-center justify-center transition-all cursor-pointer border-0"
         >
           =
         </button>
       </div>
 
-      {/* 4. Quick Action Button */}
+      {/* 4. Secondary Action Button (Apply to Cash Paid) */}
       {onApplyToPaid && (
-        <div className="shrink-0 pt-0.5">
+        <div className="w-full shrink-0 pt-0.5">
           <button
             type="button"
             onClick={() => {
@@ -498,9 +498,9 @@ export function CalculatorNumpad({ onApplyToPaid, totalPayable = 0, resetKey }: 
                 onApplyToPaid(val)
               }
             }}
-            className="w-full h-8 px-2 bg-emerald-50 hover:bg-emerald-100 active:scale-[0.99] border border-emerald-200 text-emerald-800 rounded-[5px] text-[11px] font-bold flex items-center justify-center gap-1.5 transition-all shadow-2xs cursor-pointer"
+            className="w-full py-1.5 px-3 h-7 rounded-[7px] bg-white hover:bg-gray-50 active:scale-[0.99] border border-gray-200/80 text-[#3D665B] text-xs font-medium flex items-center justify-center gap-1.5 transition-all shadow-[0_1px_2px_rgba(0,0,0,0.02)] cursor-pointer"
           >
-            <ArrowDownToLine className="w-3.5 h-3.5" />
+            <ArrowDownToLine className="w-3.5 h-3.5 text-[#5A8F7B]" />
             <span>Apply to Cash Paid</span>
           </button>
         </div>

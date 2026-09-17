@@ -101,8 +101,8 @@ export function YearlyGraph({ data, height = 220 }: YearlyGraphProps) {
                 height={Math.max(revHeight, 2)}
                 rx="5"
                 ry="5"
-                fill="#10b981"
-                className="cursor-pointer hover:fill-[#059669] transition-colors"
+                fill="#2D7A66"
+                className="cursor-pointer hover:fill-[#246252] transition-colors"
                 onMouseEnter={(e) => {
                   const rect = e.currentTarget.getBoundingClientRect()
                   setHoveredPoint({ point: d, x: rect.left + rect.width / 2, y: rect.top })
@@ -114,7 +114,7 @@ export function YearlyGraph({ data, height = 220 }: YearlyGraphProps) {
         })}
 
         {/* Profit Trendline over bars */}
-        <path d={profitLinePath} fill="none" stroke="#f59e0b" strokeWidth="2" strokeLinecap="round" />
+        <path d={profitLinePath} fill="none" stroke="#D97706" strokeWidth="2.5" strokeLinecap="round" />
 
         {/* Profit data points */}
         {profitCoords.map((c, i) => (
@@ -122,10 +122,10 @@ export function YearlyGraph({ data, height = 220 }: YearlyGraphProps) {
             key={i}
             cx={c.x}
             cy={c.y}
-            r={3}
+            r={3.5}
             fill="#ffffff"
-            stroke="#f59e0b"
-            strokeWidth="1.5"
+            stroke="#D97706"
+            strokeWidth="2"
           />
         ))}
       </svg>

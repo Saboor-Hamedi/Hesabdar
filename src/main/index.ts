@@ -3,6 +3,23 @@ import { join, extname } from 'path'
 import { promises as fs } from 'fs'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
+import {
+  checkLicense,
+  generateHWID,
+  saveLicense,
+  backgroundRevocationCheck,
+  type LicensePayload
+} from './licenseManager'
+import {
+  signInAnonymously,
+  registerDevice,
+  subscribeToApproval,
+  unsubscribeApproval,
+  getDeviceRecord,
+  SUPABASE_URL,
+  SUPABASE_KEY
+} from './supabaseMain'
+import { setupUpdater } from './updater'
 
 const getLanguageFilePath = (): string => join(app.getPath('userData'), 'language.json')
 const getSettingsFilePath = (): string => join(app.getPath('userData'), 'settings.json')
@@ -101,7 +118,7 @@ function createWindow(): void {
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.whenReady().then(() => {
+app.whenReady().then(async () => {
   // Set app user model id for windows
   electronApp.setAppUserModelId('com.electron')
 
@@ -114,6 +131,107 @@ app.whenReady().then(() => {
 
   // Disable native menus entirely
   Menu.setApplicationMenu(null)
+
+  // ── License System Bootstrap ──────────────────────────────────────────────
+  const licenseResult = await checkLicense()
+  let licenseStatus: 'valid' | 'locked' = licenseResult.valid ? 'valid' : 'locked'
+  let licenseIdentity = licenseResult.valid
+    ? { full_name: licenseResult.full_name!, email: licenseResult.email!, phone: licenseResult.phone! }
+    : null
+
+  // If local license is missing, check if Supabase already approved this machine
+  if (licenseStatus !== 'valid') {
+    try {
+      const hwid = generateHWID()
+      const device = await getDeviceRecord(hwid)
+      if (device?.status === 'approved' && device?.license_token) {
+        const payload: LicensePayload = JSON.parse(
+          Buffer.from(device.license_token, 'base64').toString('utf-8')
+        )
+        await saveLicense(payload)
+        licenseStatus = 'valid'
+        licenseIdentity = { full_name: payload.full_name, email: payload.email, phone: payload.phone }
+      }
+    } catch (err) {
+      console.error('Remote check on startup error:', err)
+    }
+  }
+
+  // IPC: renderer asks for license status on mount
+  ipcMain.handle('license:check', async () => {
+    if (licenseStatus === 'valid') {
+      return { valid: true, ...licenseIdentity }
+    }
+    try {
+      const hwid = generateHWID()
+      const device = await getDeviceRecord(hwid)
+      if (device?.status === 'approved' && device?.license_token) {
+        const payload: LicensePayload = JSON.parse(
+          Buffer.from(device.license_token, 'base64').toString('utf-8')
+        )
+        await saveLicense(payload)
+        licenseStatus = 'valid'
+        licenseIdentity = { full_name: payload.full_name, email: payload.email, phone: payload.phone }
+        return { valid: true, ...licenseIdentity }
+      }
+    } catch {}
+    return { valid: false }
+  })
+
+  // IPC: renderer gets identity after activation
+  ipcMain.handle('license:get-identity', async () => {
+    return licenseIdentity
+  })
+
+  // IPC: renderer sends activation request (name, email, phone)
+  ipcMain.handle('license:request-activation', async (_e, params: { full_name: string; email: string; phone: string }) => {
+    try {
+      // Sign in anonymously to get auth.uid for RLS
+      await signInAnonymously()
+
+      const hwid = generateHWID()
+
+      // Register device in Supabase
+      const result = await registerDevice({ hwid, ...params })
+      if (!result.success) return { success: false, error: result.error }
+
+      // Subscribe to Realtime approval channel (fires when you approve in Supabase)
+      subscribeToApproval(
+        hwid,
+        async (licenseToken: string) => {
+          // Parse the signed token from the Edge Function
+          try {
+            const payload: LicensePayload = JSON.parse(
+              Buffer.from(licenseToken, 'base64').toString('utf-8')
+            )
+            await saveLicense(payload)
+            licenseStatus = 'valid'
+            licenseIdentity = { full_name: payload.full_name, email: payload.email, phone: payload.phone }
+
+            // Notify renderer to unlock
+            BrowserWindow.getAllWindows().forEach(w =>
+              w.webContents.send('license:activated', licenseIdentity)
+            )
+
+            unsubscribeApproval()
+          } catch (err) {
+            console.error('Failed to save license after approval:', err)
+          }
+        },
+        (status: string) => {
+          // Forward status changes to renderer (pending, rejected, etc.)
+          BrowserWindow.getAllWindows().forEach(w =>
+            w.webContents.send('license:status-change', status)
+          )
+        }
+      )
+
+      return { success: true, hwid }
+    } catch (e: any) {
+      return { success: false, error: e?.message || 'Unknown error' }
+    }
+  })
+  // ── End License Bootstrap ─────────────────────────────────────────────────
 
   // Language settings IPC
   ipcMain.handle('language:get', async () => {
@@ -281,6 +399,21 @@ app.whenReady().then(() => {
   ipcMain.on('ping', () => console.log('pong'))
 
   createWindow()
+  setupUpdater()
+
+  // Background revocation check — 8 seconds after startup, non-blocking
+  if (licenseStatus === 'valid' && licenseIdentity) {
+    setTimeout(async () => {
+      const hwid = generateHWID()
+      await backgroundRevocationCheck(hwid, SUPABASE_URL, SUPABASE_KEY, () => {
+        licenseStatus = 'locked'
+        licenseIdentity = null
+        BrowserWindow.getAllWindows().forEach(w =>
+          w.webContents.send('license:revoked')
+        )
+      })
+    }, 8000)
+  }
 
   app.on('activate', function () {
     // On macOS it's common to re-create a window in the app when the

@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Receipt, RotateCcw } from 'lucide-react'
+import { RotateCcw, CheckCircle2, ArrowLeft } from 'lucide-react'
 import type { Sale, Customer } from '../../../core/types'
 import { usePOS } from '../hooks/usePOS'
 import { ItemEntryBar } from '../entry/ItemEntryBar'
@@ -81,6 +81,7 @@ export function POSView() {
     balance: 0,
   })
   const [customerErrors, setCustomerErrors] = useState<Record<string, string>>({})
+  const [mobileView, setMobileView] = useState<'table' | 'checkout'>('table')
 
   const isUnderpaidCash =
     paymentMode === 'cash' && total > 0 && cashPaid > 0 && cashPaid < total
@@ -94,6 +95,7 @@ export function POSView() {
     setCompletedSale(null)
     setIsCheckoutComplete(false)
     clearCart()
+    setMobileView('table')
   }, [clearCart])
 
   // Complete Sale: records sale, triggers Thermal Receipt modal,
@@ -226,15 +228,21 @@ export function POSView() {
       clearCart()
       setIsCheckoutComplete(false)
     }
+    setMobileView('table')
     handleAddEntryItem()
   }
 
   return (
-    <div className="flex flex-col lg:flex-row h-full gap-3 select-none overflow-hidden">
+    <div className="flex flex-col lg:flex-row h-full gap-3.5 xl:gap-4 select-none overflow-hidden pr-2 xl:pr-3">
       {/* ========================================================
           LEFT COLUMN: Cashier Direct Inputs & Invoice Table
+          (Closes/hides on small screens when cashier opens Checkout)
           ======================================================== */}
-      <div className="flex-1 flex flex-col gap-3 min-w-0 h-full overflow-hidden">
+      <div
+        className={`flex-1 flex-col gap-3 min-w-0 h-full overflow-hidden ${
+          mobileView === 'table' ? 'flex' : 'hidden lg:flex'
+        }`}
+      >
         {/* Fast Item Typing Bar (Commodity Search/Scan, Amount, Unit, Price, Add) */}
         <ItemEntryBar
           products={products}
@@ -270,13 +278,49 @@ export function POSView() {
             setIsCheckoutComplete(false)
           }}
         />
+
+        {/* Responsive Mobile "Proceed to Checkout" Action Bar (Visible only on screens < lg) */}
+        <div className="lg:hidden shrink-0 pt-1">
+          <Button
+            variant="primary"
+            onClick={() => setMobileView('checkout')}
+            disabled={cart.length === 0}
+            className="w-full h-11 bg-[#5A8F7B] hover:bg-[#4A7C6F] text-white font-bold text-sm rounded-lg flex items-center justify-between px-4 shadow-sm cursor-pointer"
+          >
+            <span className="flex items-center gap-2">
+              <span>{t('pos.proceedToCheckout', 'Proceed to Checkout')}</span>
+              <span className="text-xs font-normal opacity-85">({cart.length} {t('pos.items', 'items')})</span>
+            </span>
+            <span className="font-mono font-bold text-sm">{total.toLocaleString()} AFN →</span>
+          </Button>
+        </div>
       </div>
 
       {/* ========================================================
           RIGHT COLUMN: Cashier Calculator & Financial Settlement
-          (Zero Scroll: Fits 100% in viewport without any scrollbar)
+          (Appears full-screen on small screens, side-by-side on lg:+)
+          (Zero Scroll: grouped compactly without artificial gaps)
           ======================================================== */}
-      <div className="w-full lg:w-88 xl:w-96 flex flex-col h-full shrink-0 overflow-hidden select-none gap-2">
+      <div
+        className={`w-full lg:w-76 xl:w-80 flex-col h-full shrink-0 overflow-y-auto select-none gap-2 ${
+          mobileView === 'checkout' ? 'flex' : 'hidden lg:flex'
+        }`}
+      >
+        {/* Responsive Mobile "Back to Items" Navigation Bar (Visible only on screens < lg) */}
+        <div className="lg:hidden flex items-center justify-between pb-1.5 shrink-0 border-b border-gray-200">
+          <button
+            type="button"
+            onClick={() => setMobileView('table')}
+            className="flex items-center gap-1.5 text-xs font-bold text-[#4A7C6F] hover:underline cursor-pointer py-1"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            <span>{t('pos.backToItems', '← Back to Items Table')}</span>
+          </button>
+          <span className="text-xs font-semibold text-gray-600">
+            {cart.length} items • <strong className="font-mono text-gray-900">{total.toLocaleString()} AFN</strong>
+          </span>
+        </div>
+
         {/* On-screen Cashier Calculator (clears on checkout via resetKey) */}
         <CalculatorNumpad
           onApplyToPaid={setCashPaid}
@@ -311,27 +355,32 @@ export function POSView() {
             disabled={!isCheckoutComplete && isCheckoutDisabled}
             icon={
               isCheckoutComplete ? (
-                <RotateCcw className="w-4 h-4" />
+                <RotateCcw className="w-4.5 h-4.5 text-white" />
               ) : (
-                <Receipt className="w-4 h-4" />
+                <CheckCircle2 className="w-4.5 h-4.5 text-white" />
               )
             }
-            className={`w-full h-11 text-xs font-bold text-white rounded-[5px] shadow-sm flex items-center justify-center gap-2 transition-all active:scale-[0.99] cursor-pointer ${
+            className={`w-full h-10.5 text-sm font-bold text-white rounded-lg shadow-sm flex items-center justify-center gap-2 transition-all active:scale-95 cursor-pointer ${
               isCheckoutComplete
-                ? 'bg-blue-600 hover:bg-blue-700'
+                ? 'bg-slate-800 hover:bg-slate-900'
                 : isUnderpaidCash
-                  ? 'bg-red-600 hover:bg-red-700 opacity-90 cursor-not-allowed'
-                  : 'bg-emerald-600 hover:bg-emerald-700'
+                  ? 'bg-rose-600 hover:bg-rose-700 opacity-90 cursor-not-allowed'
+                  : 'bg-[#5A8F7B] hover:bg-[#4A7C6F]'
             }`}
           >
-            <span>
-              {isCheckoutComplete
-                ? `${t('pos.checkedOut', 'Checked Out')} • ${t('pos.newSale', 'New Sale')}`
-                : isUnderpaidCash
-                  ? `${t('pos.underpaid', 'Underpaid')} (-${total - cashPaid} AFN)`
-                  : isCreditWithoutCustomer
-                    ? t('pos.customerRequired', 'Select Customer for Credit')
-                    : `${t('pos.checkout', 'Checkout (F12)')}`}
+            <span className="flex items-center tracking-wider uppercase font-bold">
+              {isCheckoutComplete ? (
+                <span>{t('pos.checkedOut', 'Checked Out')} • {t('pos.newSale', 'New Sale')}</span>
+              ) : isUnderpaidCash ? (
+                <span className="tracking-normal font-semibold">{t('pos.underpaid', 'Underpaid')} (-{total - cashPaid} AFN)</span>
+              ) : isCreditWithoutCustomer ? (
+                <span className="tracking-normal font-semibold">{t('pos.customerRequired', 'Select Customer for Credit')}</span>
+              ) : (
+                <>
+                  <span>CHECKOUT</span>
+                  <span className="opacity-75 font-normal text-xs ms-1.5 tracking-normal">(F12)</span>
+                </>
+              )}
             </span>
           </Button>
         </div>

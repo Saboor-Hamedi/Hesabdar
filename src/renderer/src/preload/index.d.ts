@@ -29,6 +29,22 @@ export interface AppAPI {
     getPrinters: () => Promise<Array<{ name: string; displayName: string; isDefault: boolean; status: number }>>
     direct: (options?: { deviceName?: string; silent?: boolean }) => Promise<{ success: boolean; failureReason?: string }>
   }
+  license?: {
+    check: () => Promise<any>
+    requestActivation: (params: { full_name: string; email: string; phone: string }) => Promise<any>
+    getIdentity: () => Promise<any>
+    onActivated: (cb: (identity: { full_name: string; email: string; phone: string }) => void) => () => void
+    onStatusChange: (cb: (status: string) => void) => () => void
+    onRevoked: (cb: () => void) => () => void
+  }
+  update?: {
+    getVersion: () => Promise<string>
+    check: () => Promise<{ success: boolean; updateInfo?: any; error?: string }>
+    download: () => Promise<{ success: boolean; error?: string }>
+    install: () => void
+    onStatusChange: (cb: (status: any, data?: any) => void) => () => void
+    onProgress: (cb: (progress: any) => void) => () => void
+  }
   products?: any
 }
 

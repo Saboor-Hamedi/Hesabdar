@@ -1,6 +1,7 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { ActivityBar } from './ActivityBar'
 import { TitleBar, TITLEBAR_HEIGHT } from '../titlebar/TitleBar'
+import { ActivationView } from '../../features/activation/ActivationView'
 import { POSView } from '../../features/pos/components/POSView'
 import { SoldView } from '../../features/sold/components/SoldView'
 import { ProductsView } from '../../features/products/components/ProductsView'
@@ -19,6 +20,28 @@ const TAB_STORAGE_KEY = 'hesabdar_active_tab'
  * Statefully preserves active tab across app refreshes and sessions.
  */
 export function AppShell() {
+  const [checking, setChecking] = useState(true)
+  const [licensed, setLicensed] = useState(false)
+
+  useEffect(() => {
+    window.api?.license?.check?.().then((result: any) => {
+      if (result?.valid) {
+        setLicensed(true)
+      }
+      setChecking(false)
+    }).catch(() => {
+      setChecking(false)
+    })
+
+    const offRevoked = window.api?.license?.onRevoked?.(() => {
+      setLicensed(false)
+    })
+
+    return () => {
+      offRevoked?.()
+    }
+  }, [])
+
   const [active, setActive] = useState(() => {
     try {
       const saved = localStorage.getItem(TAB_STORAGE_KEY)
@@ -59,6 +82,26 @@ export function AppShell() {
       default:
         return <POSView />
     }
+  }
+
+  if (checking) {
+    return (
+      <div className="flex h-screen w-screen flex-col overflow-hidden bg-[#fafafa]">
+        <TitleBar />
+        <div className="flex flex-1 items-center justify-center" style={{ paddingTop: TITLEBAR_HEIGHT }}>
+          <div className="w-8 h-8 border-2 border-[#5A8F7B] border-t-transparent rounded-full animate-spin" />
+        </div>
+      </div>
+    )
+  }
+
+  if (!licensed) {
+    return (
+      <div className="flex h-screen w-screen flex-col overflow-hidden bg-[#fafafa]">
+        <TitleBar />
+        <ActivationView onActivated={() => setLicensed(true)} />
+      </div>
+    )
   }
 
   return (

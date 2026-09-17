@@ -61,8 +61,8 @@ export function MonthlyGraph({ data, height = 220 }: MonthlyGraphProps) {
         <defs>
           {/* Monthly revenue gradient */}
           <linearGradient id="monthlyRevGrad" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#10b981" stopOpacity="0.25" />
-            <stop offset="100%" stopColor="#10b981" stopOpacity="0.0" />
+            <stop offset="0%" stopColor="#2D7A66" stopOpacity="0.25" />
+            <stop offset="100%" stopColor="#2D7A66" stopOpacity="0.0" />
           </linearGradient>
         </defs>
 
@@ -94,10 +94,10 @@ export function MonthlyGraph({ data, height = 220 }: MonthlyGraphProps) {
 
         {/* Revenue area fill and path */}
         <path d={revenueAreaPath} fill="url(#monthlyRevGrad)" />
-        <path d={revenueLinePath} fill="none" stroke="#10b981" strokeWidth="2" strokeLinecap="round" />
+        <path d={revenueLinePath} fill="none" stroke="#2D7A66" strokeWidth="2.5" strokeLinecap="round" />
 
         {/* Profit trend line */}
-        <path d={profitLinePath} fill="none" stroke="#f59e0b" strokeWidth="1.5" strokeDasharray="3 3" />
+        <path d={profitLinePath} fill="none" stroke="#D97706" strokeWidth="2" strokeDasharray="3 3" />
 
         {/* Data points & X axis date labels */}
         {coords.map((c, i) => (
@@ -118,10 +118,10 @@ export function MonthlyGraph({ data, height = 220 }: MonthlyGraphProps) {
             <circle
               cx={c.x}
               cy={c.yRev}
-              r={hoveredPoint?.point === c.data ? 5 : 3}
+              r={hoveredPoint?.point === c.data ? 5 : 3.5}
               fill="#ffffff"
-              stroke="#10b981"
-              strokeWidth="2"
+              stroke="#2D7A66"
+              strokeWidth="2.5"
               className="cursor-pointer transition-all duration-100"
               onMouseEnter={(e) => {
                 const rect = e.currentTarget.getBoundingClientRect()

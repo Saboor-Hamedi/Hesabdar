@@ -63,8 +63,8 @@ export function DailyGraph({ data, height = 220 }: DailyGraphProps) {
         <defs>
           {/* Revenue gradient fill */}
           <linearGradient id="dailyRevGradient" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#10b981" stopOpacity="0.3" />
-            <stop offset="100%" stopColor="#10b981" stopOpacity="0.0" />
+            <stop offset="0%" stopColor="#2D7A66" stopOpacity="0.3" />
+            <stop offset="100%" stopColor="#2D7A66" stopOpacity="0.0" />
           </linearGradient>
         </defs>
 
@@ -96,10 +96,10 @@ export function DailyGraph({ data, height = 220 }: DailyGraphProps) {
 
         {/* Area and Line for Revenue */}
         <path d={revenueAreaPath} fill="url(#dailyRevGradient)" />
-        <path d={revenueLinePath} fill="none" stroke="#10b981" strokeWidth="2" strokeLinecap="round" />
+        <path d={revenueLinePath} fill="none" stroke="#2D7A66" strokeWidth="2.5" strokeLinecap="round" />
 
         {/* Line for Profit */}
-        <path d={profitLinePath} fill="none" stroke="#f59e0b" strokeWidth="1.5" strokeDasharray="4 3" />
+        <path d={profitLinePath} fill="none" stroke="#D97706" strokeWidth="2" strokeDasharray="4 3" />
 
         {/* Data points & X axis hour labels */}
         {coords.map((c, i) => (
@@ -120,10 +120,10 @@ export function DailyGraph({ data, height = 220 }: DailyGraphProps) {
             <circle
               cx={c.x}
               cy={c.yRev}
-              r={hoveredPoint?.point === c.data ? 5 : 3}
+              r={hoveredPoint?.point === c.data ? 5 : 3.5}
               fill="#ffffff"
-              stroke="#10b981"
-              strokeWidth="2"
+              stroke="#2D7A66"
+              strokeWidth="2.5"
               className="cursor-pointer transition-all duration-100"
               onMouseEnter={(e) => {
                 const rect = e.currentTarget.getBoundingClientRect()

@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next'
-import { CheckCircle, Printer, FileDown } from 'lucide-react'
+import { Printer, FileDown, RotateCcw } from 'lucide-react'
 import type { Sale, Customer } from '../../../core/types'
 import { notify } from '../../../core/notifications'
 import { Modal } from '../../../components/ui/Modal'
@@ -78,16 +78,17 @@ export function ReceiptModal({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={t('pos.transactionCompleted')}
-      subtitle={`Invoice #${sale.invoice_no}`}
-      maxWidth="max-w-[360px]"
+      title={t('pos.transactionCompleted', 'Transaction Completed!')}
+      subtitle="Stock levels updated automatically."
+      badge={
+        <span className="font-mono text-xs font-bold text-gray-500 bg-gray-100 px-2.5 py-1 rounded-full">
+          #{sale.invoice_no}
+        </span>
+      }
+      style={{ width: '420px', maxWidth: '95vw' }}
+      bodyClassName="p-8"
     >
-      <div className="flex flex-col gap-2.5">
-        <div className="no-print flex items-center gap-2 p-2.5 rounded-[5px] bg-emerald-50 text-emerald-900 border border-emerald-200 text-xs font-semibold shadow-2xs">
-          <CheckCircle className="w-4 h-4 text-emerald-600 shrink-0" />
-          <span>{t('pos.stockUpdated')}</span>
-        </div>
-
+      <div className="flex flex-col gap-4">
         <ThermalReceipt
           sale={{
             ...sale,
@@ -95,32 +96,36 @@ export function ReceiptModal({
           }}
         />
 
-        <div className="no-print flex items-center gap-1.5 pt-2 border-t border-gray-100">
-          <Button
-            variant="outline"
-            onClick={onNewSale}
-            className="flex-1 h-8 text-xs font-semibold rounded-[5px]"
-          >
-            {t('pos.newSale')}
-          </Button>
+        {/* Action Button Hierarchy: New Sale is Primary, Print & PDF are Secondary */}
+        <div className="no-print flex flex-col gap-3 pt-3 border-t border-gray-100">
+          <div className="grid grid-cols-2 gap-2.5">
+            <Button
+              variant="outline"
+              onClick={handlePrintReceipt}
+              icon={<Printer className="w-4 h-4 text-gray-600" />}
+              className="h-10 text-xs font-semibold bg-[#F9FAFB] hover:bg-gray-100 text-gray-800 border border-gray-200/80 rounded-xl"
+            >
+              {t('pos.printReceipt', 'Print Receipt')}
+            </Button>
 
-          <Button
-            variant="outline"
-            onClick={handleSavePDF}
-            icon={<FileDown className="w-3.5 h-3.5 text-rose-600" />}
-            className="h-8 px-2 text-xs font-semibold hover:bg-rose-50 border-rose-200 text-rose-800"
-            title="Save receipt as PDF"
-          >
-            PDF
-          </Button>
+            <Button
+              variant="outline"
+              onClick={handleSavePDF}
+              icon={<FileDown className="w-4 h-4 text-gray-600" />}
+              className="h-10 text-xs font-semibold bg-[#F9FAFB] hover:bg-gray-100 text-gray-800 border border-gray-200/80 rounded-xl"
+              title="Save receipt as PDF"
+            >
+              Save PDF
+            </Button>
+          </div>
 
           <Button
             variant="primary"
-            onClick={handlePrintReceipt}
-            icon={<Printer className="w-3.5 h-3.5" />}
-            className="flex-1 h-8 text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white rounded-[5px] shadow-sm flex items-center justify-center gap-1"
+            onClick={onNewSale}
+            icon={<RotateCcw className="w-4 h-4" />}
+            className="w-full h-11 text-sm font-bold bg-[#5A8F7B] hover:bg-[#4A7C6F] text-white rounded-xl shadow-sm"
           >
-            {t('pos.printReceipt')}
+            {t('pos.newSale', 'New Sale')}
           </Button>
         </div>
       </div>

@@ -27,21 +27,21 @@ export function GraphHeader({ period, onChangePeriod, title }: GraphHeaderProps)
     <div className="flex items-center justify-between gap-3 mb-2">
       {/* Title & Legend */}
       <div className="flex items-center gap-3">
-        <h4 className="text-xs font-semibold text-gray-800">{displayTitle}</h4>
-        <div className="flex items-center gap-2.5 text-[10px] text-gray-500 select-none">
-          <span className="flex items-center gap-1">
-            <span className="w-2 h-2 rounded-[2px] bg-[#10b981]" />
+        <h4 className="text-xs font-bold text-gray-900">{displayTitle}</h4>
+        <div className="flex items-center gap-3 text-[11px] text-gray-500 select-none">
+          <span className="flex items-center gap-1.5 font-medium">
+            <span className="w-2.5 h-2.5 rounded-[3px] bg-[#2D7A66]" />
             {t('graphs.revenue')}
           </span>
-          <span className="flex items-center gap-1">
-            <span className="w-2 h-2 rounded-[2px] bg-[#f59e0b]" />
+          <span className="flex items-center gap-1.5 font-medium">
+            <span className="w-2.5 h-2.5 rounded-[3px] bg-[#D97706]" />
             {t('graphs.profit')}
           </span>
         </div>
       </div>
 
-      {/* Period Toggle Group: small buttons with 5px radius */}
-      <div className="flex items-center p-0.5 bg-gray-100/80 rounded-[5px] border border-gray-200/60">
+      {/* Period Toggle Group: buttons with 6px radius */}
+      <div className="flex items-center p-0.5 bg-gray-100 rounded-[8px] border border-gray-200/70">
         {periods.map(({ id, label }) => {
           const isActive = period === id
           return (
@@ -49,11 +49,11 @@ export function GraphHeader({ period, onChangePeriod, title }: GraphHeaderProps)
               key={id}
               onClick={() => onChangePeriod(id)}
               className={`
-                h-6 px-2 text-[11px] font-medium rounded-[5px] transition-colors duration-150
-                focus:outline-none focus:ring-0
+                h-6.5 px-2.5 text-[11px] font-semibold rounded-[6px] transition-all duration-150
+                focus:outline-none focus:ring-0 cursor-pointer
                 ${
                   isActive
-                    ? 'bg-white text-gray-800 shadow-xs'
+                    ? 'bg-white text-gray-900 shadow-2xs'
                     : 'text-gray-500 hover:text-gray-800 hover:bg-gray-200/50'
                 }
               `}

@@ -19,23 +19,23 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
  */
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   ({ children, variant = 'primary', icon, isLoading = false, className = '', disabled, ...props }, ref) => {
-    // Style configurations for each visual variant
+    // Style configurations for each visual variant adhering to Calm Technology
     const variantStyles: Record<ButtonVariant, string> = {
-      // Primary brand green
+      // Primary Sage Green (#5A8F7B)
       primary:
-        'bg-[#10b981] text-white hover:bg-[#059669] border border-transparent active:bg-[#047857]',
+        'bg-[#5A8F7B] text-white hover:bg-[#4A7C6F] active:bg-[#3D665B] shadow-[0_1px_2px_rgba(0,0,0,0.05)] border border-transparent',
       // Secondary soft gray
       secondary:
-        'bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-200 active:bg-gray-300',
+        'bg-[#F3F4F6] text-[#1F2937] hover:bg-[#E5E7EB] border border-transparent active:bg-[#D1D5DB]',
       // Outline clean border
       outline:
-        'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200 active:bg-gray-100',
-      // Danger red
+        'bg-[#FAFAFA] text-[#1F2937] hover:bg-[#F3F4F6] border border-gray-200/80 active:bg-gray-100 shadow-[0_1px_2px_rgba(0,0,0,0.03)]',
+      // Danger muted red
       danger:
-        'bg-red-500 text-white hover:bg-red-600 border border-transparent active:bg-red-700',
+        'bg-rose-600 text-white hover:bg-rose-700 border border-transparent active:bg-rose-800 shadow-[0_1px_2px_rgba(0,0,0,0.05)]',
       // Ghost transparent
       ghost:
-        'bg-transparent text-gray-600 hover:bg-gray-100 border border-transparent',
+        'bg-transparent text-[#6B7280] hover:text-[#1F2937] hover:bg-gray-100/80 border border-transparent',
     }
 
     return (
@@ -43,10 +43,10 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         ref={ref}
         disabled={disabled || isLoading}
         className={`
-          inline-flex items-center justify-center gap-1.5
-          h-8 px-3 text-xs font-medium rounded-[5px] whitespace-nowrap
-          select-none cursor-pointer transition-colors duration-150
-          focus:outline-none focus:ring-0 focus:border-inherit
+          inline-flex items-center justify-center gap-2
+          h-9 px-4 text-xs font-medium rounded-[10px] whitespace-nowrap
+          select-none cursor-pointer transition-all duration-150
+          focus:outline-none focus:ring-2 focus:ring-[#5A8F7B]/20
           disabled:opacity-50 disabled:cursor-not-allowed
           ${variantStyles[variant]}
           ${className}

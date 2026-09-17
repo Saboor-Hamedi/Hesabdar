@@ -534,28 +534,6 @@ export function importDatabaseBackup(jsonString: string): boolean {
   }
 }
 
-export function getSettings(): {
-  storeName: string
-  phone: string
-  address: string
-  currency: string
-  taxRate: number
-  language: string
-} {
-  try {
-    const cached = localStorage.getItem('hesabdar_store_profile')
-    if (cached) return JSON.parse(cached)
-  } catch {}
-  return {
-    storeName: 'Hesabdar Supermarket',
-    phone: '0799123456',
-    address: 'Kabul, Afghanistan',
-    currency: 'AFN',
-    taxRate: 0,
-    language: 'en',
-  }
-}
-
 export {
   exportDatabaseToExcel,
   importDatabaseFromExcel,

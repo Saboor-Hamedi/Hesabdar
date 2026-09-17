@@ -23,15 +23,15 @@ export function InvoiceTable({
   const totalUnits = items.reduce((sum, it) => sum + (it.qty || 0), 0)
 
   return (
-    <div className="flex-1 bg-white border border-gray-200/90 rounded-[5px] flex flex-col justify-between shadow-xs overflow-hidden min-h-[340px]">
+    <div className="flex-1 bg-white border border-gray-200/80 rounded-[8px] flex flex-col justify-between shadow-xs overflow-hidden min-h-[340px]">
       {/* Table Header Bar */}
       <div className="px-3 py-2.5 bg-gray-50/70 border-b border-gray-200/80 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <ShoppingCart className="w-4 h-4 text-emerald-600" />
-          <span className="text-xs font-bold text-gray-800">
+          <ShoppingCart className="w-4 h-4 text-[#4A7C6F]" />
+          <span className="text-xs font-bold text-gray-900">
             Invoice Items
           </span>
-          <span className="text-[10px] px-1.5 py-0.2 rounded-[3px] bg-emerald-50 text-emerald-700 font-mono font-medium">
+          <span className="text-[10px] px-2 py-0.5 rounded-[6px] bg-[#4A7C6F]/10 text-[#2E4F46] border border-[#4A7C6F]/20 font-mono font-bold">
             {items.length} items
           </span>
         </div>
@@ -40,7 +40,7 @@ export function InvoiceTable({
           <button
             type="button"
             onClick={onClearAll}
-            className="text-[11px] text-red-600 hover:text-red-700 flex items-center gap-1 transition-colors font-medium"
+            className="text-[11px] text-rose-600 hover:text-rose-700 flex items-center gap-1 transition-colors font-medium cursor-pointer"
           >
             <Trash2 className="w-3 h-3" /> Clear Invoice
           </button>
@@ -106,13 +106,13 @@ export function InvoiceTable({
                         onChange={(e) =>
                           onSetItemQty(it.product_id, parseFloat(e.target.value) || 0)
                         }
-                        className="w-14 h-6 text-center text-xs font-mono font-bold border border-gray-200 rounded-[3px] bg-white text-gray-800 focus:outline-none focus:border-emerald-500"
+                        className="w-14 h-6 text-center text-xs font-mono font-bold border border-gray-200 rounded-[4px] bg-white text-gray-800 focus:outline-none focus:border-[#4A7C6F]"
                       />
 
                       <button
                         type="button"
                         onClick={() => onUpdateQty(it.product_id, 1)}
-                        className="w-5 h-5 flex items-center justify-center rounded-[3px] border border-gray-200 hover:bg-gray-100 text-gray-600 transition-colors"
+                        className="w-5 h-5 flex items-center justify-center rounded-[4px] border border-gray-200 hover:bg-gray-100 text-gray-600 transition-colors"
                       >
                         <Plus className="w-2.5 h-2.5" />
                       </button>
@@ -121,7 +121,7 @@ export function InvoiceTable({
 
                   {/* Unit */}
                   <td className="py-2 px-3 text-center">
-                    <span className="text-[10px] px-1.5 py-0.5 rounded-[3px] bg-gray-100 text-gray-700 font-mono uppercase">
+                    <span className="text-[10px] px-1.5 py-0.5 rounded-[4px] bg-gray-100 text-gray-700 font-mono uppercase">
                       {it.unit || 'pcs'}
                     </span>
                   </td>
@@ -132,7 +132,7 @@ export function InvoiceTable({
                   </td>
 
                   {/* Line Total */}
-                  <td className="py-2 px-3 text-end font-mono font-bold text-emerald-800 text-xs">
+                  <td className="py-2 px-3 text-end font-mono font-bold text-[#2E4F46] text-xs">
                     {formatCurrency(it.line_total)}
                   </td>
 

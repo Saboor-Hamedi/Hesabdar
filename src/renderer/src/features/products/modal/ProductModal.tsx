@@ -44,34 +44,41 @@ export function ProductModal({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={isEditing ? 'Edit Product Details / ویرایش جنس' : t('products.modalTitle')}
+      title={isEditing ? 'Edit Product Details' : 'Add New Inventory Item'}
       subtitle={
         isEditing
           ? 'Modify commodity names, pricing, barcode, and inventory stock balance.'
-          : t('products.modalSubtitle')
+          : 'Register new merchandise item into POS and inventory database.'
       }
-      style={{ width: '900px', height: '700px', maxWidth: '95vw', maxHeight: '92vh' }}
+      badge={
+        isEditing ? (
+          <span className="text-xs font-mono font-semibold px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200/60 shadow-2xs">
+            Product #{editingProduct?.id}
+          </span>
+        ) : undefined
+      }
+      style={{ width: '920px', maxWidth: '95vw', maxHeight: '92vh' }}
       className="flex flex-col"
-      bodyClassName="flex-1 flex flex-col p-5 overflow-y-auto"
+      bodyClassName="flex-1 flex flex-col p-8 overflow-y-auto"
     >
-      <form onSubmit={onSubmit} className="flex flex-col justify-between h-full gap-4">
-        <div className="flex flex-col gap-3.5">
-          {/* Top Fast-Searchable Catalog Preset Dropdown (Shown or available in both modes) */}
-          <div className="p-3.5 bg-emerald-50/40 border border-emerald-200/60 rounded-[5px]">
+      <form onSubmit={onSubmit} className="flex flex-col justify-between h-full gap-6">
+        <div className="flex flex-col gap-5">
+          {/* Top Fast-Searchable Catalog Preset Dropdown */}
+          <div className="p-4 bg-gray-50 border border-gray-100 rounded-xl">
             <CatalogSelect
               onSelect={onSelectCatalogItem}
               selectedItemName={form.name_en || form.name_fa}
             />
 
             {/* Quick Popular Commodity Chips */}
-            <div className="flex items-center gap-1.5 flex-wrap mt-2.5 pt-2 border-t border-emerald-100/80">
-              <span className="text-[10px] text-gray-500 font-medium">Popular Afghan Items:</span>
+            <div className="flex items-center gap-2 flex-wrap mt-3 pt-2.5 border-t border-gray-200/60">
+              <span className="text-[11px] text-gray-500 font-medium">Popular Afghan Items:</span>
               {COMMON_CATALOG_ITEMS.slice(0, 8).map((item) => (
                 <button
                   key={item.id}
                   type="button"
                   onClick={() => onSelectCatalogItem(item)}
-                  className="text-[10px] px-2.5 py-1 rounded-[5px] bg-white border border-gray-200 hover:border-emerald-500 hover:text-emerald-700 hover:bg-emerald-50 text-gray-700 transition-all shadow-2xs cursor-pointer active:scale-95 font-medium"
+                  className="text-xs px-3 py-1 rounded-full bg-white border border-gray-200/80 hover:bg-[#5A8F7B] hover:text-white hover:border-[#5A8F7B] text-gray-700 transition-all shadow-2xs cursor-pointer active:scale-95 font-medium"
                 >
                   {item.name_en} / {item.name_fa}
                 </button>
@@ -80,22 +87,8 @@ export function ProductModal({
           </div>
 
           {/* Section 1: Item Names across Languages */}
-          <div className="p-3.5 border border-gray-200/90 rounded-[5px] bg-gray-50/40 flex flex-col gap-3">
-            <div className="text-xs font-semibold text-gray-800 flex items-center justify-between">
-              <span className="flex items-center gap-2">
-                Item Names &amp; Identification
-                <span className="text-[10px] font-normal text-gray-400">
-                  (Auto-syncs across English, Persian, and Pashto)
-                </span>
-              </span>
-              {isEditing && (
-                <span className="text-[10px] font-mono font-bold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-[5px]">
-                  Product ID #{editingProduct?.id}
-                </span>
-              )}
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div className="flex flex-col gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               {/* English Name with Auto-Suggest */}
               <Input
                 label="Name in English"
@@ -107,7 +100,7 @@ export function ProductModal({
 
               {/* Persian / Dari Name */}
               <Input
-                label="نام به دری / فارسی *"
+                label="نام به دری / فارسی"
                 placeholder="مثلاً: روغن نباتی، برنج..."
                 value={form.name_fa}
                 onChange={(e) => onPersianNameChange(e.target.value)}
@@ -125,7 +118,7 @@ export function ProductModal({
               />
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <Input
                 label={t('products.barcode')}
                 placeholder="Scan or enter barcode"
@@ -134,12 +127,14 @@ export function ProductModal({
                 error={errors.barcode}
               />
 
-              <div className="flex flex-col gap-1">
-                <label className="text-[11px] font-medium text-gray-600">{t('products.unit')}</label>
+              <div className="flex flex-col gap-1.5">
+                <label className="text-[11px] font-semibold uppercase tracking-[0.05em] text-[#6B7280] select-none">
+                  {t('products.unit')}
+                </label>
                 <select
                   value={form.unit}
                   onChange={(e) => onChangeForm((f) => ({ ...f, unit: e.target.value as UnitType }))}
-                  className="w-full h-8 px-2 text-xs rounded-[5px] border border-gray-200 bg-white text-gray-800 focus:outline-none focus:border-gray-400 cursor-pointer"
+                  className="w-full h-9 px-3 text-xs rounded-lg transition-all duration-150 bg-[#F9FAFB] hover:bg-[#F3F4F6] text-[#1F2937] border border-transparent focus:border-[#5A8F7B]/40 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#5A8F7B]/20 cursor-pointer"
                 >
                   <option value="pcs">{t('products.unitPcs')}</option>
                   <option value="kg">{t('products.unitKg')}</option>
@@ -150,8 +145,10 @@ export function ProductModal({
                 </select>
               </div>
 
-              <div className="flex flex-col gap-1">
-                <label className="text-[11px] font-medium text-gray-600">{t('products.category')}</label>
+              <div className="flex flex-col gap-1.5">
+                <label className="text-[11px] font-semibold uppercase tracking-[0.05em] text-[#6B7280] select-none">
+                  {t('products.category')}
+                </label>
                 <input
                   type="text"
                   placeholder="e.g. Groceries, Dairy, Spices..."
@@ -162,29 +159,31 @@ export function ProductModal({
                       category_id: e.target.value ? Number(e.target.value) : undefined,
                     }))
                   }
-                  className="w-full h-8 px-2 text-xs rounded-[5px] border border-gray-200 bg-white text-gray-800 focus:outline-none focus:border-gray-400"
+                  className="w-full h-9 px-3 text-xs rounded-lg transition-all duration-150 bg-[#F9FAFB] hover:bg-[#F3F4F6] text-[#1F2937] placeholder:text-gray-400 border border-transparent focus:border-[#5A8F7B]/40 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#5A8F7B]/20"
                 />
               </div>
             </div>
           </div>
 
           {/* Section 2: Pricing & Stock Inventory */}
-          <div className="p-3.5 border border-gray-200/90 rounded-[5px] bg-gray-50/40 flex flex-col gap-3">
-            <div className="text-xs font-semibold text-gray-800 flex items-center justify-between">
-              <span>Pricing &amp; Stock Quantities</span>
+          <div className="pt-4 border-t border-gray-100 flex flex-col gap-3.5">
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] font-semibold uppercase tracking-[0.05em] text-[#6B7280]">
+                Pricing &amp; Stock Quantities
+              </span>
               {form.sell_price > 0 && (
                 <div className="flex items-center gap-2">
                   <span
-                    className={`text-[10px] font-mono font-semibold px-2 py-0.5 rounded-[5px] border ${
+                    className={`text-xs font-mono font-semibold px-2.5 py-0.5 rounded-full border ${
                       form.sell_price > form.cost_price
-                        ? 'text-emerald-800 bg-emerald-50 border-emerald-200'
-                        : 'text-amber-800 bg-amber-50 border-amber-200'
+                        ? 'text-emerald-800 bg-emerald-50 border-emerald-200/70'
+                        : 'text-amber-800 bg-amber-50 border-amber-200/70'
                     }`}
                   >
                     Gain: {form.sell_price - form.cost_price} AFN ({Math.round(((form.sell_price - form.cost_price) / form.sell_price) * 100)}% margin)
                   </span>
                   {form.stock_qty > 0 && (
-                    <span className="text-[10px] font-mono text-gray-500 bg-gray-100 px-2 py-0.5 rounded-[5px]">
+                    <span className="text-xs font-mono text-gray-500 bg-gray-100 px-2.5 py-0.5 rounded-full">
                       Stock Value: {(form.cost_price * form.stock_qty).toLocaleString()} AFN
                     </span>
                   )}
@@ -192,11 +191,13 @@ export function ProductModal({
               )}
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
               <Input
                 label={t('products.costPrice')}
                 type="number"
                 placeholder="0"
+                suffix="AFN"
+                className="text-right font-mono"
                 value={form.cost_price || ''}
                 onChange={(e) => onChangeForm((f) => ({ ...f, cost_price: parseFloat(e.target.value) || 0 }))}
                 error={errors.cost_price}
@@ -207,6 +208,8 @@ export function ProductModal({
                 label={t('products.sellPrice')}
                 type="number"
                 placeholder="0"
+                suffix="AFN"
+                className="text-right font-mono"
                 value={form.sell_price || ''}
                 onChange={(e) => onChangeForm((f) => ({ ...f, sell_price: parseFloat(e.target.value) || 0 }))}
                 error={errors.sell_price}
@@ -218,6 +221,7 @@ export function ProductModal({
                 type="number"
                 step="any"
                 placeholder="0"
+                className="text-right font-mono"
                 value={form.stock_qty || ''}
                 onChange={(e) => onChangeForm((f) => ({ ...f, stock_qty: parseFloat(e.target.value) || 0 }))}
                 error={errors.stock_qty}
@@ -227,6 +231,7 @@ export function ProductModal({
                 label={t('products.reorderLevel')}
                 type="number"
                 placeholder="5"
+                className="text-right font-mono"
                 value={form.reorder_level || ''}
                 onChange={(e) => onChangeForm((f) => ({ ...f, reorder_level: parseFloat(e.target.value) || 0 }))}
                 error={errors.reorder_level}
@@ -236,21 +241,20 @@ export function ProductModal({
         </div>
 
         {/* Modal Actions */}
-        <div className="flex items-center justify-between pt-3 mt-1 border-t border-gray-100 shrink-0">
+        <div className="flex items-center justify-between pt-5 border-t border-gray-100 shrink-0">
           <span className="text-[11px] text-gray-400">
             {isEditing
               ? 'Changes will be updated instantly across inventory and POS.'
               : 'Window remains open for continuous, rapid inventory entry.'}
           </span>
-          <div className="flex items-center gap-2">
-            <Button variant="outline" type="button" onClick={onClose}>
+          <div className="flex items-center gap-6">
+            <Button variant="ghost" type="button" onClick={onClose}>
               Cancel
             </Button>
             <Button
               variant="primary"
               type="submit"
-              icon={isEditing ? <Check className="w-3.5 h-3.5" /> : <Plus className="w-3.5 h-3.5" />}
-              className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold cursor-pointer"
+              icon={isEditing ? <Check className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
             >
               {isEditing ? 'Update Product Details' : 'Save & Add Next Item'}
             </Button>

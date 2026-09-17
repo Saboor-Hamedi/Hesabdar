@@ -40,6 +40,43 @@ const api = {
     getPrinters: () => ipcRenderer.invoke('print:getPrinters'),
     direct: (options?: { deviceName?: string; silent?: boolean }) =>
       ipcRenderer.invoke('print:direct', options)
+  },
+  license: {
+    check: () => ipcRenderer.invoke('license:check'),
+    requestActivation: (params: { full_name: string; email: string; phone: string }) =>
+      ipcRenderer.invoke('license:request-activation', params),
+    getIdentity: () => ipcRenderer.invoke('license:get-identity'),
+    onActivated: (cb: (identity: { full_name: string; email: string; phone: string }) => void) => {
+      const handler = (_e: unknown, identity: any) => cb(identity)
+      ipcRenderer.on('license:activated', handler)
+      return () => ipcRenderer.off('license:activated', handler)
+    },
+    onStatusChange: (cb: (status: string) => void) => {
+      const handler = (_e: unknown, status: string) => cb(status)
+      ipcRenderer.on('license:status-change', handler)
+      return () => ipcRenderer.off('license:status-change', handler)
+    },
+    onRevoked: (cb: () => void) => {
+      const handler = () => cb()
+      ipcRenderer.on('license:revoked', handler)
+      return () => ipcRenderer.off('license:revoked', handler)
+    }
+  },
+  update: {
+    getVersion: () => ipcRenderer.invoke('update:get-version'),
+    check: () => ipcRenderer.invoke('update:check'),
+    download: () => ipcRenderer.invoke('update:download'),
+    install: () => ipcRenderer.invoke('update:install'),
+    onStatusChange: (cb: (status: string, data?: any) => void) => {
+      const handler = (_e: unknown, status: string, data?: any) => cb(status, data)
+      ipcRenderer.on('update:status', handler)
+      return () => ipcRenderer.off('update:status', handler)
+    },
+    onProgress: (cb: (progress: any) => void) => {
+      const handler = (_e: unknown, progress: any) => cb(progress)
+      ipcRenderer.on('update:progress', handler)
+      return () => ipcRenderer.off('update:progress', handler)
+    }
   }
 }
 

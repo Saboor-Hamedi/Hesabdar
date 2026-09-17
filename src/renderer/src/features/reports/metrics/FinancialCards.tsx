@@ -33,31 +33,37 @@ export function FinancialCards({
       label: t('reports.grossSales'),
       value: grossSales,
       change: `${salesCount} invoices`,
-      positive: true,
+      tagClass: 'bg-emerald-50 text-emerald-700 border border-emerald-200/60',
     },
     {
       label: t('reports.cogs'),
       value: cogs,
       change: 'Cost basis',
-      positive: false,
+      tagClass: 'bg-slate-100 text-slate-700 border border-slate-200/60 font-medium',
     },
     {
       label: t('reports.netProfitMargin'),
       value: netProfit,
       change: grossSales > 0 ? `${Math.round((netProfit / grossSales) * 100)}% margin` : '0%',
-      positive: netProfit >= 0,
+      tagClass:
+        netProfit >= 0
+          ? 'bg-emerald-50 text-emerald-800 border border-emerald-200/60 font-semibold'
+          : 'bg-rose-50 text-rose-700 border border-rose-200/60',
     },
     {
       label: t('reports.customerCredit'),
       value: totalCustomerDebt,
-      change: `${customersCount} accounts`,
-      positive: true,
+      change: totalCustomerDebt === 0 ? 'Optimal Cash Flow' : `${customersCount} accounts`,
+      tagClass:
+        totalCustomerDebt === 0
+          ? 'bg-emerald-50 text-emerald-700 border border-emerald-200/60 font-medium'
+          : 'bg-amber-50 text-amber-800 border border-amber-200/60',
     },
     {
       label: t('reports.payableSuppliers'),
       value: totalSupplierPayable,
       change: `${suppliersCount} vendors`,
-      positive: false,
+      tagClass: 'bg-slate-100 text-slate-700 border border-slate-200/60 font-medium',
     },
   ]
 
@@ -65,15 +71,13 @@ export function FinancialCards({
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3">
       {financialSummary.map((item, idx) => (
         <Card key={idx}>
-          <span className="text-[11px] text-gray-400 font-medium">{item.label}</span>
-          <div className="flex items-baseline justify-between mt-2">
-            <span className="text-base font-bold font-mono text-gray-900">
+          <span className="text-xs text-gray-500 font-medium">{item.label}</span>
+          <div className="flex items-baseline justify-between mt-2 gap-1.5 flex-wrap">
+            <span className="text-lg font-bold font-mono text-gray-900">
               {formatCurrency(item.value)}
             </span>
             <span
-              className={`text-[10px] font-medium px-1.5 py-0.5 rounded-[5px] ${
-                item.positive ? 'bg-emerald-50 text-emerald-700' : 'bg-rose-50 text-rose-700'
-              }`}
+              className={`text-[10px] px-1.5 py-0.5 rounded-[6px] ${item.tagClass}`}
             >
               {item.change}
             </span>

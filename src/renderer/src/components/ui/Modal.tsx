@@ -9,6 +9,7 @@ export interface ModalProps {
   onClose: () => void
   title: string
   subtitle?: string
+  badge?: ReactNode
   children: ReactNode
   maxWidth?: string
   className?: string
@@ -18,13 +19,20 @@ export interface ModalProps {
 }
 
 /**
- * Accessible dialog modal with 5px border radius, backdrop blur, and ESC dismiss.
+ * Modern modal dialog conforming to Global Modal Design System:
+ * - 16px border radius (rounded-2xl)
+ * - Soft deep shadow (0 25px 50px -12px rgba(0,0,0,0.15))
+ * - Backdrop overlay rgba(0,0,0,0.4) with blur
+ * - Clean header without colored backgrounds, H2 title (20-24px), 13px subtitle
+ * - Top-right badge slot and minimalist X close icon
+ * - Standardized 32px padding (px-8)
  */
 export function Modal({
   isOpen,
   onClose,
   title,
   subtitle,
+  badge,
   children,
   maxWidth,
   className = '',
@@ -56,47 +64,50 @@ export function Modal({
     className.includes('max-w-3xl') ||
     className.includes('max-w-4xl')
 
-  const sizingClass = maxWidth || (hasExplicitWidth ? '' : 'max-w-md')
+  const sizingClass = maxWidth || (hasExplicitWidth ? '' : 'max-w-lg')
 
   return (
     <div
       className="fixed inset-0 flex items-center justify-center p-4 print:static print:p-0 print:block"
       style={{ zIndex }}
     >
-      {/* Dimmed backdrop with slight blur */}
+      {/* Dimmed backdrop overlay: rgba(0,0,0,0.4) with slight blur */}
       <div
-        className="fixed inset-0 bg-black/30 backdrop-blur-[2px] transition-opacity no-print"
+        className="fixed inset-0 bg-black/40 backdrop-blur-sm transition-opacity no-print"
         onClick={onClose}
       />
 
-      {/* Modal Dialog Box: 5px radius, sleek shadow */}
+      {/* Modal Dialog Box: 16px radius, soft deep shadow */}
       <div
         style={style}
         className={`
-          relative z-10 w-full ${sizingClass} bg-white rounded-[5px]
-          border border-gray-200/90 shadow-xl overflow-hidden
+          relative z-10 w-full ${sizingClass} bg-white rounded-2xl
+          border border-gray-100 shadow-[0_25px_50px_-12px_rgba(0,0,0,0.15)] overflow-hidden
           animate-in fade-in zoom-in-95 duration-150
           print:border-none print:shadow-none print:overflow-visible print:w-auto print:max-w-none print:static
           ${className}
         `}
       >
-        {/* Header with Title and Close Button */}
-        <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100 bg-gray-50/50 shrink-0 no-print">
-          <div>
-            <h2 className="text-xs font-semibold text-gray-800">{title}</h2>
-            {subtitle && <p className="text-[11px] text-gray-400 mt-0.5">{subtitle}</p>}
+        {/* Header with Title, optional top-right Badge, and Minimalist Close Button */}
+        <div className="flex items-start justify-between px-8 pt-7 pb-4 bg-white shrink-0 no-print">
+          <div className="flex-1 pr-4">
+            <h2 className="text-xl font-bold text-[#1F2937] tracking-tight leading-snug">{title}</h2>
+            {subtitle && <p className="text-[13px] text-[#6B7280] font-normal mt-1 leading-normal">{subtitle}</p>}
           </div>
-          <button
-            onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 p-1 rounded-[5px] hover:bg-gray-100 transition-colors focus:outline-none cursor-pointer"
-            aria-label="Close"
-          >
-            <X className="w-3.5 h-3.5" />
-          </button>
+          <div className="flex items-center gap-3 shrink-0 pt-0.5">
+            {badge && <div className="shrink-0">{badge}</div>}
+            <button
+              onClick={onClose}
+              className="text-[#9CA3AF] hover:text-[#111827] p-1.5 rounded-lg hover:bg-gray-100 transition-colors focus:outline-none cursor-pointer"
+              aria-label="Close"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
         </div>
 
-        {/* Modal Body */}
-        <div className={`p-4 max-h-[85vh] overflow-y-auto print:p-0 print:max-h-none print:overflow-visible ${bodyClassName}`}>
+        {/* Modal Body with standardized padding */}
+        <div className={`px-8 pb-8 pt-2 max-h-[85vh] overflow-y-auto print:p-0 print:max-h-none print:overflow-visible ${bodyClassName}`}>
           {children}
         </div>
       </div>

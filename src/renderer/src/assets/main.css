@@ -1,17 +1,38 @@
 @import "tailwindcss";
 
 @theme {
-  /* Hesabdar brand — deep green + gold */
-  --color-primary-50:  oklch(0.97 0.02 150);
-  --color-primary-500: oklch(0.55 0.15 150);
-  --color-primary-900: oklch(0.25 0.08 150);
+  /* Hesabdar brand — Calm Sage Teal (Linear / Notion / Modern POS style) */
+  --color-primary-50:  #f2f7f5;
+  --color-primary-100: #e1ede8;
+  --color-primary-200: #c4dbd2;
+  --color-primary-500: #4a7c6f;
+  --color-primary-600: #3d665b;
+  --color-primary-700: #32534b;
+  --color-primary-800: #29433d;
+  --color-primary-900: #1e332e;
 
-  --color-accent-500: oklch(0.75 0.12 85);
+  --color-accent-500: #5a8f7b;
 
   --font-sans: 'Vazirmatn Variable', 'Noto Naskh Arabic', system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
 
-  --radius-lg: 0.75rem;
+  --radius-lg: 0.5rem;
+}
+
+/* Subtle, modern scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #e2e8f0;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #cbd5e1;
 }
 
 html, body, #root {

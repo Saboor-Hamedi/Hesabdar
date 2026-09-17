@@ -4,6 +4,7 @@ import { TitlebarIconCard } from '../icon/TitlebarIconCard'
 import { LanguageCard } from '../language/LanguageCard'
 import { StoreProfileCard } from '../profile/StoreProfileCard'
 import { BackupCard } from '../backup/BackupCard'
+import { AppUpdateCard } from '../update/AppUpdateCard'
 
 /**
  * SettingsView: Modular configuration view orchestrating separated icon, language, profile, and backup cards.
@@ -57,6 +58,9 @@ export function SettingsView() {
 
       {/* 4. Database Backup & Safety */}
       <BackupCard />
+
+      {/* 5. Software & App Updates */}
+      <AppUpdateCard />
     </div>
   )
 }

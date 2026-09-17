@@ -34,40 +34,49 @@ export function SupplierPaymentModal({
       onClose={onClose}
       title="Pay Supplier Balance"
       subtitle={`Record payment dispatched to ${supplier.name} ${supplier.company ? `(${supplier.company})` : ''}`}
+      badge={
+        <span className="text-xs font-mono font-semibold px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200/60 shadow-2xs">
+          SUPP-{String(1000 + supplier.id)}
+        </span>
+      }
+      style={{ width: '580px', maxWidth: '95vw' }}
+      bodyClassName="p-8"
     >
-      <form onSubmit={onSubmit} className="flex flex-col gap-3">
-        <div className="p-3 bg-gray-50 border border-gray-100 rounded-[5px] flex items-center justify-between">
+      <form onSubmit={onSubmit} className="flex flex-col gap-5">
+        <div className="p-4 bg-gray-50 border border-gray-100 rounded-xl flex items-center justify-between">
           <div className="flex flex-col">
-            <span className="text-xs font-semibold text-gray-800">{supplier.name}</span>
+            <span className="text-sm font-bold text-gray-900">{supplier.name}</span>
             {supplier.company && (
-              <span className="text-[11px] text-gray-500 font-medium">{supplier.company}</span>
+              <span className="text-xs text-gray-500 font-medium">{supplier.company}</span>
             )}
-            <span className="text-[10px] text-gray-400 font-mono">{supplier.phone || 'No phone'}</span>
+            <span className="text-xs text-gray-400 font-mono mt-0.5">{supplier.phone || 'No phone'}</span>
           </div>
           <div className="text-end">
-            <span className="text-[10px] text-gray-400 block font-medium">Current Payable Balance</span>
-            <span className="text-sm font-bold font-mono text-amber-700">
+            <span className="text-[11px] font-semibold text-gray-500 uppercase tracking-[0.05em] block">Current Payable</span>
+            <span className="text-base font-bold font-mono text-amber-700 mt-0.5 block">
               {formatCurrency(supplier.balance || 0)}
             </span>
           </div>
         </div>
 
-        <div className="flex flex-col gap-1.5">
+        <div className="flex flex-col gap-2.5">
           <Input
-            label="Payment Amount Dispatched (AFN) *"
+            label="Payment Amount Dispatched"
             type="number"
-            placeholder="Enter amount to pay"
+            placeholder="0"
+            suffix="AFN"
+            className="text-right font-mono text-base font-bold"
             value={amount || ''}
             onChange={(e) => onChangeAmount(Math.max(0, parseFloat(e.target.value) || 0))}
             required
           />
 
           {/* Quick denomination banknote chips */}
-          <div className="flex items-center gap-1.5 flex-wrap pt-0.5">
+          <div className="flex items-center gap-2 flex-wrap pt-1">
             <button
               type="button"
               onClick={() => onChangeAmount(supplier.balance || 0)}
-              className="px-2.5 py-1 rounded-[5px] text-[10px] font-bold bg-emerald-600 hover:bg-emerald-700 text-white transition-all shadow-2xs cursor-pointer active:scale-95"
+              className="px-3 py-1 rounded-full text-xs font-mono font-semibold bg-emerald-600 hover:bg-emerald-700 text-white transition-all shadow-2xs cursor-pointer active:scale-95"
             >
               Pay Full ({formatCurrency(supplier.balance || 0)})
             </button>
@@ -76,7 +85,7 @@ export function SupplierPaymentModal({
                 key={chip}
                 type="button"
                 onClick={() => onChangeAmount(chip)}
-                className="px-2 py-1 rounded-[5px] text-[10px] font-mono font-medium bg-white text-gray-700 hover:bg-gray-50 border border-gray-200 transition-all shadow-2xs cursor-pointer active:scale-95"
+                className="px-3 py-1 rounded-full text-xs font-mono font-medium bg-[#F3F4F6] text-gray-700 hover:bg-[#5A8F7B] hover:text-white transition-all cursor-pointer active:scale-95 border-none"
               >
                 {chip.toLocaleString()} AFN
               </button>
@@ -85,26 +94,25 @@ export function SupplierPaymentModal({
         </div>
 
         {/* Balance Remaining after payment */}
-        <div className="p-2.5 bg-emerald-50/50 border border-emerald-200/80 rounded-[5px] flex items-center justify-between text-xs">
-          <span className="text-emerald-900 font-semibold flex items-center gap-1.5">
-            <Coins className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+        <div className="p-3.5 bg-emerald-50/50 border border-emerald-200/70 rounded-xl flex items-center justify-between text-xs">
+          <span className="text-emerald-900 font-semibold flex items-center gap-2">
+            <Coins className="w-4 h-4 text-[#5A8F7B] shrink-0" />
             Remaining Balance:
           </span>
-          <span className="font-mono font-black text-sm text-emerald-800">
+          <span className="font-mono font-bold text-sm text-emerald-800">
             {formatCurrency(remaining)}
           </span>
         </div>
 
-        <div className="flex items-center justify-end gap-2 pt-2 border-t border-gray-100">
-          <Button variant="outline" type="button" onClick={onClose}>
+        <div className="flex items-center justify-end gap-6 pt-4 border-t border-gray-100">
+          <Button variant="ghost" type="button" onClick={onClose}>
             Cancel
           </Button>
           <Button
             variant="primary"
             type="submit"
             disabled={amount <= 0}
-            icon={<Wallet className="w-3.5 h-3.5" />}
-            className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold"
+            icon={<Wallet className="w-4 h-4" />}
           >
             Confirm Supplier Payment
           </Button>

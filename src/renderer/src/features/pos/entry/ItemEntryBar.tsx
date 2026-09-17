@@ -151,7 +151,7 @@ export function ItemEntryBar({
   const lineTotal = Math.round(amount * price * 100) / 100
 
   return (
-    <div className="bg-white border border-gray-200/90 rounded-[5px] p-3 shadow-xs flex flex-col gap-2.5">
+    <div className="bg-white border border-gray-200/70 rounded-[8px] p-3.5 shadow-[0_1px_3px_rgba(0,0,0,0.04)] flex flex-col gap-3">
       {/* Row 1: Full-width Item Search & Barcode Lookup */}
       <div className="flex items-center gap-2">
         <div ref={dropdownRef} className="relative flex-1">
@@ -174,9 +174,9 @@ export function ItemEntryBar({
               }}
               onKeyDown={handleSearchKeyDown}
               placeholder={`${t('pos.scanPlaceholder')} (F2)`}
-              className="w-full h-10 ps-9 pe-8 text-xs rounded-[5px] border border-gray-300 bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:border-emerald-500 font-medium"
+              className="w-full h-10 ps-9 pe-8 text-xs rounded-[8px] border border-gray-200/80 bg-[#FAFAFA] text-[#1F2937] placeholder:text-[#9CA3AF] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#4A7C6F]/20 font-medium transition-all shadow-[0_1px_2px_rgba(0,0,0,0.02)]"
             />
-            <Search className="w-4 h-4 text-gray-400 absolute start-3 pointer-events-none" />
+            <Search className="w-4 h-4 text-[#9CA3AF] absolute start-3 pointer-events-none" />
 
             {searchQuery ? (
               <button
@@ -191,9 +191,9 @@ export function ItemEntryBar({
 
           {/* Autocomplete Dropdown: only when query is active */}
           {isDropdownOpen && searchQuery.trim().length > 0 && (
-            <div className="absolute z-50 left-0 right-0 mt-1 bg-white border border-gray-200 rounded-[5px] shadow-xl max-h-56 overflow-y-auto divide-y divide-gray-100">
+            <div className="absolute z-50 left-0 right-0 mt-1.5 bg-white border border-gray-200/80 rounded-[8px] shadow-lg max-h-56 overflow-y-auto divide-y divide-gray-100 animate-in fade-in zoom-in-95 duration-100">
               {filteredProducts.length === 0 ? (
-                <div className="p-3 text-center text-xs text-gray-400">
+                <div className="p-3 text-center text-xs text-[#9CA3AF]">
                   <p>No matching commodity found.</p>
                 </div>
               ) : (
@@ -207,42 +207,42 @@ export function ItemEntryBar({
                       key={p.id}
                       onClick={() => handlePickProduct(p)}
                       onMouseEnter={() => setHighlightedIndex(idx)}
-                      className={`p-2 flex items-center justify-between cursor-pointer text-xs transition-colors ${
+                      className={`p-2.5 flex items-center justify-between cursor-pointer text-xs transition-colors ${
                         isHighlighted
-                          ? 'bg-emerald-50 text-emerald-900'
+                          ? 'bg-[#4A7C6F]/10 text-[#1F2937]'
                           : isSelected
-                            ? 'bg-gray-50 font-semibold'
+                            ? 'bg-gray-50 font-medium'
                             : 'hover:bg-gray-50'
                       }`}
                     >
                       <div className="flex flex-col min-w-0 pr-2">
                         <div className="flex items-center gap-2">
-                          <span className="font-semibold text-gray-900 truncate">
+                          <span className="font-medium text-[#1F2937] truncate">
                             {p.name_fa}
                           </span>
                           {p.name_en && (
-                            <span className="text-[10px] text-gray-400 truncate">
+                            <span className="text-[10px] text-[#9CA3AF] truncate">
                               ({p.name_en})
                             </span>
                           )}
-                          <span className="text-[9px] px-1.5 py-0.2 rounded-[3px] bg-gray-100 text-gray-600 uppercase font-mono">
+                          <span className="text-[9px] px-1.5 py-0.2 rounded-[4px] bg-gray-100 text-[#6B7280] uppercase font-mono">
                             {p.unit}
                           </span>
                         </div>
-                        <div className="flex items-center gap-2 text-[10px] text-gray-400 font-mono mt-0.5">
+                        <div className="flex items-center gap-2 text-[10px] text-[#9CA3AF] font-mono mt-0.5">
                           <span>{p.barcode || `#${p.id}`}</span>
                           <span>•</span>
-                          <span className={isLow ? 'text-amber-600 font-medium' : ''}>
+                          <span className={isLow ? 'text-amber-700 font-medium' : ''}>
                             Stock: {p.stock_qty} {p.unit}
                           </span>
                         </div>
                       </div>
 
                       <div className="text-end shrink-0">
-                        <span className="font-mono font-bold text-xs text-emerald-700 block">
+                        <span className="font-mono font-medium text-xs text-[#1F2937] block">
                           {formatCurrency(p.sell_price)}
                         </span>
-                        <span className="text-[9px] text-gray-400">per {p.unit}</span>
+                        <span className="text-[9px] text-[#9CA3AF]">per {p.unit}</span>
                       </div>
                     </div>
                   )
@@ -253,61 +253,64 @@ export function ItemEntryBar({
         </div>
       </div>
 
-      {/* Row 2: 4-Column Balanced Grid: Qty, Unit Price, Line Total, Add Button */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 items-center">
-        {/* Col 1: Quantity with Unit */}
-        <div className="flex items-center h-10 border border-gray-300 rounded-[5px] bg-white px-2.5 focus-within:border-emerald-500 shadow-2xs">
-          <span className="text-[11px] text-gray-500 font-semibold me-1 shrink-0 select-none">
-            {t('pos.qty')}
-          </span>
-          <input
-            ref={amountInputRef}
-            type="number"
-            step="any"
-            min="0.01"
-            value={amount || ''}
-            onChange={(e) => onChangeAmount(Math.max(0, parseFloat(e.target.value) || 0))}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') {
-                e.preventDefault()
-                handleAdd()
-              }
-            }}
-            placeholder="1"
-            className="w-full text-center text-xs font-mono font-bold text-gray-900 bg-transparent focus:outline-none"
-          />
-          <span className="text-[10px] text-gray-400 uppercase font-mono ms-1 shrink-0 select-none">
-            {unit}
-          </span>
+      {/* Row 2: Merged Cohesive Toolbar (Qty + Unit Price + Line Total) + Add Button */}
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
+        {/* Unified Toolbar with internal dividers */}
+        <div className="flex-1 h-10 rounded-[8px] bg-[#FAFAFA] border border-gray-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.03)] flex items-stretch divide-x divide-gray-200/70 rtl:divide-x-reverse overflow-hidden">
+          {/* Part 1: Quantity input */}
+          <div className="flex-1 px-3 flex items-center justify-between min-w-[110px]">
+            <span className="text-[11px] text-[#6B7280] font-medium tracking-wide shrink-0 select-none">
+              {t('pos.qty')}
+            </span>
+            <input
+              ref={amountInputRef}
+              type="number"
+              step="any"
+              min="0.01"
+              value={amount || ''}
+              onChange={(e) => onChangeAmount(Math.max(0, parseFloat(e.target.value) || 0))}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault()
+                  handleAdd()
+                }
+              }}
+              placeholder="1"
+              className="w-16 text-center text-xs font-mono font-medium text-[#1F2937] bg-transparent focus:outline-none"
+            />
+            <span className="text-[10px] text-[#9CA3AF] uppercase font-mono shrink-0 select-none">
+              {unit}
+            </span>
+          </div>
+
+          {/* Part 2: Unit Price (Clean readout) */}
+          <div className="flex-1 px-3 flex flex-col justify-center select-none min-w-[95px]">
+            <span className="text-[9px] text-[#9CA3AF] uppercase font-medium tracking-wider leading-tight">
+              {t('pos.unitPrice')}
+            </span>
+            <span className="font-mono text-xs text-[#1F2937] font-medium truncate leading-tight mt-0.5">
+              {price ? formatCurrency(price) : '0 AFN'}
+            </span>
+          </div>
+
+          {/* Part 3: Line Total (Clean subtle highlight) */}
+          <div className="flex-1 px-3 flex flex-col justify-center select-none min-w-[95px] bg-[#F3F4F6]/50">
+            <span className="text-[9px] text-[#6B7280] uppercase font-medium tracking-wider leading-tight">
+              {t('pos.lineTotal')}
+            </span>
+            <span className="font-mono text-xs font-semibold text-[#1F2937] truncate leading-tight mt-0.5">
+              {lineTotal ? formatCurrency(lineTotal) : '0 AFN'}
+            </span>
+          </div>
         </div>
 
-        {/* Col 2: Unit Price (Uneditable) */}
-        <div className="h-10 bg-gray-50 border border-gray-200 rounded-[5px] px-3 flex flex-col justify-center select-none shadow-2xs">
-          <span className="text-[9px] text-gray-400 uppercase font-semibold leading-tight tracking-wider">
-            {t('pos.unitPrice')}
-          </span>
-          <span className="font-mono font-bold text-xs text-gray-800 truncate leading-tight">
-            {price ? formatCurrency(price) : '0 AFN'}
-          </span>
-        </div>
-
-        {/* Col 3: Line Total (Uneditable) */}
-        <div className="h-10 bg-emerald-50/70 border border-emerald-300 rounded-[5px] px-3 flex flex-col justify-center select-none shadow-2xs">
-          <span className="text-[9px] text-emerald-800 uppercase font-bold leading-tight tracking-wider">
-            {t('pos.lineTotal')}
-          </span>
-          <span className="font-mono font-black text-xs text-emerald-800 truncate leading-tight">
-            {lineTotal ? formatCurrency(lineTotal) : '0 AFN'}
-          </span>
-        </div>
-
-        {/* Col 4: Add to Invoice Button */}
+        {/* Add Item Button: Refined Sage Teal CTA */}
         <Button
           variant="primary"
           onClick={handleAdd}
           disabled={!selectedProduct || amount <= 0 || price < 0}
-          icon={<CornerDownLeft className="w-4 h-4" />}
-          className="h-10 text-xs font-bold w-full justify-center shadow-xs"
+          icon={<CornerDownLeft className="w-3.5 h-3.5" />}
+          className="h-10 px-4 text-xs font-medium rounded-[8px] shrink-0 justify-center shadow-xs"
         >
           {t('pos.addItem')}
         </Button>
