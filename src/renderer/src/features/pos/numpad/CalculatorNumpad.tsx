@@ -1,5 +1,5 @@
 import { useState, useCallback, useMemo, useEffect } from 'react'
-import { Delete, RotateCcw, Calculator, ArrowDownToLine } from 'lucide-react'
+import { Delete, Calculator, ArrowDownToLine } from 'lucide-react'
 
 interface CalculatorNumpadProps {
   onApplyToPaid?: (val: number) => void
@@ -9,26 +9,37 @@ interface CalculatorNumpadProps {
 
 const MAX_DIGITS = 12
 
+function formatNumberClean(num: number): string {
+  if (isNaN(num) || !isFinite(num)) return 'Error'
+  const rounded = Math.round(num * 1000000) / 1000000
+  return String(rounded)
+}
+
 /**
  * CalculatorNumpad: High-precision, bulletproof POS Cashier Calculator.
- * - Prevents infinite leading zeros (e.g. "000000")
- * - Strictly enforces max 12 digits to guarantee display never overflows
- * - Dynamic LCD font size scaling
- * - Supports chained operators, operator switching, division by zero guard, and percentage
+ * - Solid right-aligned LCD digits (numbers never jump horizontally)
+ * - Retains full equation on top line (e.g. "8 + 6 =" and doesn't disappear into empty space)
+ * - Clean "C" clear button without awkward icon clutter
+ * - Guards against leading zero buildup and IEEE 754 precision errors
+ * - Dynamic font sizing to ensure numbers never overflow
  */
 export function CalculatorNumpad({ onApplyToPaid, totalPayable = 0, resetKey }: CalculatorNumpadProps) {
   const [display, setDisplay] = useState('0')
+  const [expression, setExpression] = useState('')
   const [prevOperand, setPrevOperand] = useState<number | null>(null)
   const [operator, setOperator] = useState<string | null>(null)
   const [isNewNumber, setIsNewNumber] = useState(true)
+  const [hasCalculated, setHasCalculated] = useState(false)
 
   // Clear calculator on external reset trigger (e.g. on Checkout)
   useEffect(() => {
     if (resetKey !== undefined && resetKey > 0) {
       setDisplay('0')
+      setExpression('')
       setPrevOperand(null)
       setOperator(null)
       setIsNewNumber(true)
+      setHasCalculated(false)
     }
   }, [resetKey])
 
@@ -53,77 +64,122 @@ export function CalculatorNumpad({ onApplyToPaid, totalPayable = 0, resetKey }: 
       default:
         result = b
     }
-    // Round to avoid IEEE 754 precision issues (e.g. 0.1 + 0.2 = 0.30000000000000004)
     return Math.round(result * 1000000) / 1000000
   }
 
   // Handle number click (0-9, 00)
-  const handleDigit = useCallback((digit: string) => {
-    setDisplay((prev) => {
-      // If we are starting a new number or display is '0' or 'Error'
-      if (isNewNumber || prev === '0' || prev === 'Error') {
+  const handleDigit = useCallback(
+    (digit: string) => {
+      if (hasCalculated) {
+        const nextDigit = digit === '00' || digit === '0' ? '0' : digit
+        setDisplay(nextDigit)
+        setExpression('')
+        setPrevOperand(null)
+        setOperator(null)
         setIsNewNumber(false)
-        if (digit === '00' || digit === '0') {
-          return '0' // Never accumulate multiple leading zeros!
+        setHasCalculated(false)
+        return
+      }
+
+      if (isNewNumber || display === '0' || display === 'Error') {
+        setIsNewNumber(false)
+        const nextDigit = digit === '00' || digit === '0' ? '0' : digit
+        setDisplay(nextDigit)
+        if (operator && prevOperand !== null) {
+          setExpression(`${formatNumberClean(prevOperand)} ${operator} ${nextDigit}`)
+        } else {
+          setExpression('')
         }
-        return digit
+        return
       }
 
-      // If user presses '0' or '00' while display is already just '0'
-      if (prev === '0') {
-        return digit === '00' || digit === '0' ? '0' : digit
+      // If display already reached max digits limit, prevent overflow
+      if (display.replace('.', '').length >= MAX_DIGITS) {
+        return
       }
 
-      // Enforce max digits limit so display never spills out
-      if (prev.replace('.', '').length >= MAX_DIGITS) {
-        return prev
+      const nextDisplay = display + digit
+      setDisplay(nextDisplay)
+      if (operator && prevOperand !== null) {
+        setExpression(`${formatNumberClean(prevOperand)} ${operator} ${nextDisplay}`)
       }
-
-      return prev + digit
-    })
-  }, [isNewNumber])
+    },
+    [hasCalculated, isNewNumber, display, operator, prevOperand]
+  )
 
   // Handle decimal dot
   const handleDot = useCallback(() => {
-    setDisplay((prev) => {
-      if (isNewNumber || prev === 'Error') {
-        setIsNewNumber(false)
-        return '0.'
-      }
-      if (prev.includes('.')) {
-        return prev // Prevent duplicate dots
-      }
-      return prev + '.'
-    })
-  }, [isNewNumber])
-
-  // Handle operators (+, -, ×, ÷)
-  const handleOperator = useCallback((nextOp: string) => {
-    const currentVal = parseFloat(display)
-
-    if (isNaN(currentVal) || display === 'Error') {
+    if (hasCalculated) {
+      setDisplay('0.')
+      setExpression('')
+      setPrevOperand(null)
+      setOperator(null)
+      setIsNewNumber(false)
+      setHasCalculated(false)
       return
     }
 
-    if (prevOperand !== null && operator && !isNewNumber) {
-      // Perform intermediate calculation
-      const res = calculate(prevOperand, operator, currentVal)
-      if (isNaN(res) || !isFinite(res)) {
-        setDisplay('Error')
-        setPrevOperand(null)
-        setOperator(null)
-        setIsNewNumber(true)
-        return
+    if (isNewNumber || display === 'Error') {
+      setIsNewNumber(false)
+      setDisplay('0.')
+      if (operator && prevOperand !== null) {
+        setExpression(`${formatNumberClean(prevOperand)} ${operator} 0.`)
       }
-      setDisplay(String(res))
-      setPrevOperand(res)
-    } else {
-      setPrevOperand(currentVal)
+      return
     }
 
-    setOperator(nextOp)
-    setIsNewNumber(true)
-  }, [display, prevOperand, operator, isNewNumber])
+    if (display.includes('.')) {
+      return
+    }
+
+    const nextDisplay = display + '.'
+    setDisplay(nextDisplay)
+    if (operator && prevOperand !== null) {
+      setExpression(`${formatNumberClean(prevOperand)} ${operator} ${nextDisplay}`)
+    }
+  }, [hasCalculated, isNewNumber, display, operator, prevOperand])
+
+  // Handle operators (+, -, ×, ÷)
+  const handleOperator = useCallback(
+    (nextOp: string) => {
+      setHasCalculated(false)
+      const currentVal = parseFloat(display)
+
+      if (isNaN(currentVal) || display === 'Error') {
+        return
+      }
+
+      if (isNewNumber && operator !== null && prevOperand !== null) {
+        setOperator(nextOp)
+        setExpression(`${formatNumberClean(prevOperand)} ${nextOp}`)
+        return
+      }
+
+      if (prevOperand !== null && operator && !isNewNumber) {
+        // Intermediate calculation
+        const res = calculate(prevOperand, operator, currentVal)
+        if (isNaN(res) || !isFinite(res)) {
+          setDisplay('Error')
+          setExpression(`${formatNumberClean(prevOperand)} ${operator} ${formatNumberClean(currentVal)} =`)
+          setPrevOperand(null)
+          setOperator(null)
+          setIsNewNumber(true)
+          return
+        }
+        setDisplay(formatNumberClean(res))
+        setPrevOperand(res)
+        setOperator(nextOp)
+        setExpression(`${formatNumberClean(res)} ${nextOp}`)
+        setIsNewNumber(true)
+      } else {
+        setPrevOperand(currentVal)
+        setOperator(nextOp)
+        setExpression(`${formatNumberClean(currentVal)} ${nextOp}`)
+        setIsNewNumber(true)
+      }
+    },
+    [display, isNewNumber, operator, prevOperand]
+  )
 
   // Handle equals (=)
   const handleEquals = useCallback(() => {
@@ -135,34 +191,57 @@ export function CalculatorNumpad({ onApplyToPaid, totalPayable = 0, resetKey }: 
     const res = calculate(prevOperand, operator, currentVal)
     if (isNaN(res) || !isFinite(res)) {
       setDisplay('Error')
+      setExpression(`${formatNumberClean(prevOperand)} ${operator} ${formatNumberClean(currentVal)} =`)
+      setPrevOperand(null)
+      setOperator(null)
     } else {
-      setDisplay(String(res))
+      const formattedRes = formatNumberClean(res)
+      setDisplay(formattedRes)
+      // Display full completed equation with = sign so it never appears empty!
+      setExpression(`${formatNumberClean(prevOperand)} ${operator} ${formatNumberClean(currentVal)} =`)
+      setPrevOperand(res)
+      setOperator(null)
     }
 
-    setPrevOperand(null)
-    setOperator(null)
     setIsNewNumber(true)
+    setHasCalculated(true)
   }, [operator, prevOperand, display])
 
   // Handle clear (C)
   const handleClear = useCallback(() => {
     setDisplay('0')
+    setExpression('')
     setPrevOperand(null)
     setOperator(null)
     setIsNewNumber(true)
+    setHasCalculated(false)
   }, [])
 
   // Backspace
   const handleBackspace = useCallback(() => {
-    setDisplay((prev) => {
-      if (isNewNumber || prev === 'Error' || prev.length <= 1) {
-        setIsNewNumber(true)
-        return '0'
+    if (hasCalculated) {
+      handleClear()
+      return
+    }
+
+    if (isNewNumber || display === 'Error' || display.length <= 1) {
+      setDisplay('0')
+      setIsNewNumber(true)
+      if (operator && prevOperand !== null) {
+        setExpression(`${formatNumberClean(prevOperand)} ${operator}`)
+      } else {
+        setExpression('')
       }
-      const sliced = prev.slice(0, -1)
-      return sliced === '' || sliced === '-' ? '0' : sliced
-    })
-  }, [isNewNumber])
+      return
+    }
+
+    const sliced = display.slice(0, -1)
+    const nextDisplay = sliced === '' || sliced === '-' ? '0' : sliced
+    setDisplay(nextDisplay)
+    if (operator && prevOperand !== null) {
+      setExpression(`${formatNumberClean(prevOperand)} ${operator} ${nextDisplay}`)
+    }
+  }, [hasCalculated, isNewNumber, display, operator, prevOperand, handleClear])
 
   // Percentage
   const handlePercent = useCallback(() => {
@@ -170,25 +249,19 @@ export function CalculatorNumpad({ onApplyToPaid, totalPayable = 0, resetKey }: 
     if (isNaN(currentVal) || display === 'Error') return
 
     if (prevOperand !== null && (operator === '+' || operator === '-')) {
-      // e.g. 100 - 20% -> 20% of 100 is 20
       const percentVal = (prevOperand * currentVal) / 100
-      setDisplay(String(Math.round(percentVal * 100000) / 100000))
+      const res = Math.round(percentVal * 100000) / 100000
+      setDisplay(formatNumberClean(res))
+      setExpression(`${formatNumberClean(prevOperand)} ${operator} ${formatNumberClean(res)}`)
     } else {
-      const res = currentVal / 100
-      setDisplay(String(Math.round(res * 1000000) / 1000000))
+      const res = Math.round((currentVal / 100) * 1000000) / 1000000
+      setDisplay(formatNumberClean(res))
+      setExpression(`${formatNumberClean(res)}`)
     }
     setIsNewNumber(true)
   }, [display, prevOperand, operator])
 
-  // Dynamic Equation display text
-  const equationText = useMemo(() => {
-    if (prevOperand !== null && operator) {
-      return `${prevOperand} ${operator}`
-    }
-    return '\u00A0'
-  }, [prevOperand, operator])
-
-  // Dynamic font sizing based on length to guarantee zero overflow
+  // Dynamic font sizing based on digit length to guarantee zero overflow
   const displayFontSize = useMemo(() => {
     const len = display.length
     if (len > 12) return 'text-lg sm:text-xl'
@@ -209,10 +282,12 @@ export function CalculatorNumpad({ onApplyToPaid, totalPayable = 0, resetKey }: 
           <button
             type="button"
             onClick={() => {
-              setDisplay(String(totalPayable))
+              setDisplay(formatNumberClean(totalPayable))
+              setExpression('')
               setPrevOperand(null)
               setOperator(null)
               setIsNewNumber(true)
+              setHasCalculated(false)
             }}
             className="text-[11px] text-emerald-700 hover:underline font-mono font-semibold transition-colors cursor-pointer"
             title="Load invoice total into calculator"
@@ -222,14 +297,19 @@ export function CalculatorNumpad({ onApplyToPaid, totalPayable = 0, resetKey }: 
         )}
       </div>
 
-      {/* 2. Digital LCD Screen Display (Centered large bold digits, strictly non-overflowing) */}
-      <div className="bg-gray-950 text-white rounded-[5px] px-3 py-1.5 flex flex-col items-center justify-center text-center font-mono shadow-inner min-h-[60px] border border-gray-800 shrink-0 overflow-hidden">
-        <span className="text-[11px] text-gray-400 truncate w-full h-4 select-none leading-none text-center">
-          {equationText}
-        </span>
-        <div className="w-full overflow-hidden flex items-center justify-center">
+      {/* 2. Digital LCD Screen Display (Solid right alignment, no text shifting) */}
+      <div className="bg-gray-950 text-white rounded-[5px] px-3.5 py-2 flex flex-col justify-between font-mono shadow-inner min-h-[64px] border border-gray-800 shrink-0 overflow-hidden select-none">
+        {/* Top Formula / Equation Line */}
+        <div className="w-full h-4.5 flex items-center justify-end overflow-hidden">
+          <span className="text-xs text-gray-400 font-mono tracking-wide truncate select-none">
+            {expression || '\u00A0'}
+          </span>
+        </div>
+
+        {/* Main Value Display */}
+        <div className="w-full flex items-baseline justify-end overflow-hidden">
           <span
-            className={`font-black tracking-wider text-emerald-400 select-all leading-tight text-center truncate max-w-full ${displayFontSize}`}
+            className={`font-black tracking-wider text-emerald-400 font-mono leading-none truncate ${displayFontSize}`}
           >
             {display}
           </span>
@@ -238,15 +318,14 @@ export function CalculatorNumpad({ onApplyToPaid, totalPayable = 0, resetKey }: 
 
       {/* 3. Button Matrix */}
       <div className="grid grid-cols-4 grid-rows-5 gap-1.5 flex-1 min-h-0 select-none">
-        {/* Row 1 */}
+        {/* Row 1: Clear, Backspace, %, ÷ */}
         <button
           type="button"
           onClick={handleClear}
-          className="h-full min-h-[38px] rounded-[5px] bg-red-50 hover:bg-red-100 active:scale-[0.98] border border-red-200 text-red-700 font-bold text-xs sm:text-sm flex items-center justify-center gap-1 transition-all shadow-2xs cursor-pointer"
+          className="h-full min-h-[38px] rounded-[5px] bg-red-50 hover:bg-red-100 active:scale-[0.98] border border-red-200 text-red-700 font-black text-sm flex items-center justify-center transition-all shadow-2xs cursor-pointer"
           title="Clear"
         >
-          <RotateCcw className="w-3.5 h-3.5" />
-          <span>C</span>
+          C
         </button>
         <button
           type="button"
