@@ -18,11 +18,18 @@ asarUnpack:
   - resources/**
 win:
   executableName: hesabdar
+  target:
+    - target: nsis
+      arch:
+        - x64
 nsis:
-  artifactName: ${name}-${version}-setup.${ext}
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: always
+  createStartMenuShortcut: true
   shortcutName: ${productName}
   uninstallDisplayName: ${productName}
-  createDesktopShortcut: always
+  artifactName: ${name}-${version}-setup.${ext}
   differentialPackage: true
 mac:
   entitlementsInherit: build/entitlements.mac.plist
