@@ -48,6 +48,9 @@ jobs:
       - name: Install npm dependencies
         run: npm ci || npm install
 
+      - name: Build application with electron-vite
+        run: npm run build
+
       - name: Compile and package release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

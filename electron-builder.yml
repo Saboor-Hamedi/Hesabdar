@@ -4,6 +4,7 @@ compression: maximum
 directories:
   buildResources: build
 files:
+  - 'out/**'
   - '!**/.vscode/*'
   - '!src/*'
   - '!scripts/*'
