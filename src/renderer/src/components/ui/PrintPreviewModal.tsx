@@ -8,8 +8,6 @@ import {
   Zap,
   X,
   ChevronDown,
-  ArrowDownCircle,
-  ArrowUpCircle,
   CheckCircle2,
   AlertCircle,
 } from 'lucide-react'
@@ -209,7 +207,7 @@ export function PrintPreviewModal({
                   <Printer className="w-3.5 h-3.5" />
                 </div>
                 <h3 className="font-bold text-sm text-gray-900 leading-none">
-                  Print
+                  {title || 'Print'}
                 </h3>
               </div>
               <button
