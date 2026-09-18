@@ -80,6 +80,29 @@ function saveLocalStorageArray<T>(key: string, data: T[]): void {
   } catch {}
 }
 
+function healSalesProductNames(sales: Sale[], products: Product[]): Sale[] {
+  const productsMap = new Map(products.map((p) => [p.id, p]))
+  return (sales || []).map((sale) => ({
+    ...sale,
+    items: (sale.items || []).map((it) => {
+      const prod = productsMap.get(it.product_id)
+      const resolvedName =
+        it.product_name && it.product_name !== 'undefined'
+          ? it.product_name
+          : prod?.name_fa || prod?.name_en || prod?.name_ps || (prod as any)?.name || `Product #${it.product_id}`
+      const resolvedUnit =
+        it.unit && it.unit !== 'undefined'
+          ? it.unit
+          : prod?.unit || 'pcs'
+      return {
+        ...it,
+        product_name: resolvedName,
+        unit: resolvedUnit,
+      }
+    }),
+  }))
+}
+
 /**
  * Hydrates store from localStorage initially, then immediately
  * pulls authoritative data from SQLite via Electron IPC.
@@ -95,7 +118,7 @@ function ensureInitialized(): void {
     saveLocalStorageArray(STORAGE_KEYS.PRODUCTS, _products)
   }
 
-  _sales = getLocalStorageArray<Sale>(STORAGE_KEYS.SALES)
+  _sales = healSalesProductNames(getLocalStorageArray<Sale>(STORAGE_KEYS.SALES), _products)
   _customers = getLocalStorageArray<Customer>(STORAGE_KEYS.CUSTOMERS)
   _customerPayments = getLocalStorageArray<CustomerPayment>(STORAGE_KEYS.CUSTOMER_PAYMENTS)
   _suppliers = getLocalStorageArray<Supplier>(STORAGE_KEYS.SUPPLIERS)
@@ -132,7 +155,7 @@ async function syncWithDatabase(): Promise<void> {
       _products = dbData.products || []
       _customers = dbData.customers || []
       _suppliers = dbData.suppliers || []
-      _sales = dbData.sales || []
+      _sales = healSalesProductNames(dbData.sales || [], _products)
       _customerPayments = dbData.customerPayments || []
 
       // Mirror to localStorage for instant subsequent boots
@@ -357,8 +380,9 @@ export function recordSale(saleData: {
   const api = (window as any).api
   if (api?.sales?.record) {
     api.sales.record(saleData).then((savedSale: Sale) => {
-      if (savedSale && savedSale.id && savedSale.id !== newId) {
-        _sales = _sales.map((s) => (s.id === newId ? savedSale : s))
+      if (savedSale && savedSale.id) {
+        const [healedSale] = healSalesProductNames([savedSale], getProducts())
+        _sales = _sales.map((s) => (s.id === newId || s.id === healedSale.id ? healedSale : s))
         saveLocalStorageArray(STORAGE_KEYS.SALES, _sales)
         notifyListeners()
       }

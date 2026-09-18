@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next'
-import { Calendar, Package, Eye, Trash2 } from 'lucide-react'
+import { Calendar, Package, Eye, Printer, Trash2 } from 'lucide-react'
 import type { Sale, Customer } from '../../../core/types'
 import { DataTable, type Column } from '../../../components/ui/DataTable'
 import { formatCurrency, formatDateTime } from '../../../core/utils/formatters'
@@ -8,6 +8,7 @@ interface SoldTableProps {
   sales: Sale[]
   customers: Customer[]
   onViewReceipt: (sale: Sale) => void
+  onDirectPrint?: (sale: Sale) => void
   onVoidSale: (id: number) => void
 }
 
@@ -18,6 +19,7 @@ export function SoldTable({
   sales,
   customers,
   onViewReceipt,
+  onDirectPrint,
   onVoidSale,
 }: SoldTableProps) {
   const { t } = useTranslation()
@@ -83,7 +85,7 @@ export function SoldTable({
             {row.items?.length || 0} items
           </span>
           <span className="text-[10px] text-gray-400 truncate max-w-[200px]">
-            {row.items?.map((it) => `${it.product_name} (${it.qty} ${it.unit || ''})`).join(', ')}
+            {row.items?.map((it) => `${it.product_name || 'Product'} (${it.qty} ${it.unit || 'pcs'})`).join(', ')}
           </span>
         </div>
       ),
@@ -126,15 +128,25 @@ export function SoldTable({
             type="button"
             onClick={() => onViewReceipt(row)}
             title={t('sold.invoiceDetails')}
-            className="p-1.5 rounded-[5px] text-gray-500 hover:text-emerald-700 hover:bg-emerald-50 transition-colors"
+            className="p-1.5 rounded-[5px] text-gray-500 hover:text-emerald-700 hover:bg-emerald-50 transition-colors cursor-pointer"
           >
             <Eye className="w-3.5 h-3.5" />
           </button>
+          {onDirectPrint && (
+            <button
+              type="button"
+              onClick={() => onDirectPrint(row)}
+              title="Print (1-Click)"
+              className="p-1.5 rounded-[5px] text-gray-500 hover:text-[#2F6153] hover:bg-emerald-50 transition-colors cursor-pointer"
+            >
+              <Printer className="w-3.5 h-3.5" />
+            </button>
+          )}
           <button
             type="button"
             onClick={() => onVoidSale(row.id)}
             title={t('sold.voidSale')}
-            className="p-1.5 rounded-[5px] text-gray-400 hover:text-rose-600 hover:bg-rose-50 transition-colors"
+            className="p-1.5 rounded-[5px] text-gray-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
           >
             <Trash2 className="w-3.5 h-3.5" />
           </button>

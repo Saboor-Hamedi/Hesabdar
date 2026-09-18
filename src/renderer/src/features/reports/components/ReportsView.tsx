@@ -1,10 +1,11 @@
 import { useState, useEffect, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import { BarChart3, Download } from 'lucide-react'
+import { BarChart3, Download, Calendar } from 'lucide-react'
 import { Button } from '../../../components/ui/Button'
 import { PageHeader } from '../../../components/layout/PageHeader'
 import { getSales, getCustomers, getSuppliers, getProducts, onStoreChange } from '../../../core/store'
 import { notify } from '../../../core/notifications'
+import { useCalendarFilter } from '../../../core/calendar/calendarContext'
 import { FinancialCards } from '../metrics/FinancialCards'
 import { InventoryValuationCard } from '../inventory/InventoryValuationCard'
 import { TaxBreakdownCard } from '../tax/TaxBreakdownCard'
@@ -14,6 +15,7 @@ import { TaxBreakdownCard } from '../tax/TaxBreakdownCard'
  */
 export function ReportsView() {
   const { t } = useTranslation()
+  const { isDateInRange, activePreset } = useCalendarFilter()
   const [sales, setSales] = useState(() => getSales())
   const [customers, setCustomers] = useState(() => getCustomers())
   const [suppliers, setSuppliers] = useState(() => getSuppliers())
@@ -31,15 +33,20 @@ export function ReportsView() {
     return unsubscribe
   }, [])
 
-  // Real financial calculations
-  const grossSales = useMemo(() => sales.reduce((sum, s) => sum + (s.total || 0), 0), [sales])
+  // Filter sales based on active header date range
+  const filteredSales = useMemo(() => {
+    return sales.filter((s) => isDateInRange(s.created_at))
+  }, [sales, isDateInRange])
+
+  // Real financial calculations based on filtered date range
+  const grossSales = useMemo(() => filteredSales.reduce((sum, s) => sum + (s.total || 0), 0), [filteredSales])
   const cogs = useMemo(
     () =>
-      sales.reduce((sum, s) => {
+      filteredSales.reduce((sum, s) => {
         const itemCosts = s.items?.reduce((c, it) => c + (it.cost_price || 0) * (it.qty || 1), 0) || 0
         return sum + itemCosts
       }, 0),
-    [sales]
+    [filteredSales]
   )
   const netProfit = grossSales - cogs
   const totalCustomerDebt = useMemo(() => customers.reduce((sum, c) => sum + (c.balance || 0), 0), [customers])
@@ -104,6 +111,25 @@ export function ReportsView() {
         }
       />
 
+      {/* Active Calendar Filter Indicator */}
+      <div className="flex items-center justify-between bg-emerald-50/50 border border-emerald-200/50 px-3.5 py-2 rounded-lg text-xs text-emerald-900">
+        <div className="flex items-center gap-2">
+          <Calendar className="w-3.5 h-3.5 text-emerald-700" />
+          <span>
+            Financial statements filtered by:{' '}
+            <strong className="capitalize font-semibold text-emerald-800">
+              {activePreset.replace(/_/g, ' ')}
+            </strong>
+          </span>
+          <span className="text-emerald-600 text-[11px]">
+            ({filteredSales.length} matching transactions)
+          </span>
+        </div>
+        <span className="text-[10px] text-emerald-700/80">
+          Change period via the Dual Calendar in the title bar
+        </span>
+      </div>
+
       {/* 1. Financial Performance Ledger Cards */}
       <FinancialCards
         grossSales={grossSales}
@@ -111,7 +137,7 @@ export function ReportsView() {
         netProfit={netProfit}
         totalCustomerDebt={totalCustomerDebt}
         totalSupplierPayable={totalSupplierPayable}
-        salesCount={sales.length}
+        salesCount={filteredSales.length}
         customersCount={customers.length}
         suppliersCount={suppliers.length}
       />

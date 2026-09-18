@@ -48,7 +48,12 @@ export function getAllSales(): DbSale[] {
     ORDER BY s.id DESC
   `).all() as Omit<DbSale, 'items'>[]
 
-  const getItems = db.prepare(`SELECT * FROM sale_items WHERE sale_id = ?`)
+  const getItems = db.prepare(`
+    SELECT si.*, COALESCE(p.name_fa, p.name_en, p.name_ps, 'Product #' || si.product_id) as product_name, p.unit as unit
+    FROM sale_items si
+    LEFT JOIN products p ON si.product_id = p.id
+    WHERE si.sale_id = ?
+  `)
   return rows.map((row) => ({
     ...row,
     items: getItems.all(row.id) as DbSaleItem[],
@@ -119,7 +124,12 @@ export function recordSale(saleData: {
     WHERE s.id = ?
   `).get(saleId) as Omit<DbSale, 'items'>
 
-  const items = db.prepare(`SELECT * FROM sale_items WHERE sale_id = ?`).all(saleId) as DbSaleItem[]
+  const items = db.prepare(`
+    SELECT si.*, COALESCE(p.name_fa, p.name_en, p.name_ps, 'Product #' || si.product_id) as product_name, p.unit as unit
+    FROM sale_items si
+    LEFT JOIN products p ON si.product_id = p.id
+    WHERE si.sale_id = ?
+  `).all(saleId) as DbSaleItem[]
   return { ...sale, items }
 }
 

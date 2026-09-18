@@ -1,12 +1,15 @@
 import { useEffect, useState } from 'react'
 import { TitleBarIcons } from './TitleBarIcons'
 import { WindowControls } from './WindowControls'
+import { DualCalendarPicker } from '../calendar/DualCalendarPicker'
+import { SystemClockPicker } from '../calendar/SystemClockPicker'
 
 export const TITLEBAR_HEIGHT = 30
 
 export function TitleBar() {
   const [isMaximized, setIsMaximized] = useState(false)
   const [ownerName, setOwnerName] = useState<string | null>(null)
+  const [activeHeaderModal, setActiveHeaderModal] = useState<'calendar' | 'clock' | null>(null)
 
   useEffect(() => {
     if (window.titlebarAPI?.isMaximized) {
@@ -32,7 +35,11 @@ export function TitleBar() {
 
   return (
     <div
-      onDoubleClick={() => window.titlebarAPI?.maximize?.()}
+      onDoubleClick={(e) => {
+        if (e.target === e.currentTarget) {
+          window.titlebarAPI?.maximize?.()
+        }
+      }}
       className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between select-none border-b border-gray-200/60 bg-white/95 backdrop-blur-sm"
       style={{ height: TITLEBAR_HEIGHT, WebkitAppRegion: 'drag' } as React.CSSProperties}
     >
@@ -50,7 +57,27 @@ export function TitleBar() {
         </div>
       )}
 
-      <WindowControls isMaximized={isMaximized} />
+      {/* Right Header Cluster: Dual Calendar Date Selector + System Clock + Window System Controls */}
+      <div
+        className="flex items-center gap-1.5 pl-2"
+        style={{ WebkitAppRegion: 'no-drag' } as React.CSSProperties}
+      >
+        <DualCalendarPicker
+          isOpen={activeHeaderModal === 'calendar'}
+          onToggle={() =>
+            setActiveHeaderModal((prev) => (prev === 'calendar' ? null : 'calendar'))
+          }
+          onClose={() => setActiveHeaderModal(null)}
+        />
+        <SystemClockPicker
+          isOpen={activeHeaderModal === 'clock'}
+          onToggle={() =>
+            setActiveHeaderModal((prev) => (prev === 'clock' ? null : 'clock'))
+          }
+          onClose={() => setActiveHeaderModal(null)}
+        />
+        <WindowControls isMaximized={isMaximized} />
+      </div>
     </div>
   )
 }
