@@ -1,15 +1,29 @@
 import { useState, useRef, useEffect, useMemo } from 'react'
 import { Search, ChevronDown, Check, X } from 'lucide-react'
-import { COMMON_CATALOG_ITEMS, type CatalogItem } from '../../../core/products/catalogData'
+import { initAndGetCatalog, type CatalogItem } from '../../../core/products/catalogData'
 
 interface CatalogSelectProps {
   onSelect: (item: CatalogItem) => void
   selectedItemName?: string
 }
 
+interface IndexEntry {
+  item: CatalogItem
+  haystack: string
+}
+
+function buildIndex(items: CatalogItem[]): IndexEntry[] {
+  return items.map((item) => ({
+    item,
+    haystack: [item.name_en, item.name_fa, item.name_ps, item.barcode, item.category]
+      .join('|')
+      .toLowerCase()
+  }))
+}
+
 /**
  * CatalogSelect: Fast, lightweight searchable select combobox for goods & commodity presets.
- * Searches across English, Persian/Dari, Pashto, and categories with instant response.
+ * Powered by SQLite catalog items with pre-indexed search for instant response.
  */
 export function CatalogSelect({
   onSelect,
@@ -18,21 +32,30 @@ export function CatalogSelect({
   const [isOpen, setIsOpen] = useState(false)
   const [query, setQuery] = useState('')
   const [highlightedIndex, setHighlightedIndex] = useState(0)
+  const [catalogItems, setCatalogItems] = useState<CatalogItem[]>([])
+  const [searchIndex, setSearchIndex] = useState<IndexEntry[]>([])
   const containerRef = useRef<HTMLDivElement>(null)
   const searchInputRef = useRef<HTMLInputElement>(null)
 
-  // Filter items across all 3 languages and category
+  // Load from SQLite on mount
+  useEffect(() => {
+    let cancelled = false
+    initAndGetCatalog().then((items) => {
+      if (cancelled) return
+      setCatalogItems(items)
+      setSearchIndex(buildIndex(items))
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
+  // Fast pre-indexed filter across English, Persian, Pashto, barcode, and category
   const filteredItems = useMemo(() => {
-    if (!query.trim()) return COMMON_CATALOG_ITEMS
     const q = query.trim().toLowerCase()
-    return COMMON_CATALOG_ITEMS.filter(
-      (item) =>
-        item.name_en.toLowerCase().includes(q) ||
-        item.name_fa.toLowerCase().includes(q) ||
-        item.name_ps.toLowerCase().includes(q) ||
-        item.category.toLowerCase().includes(q)
-    )
-  }, [query])
+    if (!q) return catalogItems
+    return searchIndex.filter((e) => e.haystack.includes(q)).map((e) => e.item)
+  }, [query, searchIndex, catalogItems])
 
   // Handle click outside to close
   useEffect(() => {
@@ -58,31 +81,36 @@ export function CatalogSelect({
   // Keyboard navigation
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (!isOpen) {
-      if (e.key === 'Enter' || e.key === 'ArrowDown') {
+      if (e.key === 'Enter' || e.key === 'ArrowDown' || e.key === ' ') {
         e.preventDefault()
         setIsOpen(true)
       }
       return
     }
 
-    if (e.key === 'ArrowDown') {
-      e.preventDefault()
-      setHighlightedIndex((prev) => (prev < filteredItems.length - 1 ? prev + 1 : prev))
-    } else if (e.key === 'ArrowUp') {
-      e.preventDefault()
-      setHighlightedIndex((prev) => (prev > 0 ? prev - 1 : 0))
-    } else if (e.key === 'Enter') {
-      e.preventDefault()
-      if (filteredItems[highlightedIndex]) {
-        handleSelectItem(filteredItems[highlightedIndex])
-      }
-    } else if (e.key === 'Escape') {
-      e.preventDefault()
-      setIsOpen(false)
+    switch (e.key) {
+      case 'ArrowDown':
+        e.preventDefault()
+        setHighlightedIndex((prev) => (prev < filteredItems.length - 1 ? prev + 1 : prev))
+        break
+      case 'ArrowUp':
+        e.preventDefault()
+        setHighlightedIndex((prev) => (prev > 0 ? prev - 1 : 0))
+        break
+      case 'Enter':
+        e.preventDefault()
+        if (filteredItems[highlightedIndex]) {
+          handleItemSelect(filteredItems[highlightedIndex])
+        }
+        break
+      case 'Escape':
+        e.preventDefault()
+        setIsOpen(false)
+        break
     }
   }
 
-  const handleSelectItem = (item: CatalogItem) => {
+  const handleItemSelect = (item: CatalogItem) => {
     onSelect(item)
     setIsOpen(false)
     setQuery('')
@@ -95,7 +123,7 @@ export function CatalogSelect({
           Quick Catalog Preset (Auto-fills English, Persian, Pashto &amp; Unit)
         </span>
         <span className="text-[10px] font-normal text-gray-400">
-          {COMMON_CATALOG_ITEMS.length} commodities available
+          {catalogItems.length} commodities available
         </span>
       </label>
 
@@ -114,106 +142,99 @@ export function CatalogSelect({
               {selectedItemName}
             </span>
           ) : (
-            <span className="text-gray-400 truncate">
-              Type or select item (e.g. Oil, Rice, Sugar, Flour, Tea, Milk...)...
-            </span>
+            <span className="text-gray-400">Select standard commodity preset...</span>
           )}
         </div>
-
-        <div className="flex items-center gap-1 text-gray-400 shrink-0">
+        <div className="flex items-center gap-1.5 shrink-0 ml-2">
           {selectedItemName && (
             <button
               type="button"
               onClick={(e) => {
                 e.stopPropagation()
-                setQuery('')
+                onSelect({
+                  id: '',
+                  barcode: '',
+                  name_en: '',
+                  name_fa: '',
+                  name_ps: '',
+                  unit: 'pcs',
+                  category: 'General',
+                  suggested_cost: 0,
+                  suggested_price: 0,
+                  default_stock: 0,
+                })
               }}
-              className="p-0.5 hover:text-gray-600 rounded-[5px]"
+              className="p-0.5 text-gray-400 hover:text-gray-600 rounded"
+              title="Clear selection"
             >
-              <X className="w-3 h-3" />
+              <X className="w-3.5 h-3.5" />
             </button>
           )}
-          <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
+          <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
         </div>
       </div>
 
-      {/* Fast Searchable Dropdown Popup */}
+      {/* Dropdown Popup */}
       {isOpen && (
-        <div className="absolute z-50 left-0 right-0 mt-1 bg-white border border-gray-200 rounded-[5px] shadow-xl overflow-hidden animate-in fade-in-50 zoom-in-95 duration-100">
-          {/* Live Search Input */}
-          <div className="p-2 border-b border-gray-100 bg-gray-50/70 flex items-center gap-2">
-            <Search className="w-3.5 h-3.5 text-gray-400 shrink-0" />
-            <input
-              ref={searchInputRef}
-              type="text"
-              value={query}
-              onChange={(e) => {
-                setQuery(e.target.value)
-                setHighlightedIndex(0)
-              }}
-              placeholder="Search by English, Persian (روغن), Pashto (غوړي)..."
-              className="w-full bg-transparent text-xs text-gray-800 placeholder-gray-400 focus:outline-none"
-            />
-            {query && (
-              <button
-                type="button"
-                onClick={() => setQuery('')}
-                className="text-gray-400 hover:text-gray-600"
-              >
-                <X className="w-3 h-3" />
-              </button>
-            )}
+        <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-50 overflow-hidden">
+          {/* Search bar inside dropdown */}
+          <div className="p-2 border-b border-gray-100 bg-gray-50/50">
+            <div className="relative">
+              <Search className="w-3.5 h-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400" />
+              <input
+                ref={searchInputRef}
+                type="text"
+                value={query}
+                onChange={(e) => {
+                  setQuery(e.target.value)
+                  setHighlightedIndex(0)
+                }}
+                placeholder="Type in English, دری, or پښتو..."
+                className="w-full pl-8 pr-3 py-1.5 text-xs bg-white border border-gray-200 rounded focus:outline-none focus:border-emerald-500"
+              />
+            </div>
           </div>
 
-          {/* Items List */}
-          <div className="max-h-56 overflow-y-auto divide-y divide-gray-50 p-1">
+          {/* Commodity Options List */}
+          <div className="max-h-60 overflow-y-auto divide-y divide-gray-50">
             {filteredItems.length === 0 ? (
-              <div className="p-4 text-center text-xs text-gray-400">
-                No matching commodities found for &ldquo;{query}&rdquo;
+              <div className="p-4 text-center text-gray-400 text-xs">
+                No commodity found matching &quot;{query}&quot;
               </div>
             ) : (
               filteredItems.map((item, index) => {
+                const isSelected = selectedItemName === item.name_fa || selectedItemName === item.name_en
                 const isHighlighted = index === highlightedIndex
-                const isSelected = selectedItemName === item.name_en || selectedItemName === item.name_fa
 
                 return (
                   <div
                     key={item.id}
-                    onClick={() => handleSelectItem(item)}
+                    onClick={() => handleItemSelect(item)}
                     onMouseEnter={() => setHighlightedIndex(index)}
                     className={`
-                      flex items-center justify-between p-2 rounded-[5px] cursor-pointer transition-colors text-xs
-                      ${isHighlighted ? 'bg-emerald-50 text-emerald-900' : 'hover:bg-gray-50 text-gray-800'}
+                      px-3 py-2 cursor-pointer flex items-center justify-between transition-colors
+                      ${isHighlighted ? 'bg-emerald-50/60' : 'hover:bg-gray-50'}
+                      ${isSelected ? 'bg-emerald-50 font-medium' : ''}
                     `}
                   >
                     <div className="flex flex-col min-w-0 pr-2">
                       <div className="flex items-center gap-2">
-                        <span className="font-semibold text-gray-900">{item.name_en}</span>
-                        <span className="text-[10px] text-emerald-700 font-medium">
-                          {item.name_fa}
-                        </span>
-                        <span className="text-[10px] text-gray-400">
-                          ({item.name_ps})
-                        </span>
+                        <span className="font-semibold text-gray-900 truncate">{item.name_fa}</span>
+                        <span className="text-[11px] text-gray-500 truncate">({item.name_en})</span>
+                        <span className="text-[10px] text-gray-400 truncate">{item.name_ps}</span>
                       </div>
-                      <div className="flex items-center gap-1.5 mt-0.5">
-                        <span className="text-[9px] px-1.5 py-0.5 rounded-[3px] bg-gray-100 text-gray-600">
-                          {item.category}
-                        </span>
-                        <span className="text-[9px] px-1.5 py-0.5 rounded-[3px] bg-emerald-100/70 text-emerald-800 font-mono">
-                          Unit: {item.unit}
-                        </span>
+                      <div className="flex items-center gap-2 mt-0.5 text-[10px] text-gray-400">
+                        <span className="bg-gray-100 text-gray-600 px-1.5 py-0.2 rounded">{item.category}</span>
+                        <span>Unit: {item.unit}</span>
+                        <span>Suggested: {item.suggested_price} AFN</span>
                       </div>
                     </div>
 
-                    <div className="shrink-0 flex items-center">
-                      {isSelected ? (
-                        <Check className="w-4 h-4 text-emerald-600" />
-                      ) : (
-                        <span className="text-[10px] font-medium text-emerald-700 px-2 py-0.5 rounded-[5px] bg-white border border-emerald-200">
-                          Select
-                        </span>
-                      )}
+                    <div className="flex items-center gap-2 shrink-0">
+                      <span className="font-mono text-[10px] text-gray-400 bg-gray-50 px-1.5 py-0.5 rounded border border-gray-100">
+                        {item.barcode}
+                      </span>
+                      {isSelected && <Check className="w-4 h-4 text-emerald-600" />}
                     </div>
                   </div>
                 )
@@ -223,7 +244,7 @@ export function CatalogSelect({
 
           {/* Footer note */}
           <div className="px-3 py-1.5 bg-gray-50 border-t border-gray-100 text-[10px] text-gray-400 flex justify-between items-center">
-            <span>Showing {filteredItems.length} of {COMMON_CATALOG_ITEMS.length} commodities</span>
+            <span>Showing {filteredItems.length} of {catalogItems.length} commodities</span>
             <span>Use ↑↓ keys and Enter to select</span>
           </div>
         </div>

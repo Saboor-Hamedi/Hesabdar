@@ -26,12 +26,12 @@ import {
   SUPABASE_KEY
 } from './supabaseMain'
 import { setupUpdater } from './updater'
-import {
-  getCatalogItems,
-  seedCatalogItems,
-  searchCatalogItems,
-  type CatalogItem
-} from './catalogManager'
+import { runMigrations } from './db/index'
+import { getAllProducts, searchProducts, createProduct, updateProduct, deleteProduct, adjustProductStock } from './db/products'
+import { getAllCustomers, createCustomer, updateCustomer, deleteCustomer, adjustCustomerBalance, getCustomerPayments, recordCustomerPayment, deleteCustomerPayment } from './db/customers'
+import { getAllSuppliers, createSupplier, updateSupplier, deleteSupplier, adjustSupplierBalance } from './db/suppliers'
+import { getAllSales, recordSale, deleteSale } from './db/sales'
+import { getAllCatalogItems, searchCatalogItems, seedCatalogItems } from './db/catalog'
 
 const getLanguageFilePath = (): string => join(app.getPath('userData'), 'language.json')
 const getSettingsFilePath = (): string => join(app.getPath('userData'), 'settings.json')
@@ -133,6 +133,10 @@ function createWindow(): void {
 app.whenReady().then(async () => {
   // Set app user model id for windows
   electronApp.setAppUserModelId('com.electron')
+
+  // ── Database Bootstrap ────────────────────────────────────────────────────
+  runMigrations()
+  // ─────────────────────────────────────────────────────────────────────────
 
   // Default open or close DevTools by F12 in development
   // and ignore CommandOrControl + R in production.
@@ -559,24 +563,153 @@ app.whenReady().then(async () => {
   // IPC test
   ipcMain.on('ping', () => console.log('pong'))
 
-  // ── Catalog IPC ──────────────────────────────────────────────────────────
-  // Returns all catalog items from catalog.json in userData.
-  // If catalog.json is missing/empty, returns [] — renderer falls back to built-in seed.
-  ipcMain.handle('catalog:getAll', async () => {
-    return await getCatalogItems()
+  // ── Products IPC ──────────────────────────────────────────────────────────
+  ipcMain.handle('products:getAll', () => getAllProducts())
+  ipcMain.handle('products:search', (_e, query: string) => searchProducts(query))
+  ipcMain.handle('products:create', (_e, input) => createProduct(input))
+  ipcMain.handle('products:update', (_e, id: number, updates) => updateProduct(id, updates))
+  ipcMain.handle('products:delete', (_e, id: number) => deleteProduct(id))
+  ipcMain.handle('products:adjustStock', (_e, id: number, delta: number) => adjustProductStock(id, delta))
+
+  // ── Customers IPC ─────────────────────────────────────────────────────────
+  ipcMain.handle('customers:getAll', () => getAllCustomers())
+  ipcMain.handle('customers:create', (_e, input) => createCustomer(input))
+  ipcMain.handle('customers:update', (_e, id: number, updates) => updateCustomer(id, updates))
+  ipcMain.handle('customers:delete', (_e, id: number) => deleteCustomer(id))
+  ipcMain.handle('customers:adjustBalance', (_e, id: number, delta: number) => adjustCustomerBalance(id, delta))
+  ipcMain.handle('customers:getPayments', (_e, customerId?: number) => getCustomerPayments(customerId))
+  ipcMain.handle('customers:recordPayment', (_e, customerId: number, amount: number, note?: string) => recordCustomerPayment(customerId, amount, note))
+  ipcMain.handle('customers:deletePayment', (_e, paymentId: number) => deleteCustomerPayment(paymentId))
+
+  // ── Suppliers IPC ─────────────────────────────────────────────────────────
+  ipcMain.handle('suppliers:getAll', () => getAllSuppliers())
+  ipcMain.handle('suppliers:create', (_e, input) => createSupplier(input))
+  ipcMain.handle('suppliers:update', (_e, id: number, updates) => updateSupplier(id, updates))
+  ipcMain.handle('suppliers:delete', (_e, id: number) => deleteSupplier(id))
+  ipcMain.handle('suppliers:adjustBalance', (_e, id: number, delta: number) => adjustSupplierBalance(id, delta))
+
+  // ── Sales IPC ─────────────────────────────────────────────────────────────
+  ipcMain.handle('sales:getAll', () => getAllSales())
+  ipcMain.handle('sales:record', (_e, saleData) => recordSale(saleData))
+  ipcMain.handle('sales:delete', (_e, id: number, restoreStock?: boolean) => deleteSale(id, restoreStock ?? true))
+
+  // ── Catalog IPC ───────────────────────────────────────────────────────────
+  ipcMain.handle('catalog:getAll', () => getAllCatalogItems())
+  ipcMain.handle('catalog:search', (_e, query: string) => searchCatalogItems(query))
+  ipcMain.handle('catalog:seed', (_e, items) => seedCatalogItems(items))
+
+  // ── Database Bulk Operations & Migration IPC ─────────────────────────────
+  ipcMain.handle('db:getAllData', () => {
+    return {
+      products: getAllProducts(),
+      customers: getAllCustomers(),
+      suppliers: getAllSuppliers(),
+      sales: getAllSales(),
+      customerPayments: getCustomerPayments(),
+    }
   })
 
-  // Bulk-seed catalog items into catalog.json (only writes if file is empty / missing).
-  // Renderer calls this on first launch, passing the built-in 64+ item array.
-  ipcMain.handle('catalog:seed', async (_e, items: CatalogItem[]) => {
-    return await seedCatalogItems(items)
-  })
+  ipcMain.handle('db:migrate', (_e, dump: {
+    products: any[]
+    customers: any[]
+    suppliers: any[]
+    sales: any[]
+    customerPayments: any[]
+  }) => {
+    const { getDb } = require('./db/index') as typeof import('./db/index')
+    const db = getDb()
 
-  // Full-text search across all catalog fields (English, Dari, Pashto, barcode, category).
-  ipcMain.handle('catalog:search', async (_e, query: string) => {
-    return await searchCatalogItems(query)
+    try {
+      const migrate = db.transaction(() => {
+        const productCount = (db.prepare('SELECT COUNT(*) as cnt FROM products').get() as { cnt: number }).cnt
+        if (productCount > 0) return { migrated: false, reason: 'DB already has data' }
+
+        // Products
+        const insertProduct = db.prepare(`
+          INSERT OR IGNORE INTO products (barcode, name_fa, name_ps, name_en, unit, cost_price, sell_price, stock_qty, reorder_level, is_active, created_at)
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `)
+        for (const p of dump.products || []) {
+          insertProduct.run(
+            p.barcode || null,
+            p.name_fa,
+            p.name_ps || null,
+            p.name_en || null,
+            p.unit || 'pcs',
+            p.cost_price || 0,
+            p.sell_price || 0,
+            p.stock_qty || 0,
+            p.reorder_level || 5,
+            1,
+            p.created_at || new Date().toISOString()
+          )
+        }
+
+        // Customers
+        const insertCustomer = db.prepare(`
+          INSERT OR IGNORE INTO customers (name, phone, address, balance, created_at)
+          VALUES (?, ?, ?, ?, ?)
+        `)
+        for (const c of dump.customers || []) {
+          insertCustomer.run(c.name, c.phone || null, c.address || null, c.balance || 0, c.created_at || new Date().toISOString())
+        }
+
+        // Suppliers
+        const insertSupplier = db.prepare(`
+          INSERT OR IGNORE INTO suppliers (name, company, phone, balance, created_at)
+          VALUES (?, ?, ?, ?, ?)
+        `)
+        for (const s of dump.suppliers || []) {
+          insertSupplier.run(s.name, s.company || null, s.phone || null, s.balance || 0, s.created_at || new Date().toISOString())
+        }
+
+        // Customer Payments
+        const insertPayment = db.prepare(`
+          INSERT OR IGNORE INTO customer_payments (customer_id, amount, note, created_at)
+          VALUES (?, ?, ?, ?)
+        `)
+        for (const cp of dump.customerPayments || []) {
+          insertPayment.run(cp.customer_id, cp.amount || 0, cp.note || null, cp.created_at || new Date().toISOString())
+        }
+
+        // Sales & Sale Items
+        const insertSale = db.prepare(`
+          INSERT OR IGNORE INTO sales (id, invoice_no, customer_id, user_id, subtotal, discount, total, paid, due, payment_mode, created_at)
+          VALUES (?, ?, ?, 1, ?, ?, ?, ?, ?, ?, ?)
+        `)
+        const insertItem = db.prepare(`
+          INSERT INTO sale_items (sale_id, product_id, qty, unit_price, cost_price, line_total)
+          VALUES (?, ?, ?, ?, ?, ?)
+        `)
+        for (const s of dump.sales || []) {
+          const res = insertSale.run(
+            s.id || null,
+            s.invoice_no,
+            s.customer_id || null,
+            s.subtotal || 0,
+            s.discount || 0,
+            s.total || 0,
+            s.paid || 0,
+            s.due || 0,
+            s.payment_mode || 'cash',
+            s.created_at || new Date().toISOString()
+          )
+          const saleId = s.id || res.lastInsertRowid
+          for (const item of s.items || []) {
+            insertItem.run(saleId, item.product_id, item.qty, item.unit_price, item.cost_price || 0, item.line_total)
+          }
+        }
+
+        return { migrated: true }
+      })
+
+      return migrate()
+    } catch (err: any) {
+      console.error('[db:migrate] error:', err)
+      return { migrated: false, reason: err?.message }
+    }
   })
-  // ── End Catalog IPC ───────────────────────────────────────────────────────
+  // ── End DB IPC ────────────────────────────────────────────────────────────
 
   createWindow()
   setupUpdater()

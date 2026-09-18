@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { Plus, Check, BookOpen, Package } from 'lucide-react'
 import type { ProductFormValues } from '../../../core/validation/schemas'
 import type { Product, UnitType } from '../../../core/types'
-import { COMMON_CATALOG_ITEMS } from '../../../core/products/catalogData'
+import { initAndGetCatalog, type CatalogItem } from '../../../core/products/catalogData'
 import { Modal } from '../../../components/ui/Modal'
 import { Button } from '../../../components/ui/Button'
 import { Input } from '../../../components/ui/Input'
@@ -35,6 +35,19 @@ export function ProductModal({
 }: ProductModalProps) {
   const { t } = useTranslation()
   const isEditing = Boolean(editingProduct)
+  const [catalogItems, setCatalogItems] = React.useState<CatalogItem[]>([])
+
+  // Load catalog commodities from SQLite on modal open
+  React.useEffect(() => {
+    if (!isOpen) return
+    let cancelled = false
+    initAndGetCatalog().then((items) => {
+      if (!cancelled) setCatalogItems(items)
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [isOpen])
 
   // Smart English name search: auto-fills Persian & Pashto if matched, but clearing English NEVER wipes them out
   const handleEnglishNameChange = (val: string) => {
@@ -43,8 +56,8 @@ export function ProductModal({
       const q = val.trim().toLowerCase()
 
       // When user types at least 3 characters in English (e.g. "wheat", "rice", "oil", "sugar", "tea")
-      if (q.length >= 3) {
-        const match = COMMON_CATALOG_ITEMS.find((it) => {
+      if (q.length >= 3 && catalogItems.length > 0) {
+        const match = catalogItems.find((it) => {
           const en = it.name_en.toLowerCase()
           return (
             en === q ||

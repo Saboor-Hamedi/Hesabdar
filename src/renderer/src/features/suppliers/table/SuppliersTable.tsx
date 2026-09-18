@@ -113,6 +113,7 @@ export function SuppliersTable({
       data={suppliers}
       rowKey={(s) => s.id}
       searchable
+      searchFields={['name', 'company', 'phone']}
       searchPlaceholder={t('suppliers.searchPlaceholder')}
       pageSize={10}
     />

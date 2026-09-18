@@ -1,24 +1,13 @@
-import type { UnitType } from '../types'
-
-export interface CatalogItem {
-  id: string
-  barcode: string
-  name_en: string
-  name_fa: string
-  name_ps: string
-  unit: UnitType
-  category: string
-  suggested_cost: number
-  suggested_price: number
-  default_stock: number
-}
-
 /**
- * Extensive standard Afghan store & supermarket commodities catalog (60+ items).
- * Pre-configured with realistic market pricing (AFN), barcodes, standard units,
- * and trilingual descriptions (English, Persian/Dari, Pashto).
+ * src/main/db/defaultCatalog.ts
+ *
+ * Seed commodities for SQLite catalog_items and initial products tables.
+ * Stored directly in SQLite DB on initialization.
  */
-export const COMMON_CATALOG_ITEMS: CatalogItem[] = [
+
+import type { DbCatalogItem } from './catalog'
+
+export const DEFAULT_CATALOG_ITEMS: DbCatalogItem[] = [
   // 1. Grains, Flours & Bakery
   {
     id: 'flour-wheat',
@@ -807,92 +796,3 @@ export const COMMON_CATALOG_ITEMS: CatalogItem[] = [
     default_stock: 90,
   },
 ]
-
-/**
- * Searches the catalog by query against English, Persian, Pashto, barcode, or category.
- * Works on the in-memory array for synchronous use (smart-fill in ProductModal).
- */
-export function findCatalogItemByQuery(query: string): CatalogItem | undefined {
-  if (!query || !query.trim()) return undefined
-  const q = query.trim().toLowerCase()
-
-  // 1. Exact or barcode match
-  const exact = COMMON_CATALOG_ITEMS.find(
-    (it) => it.id.toLowerCase() === q || it.barcode.toLowerCase() === q
-  )
-  if (exact) return exact
-
-  // 2. English name prefix or word match (e.g. "wheat", "rice", "oil", "sugar")
-  const wordMatch = COMMON_CATALOG_ITEMS.find((it) => {
-    const en = it.name_en.toLowerCase()
-    return (
-      en === q ||
-      en.startsWith(q) ||
-      en.split(/[\s\-\(\)\/]+/).some((w) => w.length >= 3 && (w.startsWith(q) || q.startsWith(w)))
-    )
-  })
-  if (wordMatch) return wordMatch
-
-  // 3. Persian or Pashto match
-  return COMMON_CATALOG_ITEMS.find(
-    (it) =>
-      it.name_fa.toLowerCase().includes(q) ||
-      it.name_ps.toLowerCase().includes(q) ||
-      it.category.toLowerCase().includes(q)
-  )
-}
-
-// ── SQLite DB-backed catalog access (via Electron IPC) ──────────────────────
-
-let _cachedCatalog: CatalogItem[] | null = null
-
-/**
- * Loads all items from SQLite catalog_items table via IPC.
- * Falls back to in-memory COMMON_CATALOG_ITEMS if IPC is unavailable.
- */
-export async function initAndGetCatalog(): Promise<CatalogItem[]> {
-  if (_cachedCatalog && _cachedCatalog.length > 0) return _cachedCatalog
-
-  try {
-    const api = (window as any).api
-    if (!api?.catalog) return COMMON_CATALOG_ITEMS
-
-    const items: CatalogItem[] = await api.catalog.getAll()
-    if (items && items.length > 0) {
-      _cachedCatalog = items
-      return items
-    }
-    return COMMON_CATALOG_ITEMS
-  } catch {
-    return COMMON_CATALOG_ITEMS
-  }
-}
-
-/**
- * Search catalog items via IPC (disk). Falls back to in-memory filter if IPC unavailable.
- */
-export async function searchCatalog(query: string): Promise<CatalogItem[]> {
-  try {
-    const api = (window as any).api
-    if (!api?.catalog) {
-      return filterCatalogLocally(query)
-    }
-    const results: CatalogItem[] = await api.catalog.search(query)
-    return results.length > 0 || !query ? results : filterCatalogLocally(query)
-  } catch {
-    return filterCatalogLocally(query)
-  }
-}
-
-function filterCatalogLocally(query: string): CatalogItem[] {
-  if (!query || !query.trim()) return COMMON_CATALOG_ITEMS
-  const q = query.trim().toLowerCase()
-  return COMMON_CATALOG_ITEMS.filter(
-    (item) =>
-      item.name_en.toLowerCase().includes(q) ||
-      item.name_fa.toLowerCase().includes(q) ||
-      item.name_ps.toLowerCase().includes(q) ||
-      item.barcode.toLowerCase().includes(q) ||
-      item.category.toLowerCase().includes(q)
-  )
-}

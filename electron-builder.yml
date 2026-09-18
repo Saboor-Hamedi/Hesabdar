@@ -16,6 +16,7 @@ files:
   - '!{tsconfig.json,tsconfig.node.json,tsconfig.web.json,tsconfig.web.tsbuildinfo}'
 asarUnpack:
   - resources/**
+  - '**/*.node'
 win:
   executableName: hesabdar
   icon: build/icon.ico

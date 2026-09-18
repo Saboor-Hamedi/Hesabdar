@@ -158,6 +158,7 @@ export function CustomersTable({
       data={customers}
       rowKey={(c) => c.id}
       searchable
+      searchFields={['name', 'phone', 'address']}
       searchPlaceholder={t('customers.searchPlaceholder')}
       pageSize={10}
     />

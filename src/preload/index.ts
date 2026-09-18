@@ -94,6 +94,41 @@ const api = {
     getAll: (): Promise<any[]> => ipcRenderer.invoke('catalog:getAll'),
     seed: (items: any[]): Promise<{ seeded: number }> => ipcRenderer.invoke('catalog:seed', items),
     search: (query: string): Promise<any[]> => ipcRenderer.invoke('catalog:search', query)
+  },
+  products: {
+    getAll: () => ipcRenderer.invoke('products:getAll'),
+    search: (query: string) => ipcRenderer.invoke('products:search', query),
+    create: (input: any) => ipcRenderer.invoke('products:create', input),
+    update: (id: number, updates: any) => ipcRenderer.invoke('products:update', id, updates),
+    delete: (id: number) => ipcRenderer.invoke('products:delete', id),
+    adjustStock: (id: number, delta: number) => ipcRenderer.invoke('products:adjustStock', id, delta)
+  },
+  customers: {
+    getAll: () => ipcRenderer.invoke('customers:getAll'),
+    create: (input: any) => ipcRenderer.invoke('customers:create', input),
+    update: (id: number, updates: any) => ipcRenderer.invoke('customers:update', id, updates),
+    delete: (id: number) => ipcRenderer.invoke('customers:delete', id),
+    adjustBalance: (id: number, delta: number) => ipcRenderer.invoke('customers:adjustBalance', id, delta),
+    getPayments: (customerId?: number) => ipcRenderer.invoke('customers:getPayments', customerId),
+    recordPayment: (customerId: number, amount: number, note?: string) =>
+      ipcRenderer.invoke('customers:recordPayment', customerId, amount, note),
+    deletePayment: (paymentId: number) => ipcRenderer.invoke('customers:deletePayment', paymentId)
+  },
+  suppliers: {
+    getAll: () => ipcRenderer.invoke('suppliers:getAll'),
+    create: (input: any) => ipcRenderer.invoke('suppliers:create', input),
+    update: (id: number, updates: any) => ipcRenderer.invoke('suppliers:update', id, updates),
+    delete: (id: number) => ipcRenderer.invoke('suppliers:delete', id),
+    adjustBalance: (id: number, delta: number) => ipcRenderer.invoke('suppliers:adjustBalance', id, delta)
+  },
+  sales: {
+    getAll: () => ipcRenderer.invoke('sales:getAll'),
+    record: (saleData: any) => ipcRenderer.invoke('sales:record', saleData),
+    delete: (id: number, restoreStock?: boolean) => ipcRenderer.invoke('sales:delete', id, restoreStock)
+  },
+  db: {
+    getAllData: () => ipcRenderer.invoke('db:getAllData'),
+    migrate: (dump: any) => ipcRenderer.invoke('db:migrate', dump)
   }
 }
 

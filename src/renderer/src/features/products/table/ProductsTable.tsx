@@ -149,6 +149,7 @@ export function ProductsTable({
       data={products}
       rowKey={(p) => p.id}
       searchable
+      searchFields={['name_fa', 'name_en', 'name_ps', 'barcode', 'category_name']}
       searchPlaceholder={t('products.searchPlaceholder')}
       pageSize={10}
     />

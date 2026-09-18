@@ -60,21 +60,26 @@ export function ItemEntryBar({
     searchInputRef.current?.focus()
   }, [])
 
+  // Pre-indexed product search for zero-allocation, instant response
+  const productIndex = useMemo(() => {
+    return products.map((p) => ({
+      product: p,
+      haystack: [p.barcode, p.name_fa, p.name_en, p.name_ps, p.category_name]
+        .filter(Boolean)
+        .join('|')
+        .toLowerCase()
+    }))
+  }, [products])
+
   // Filter products based on search query (only when user types)
   const filteredProducts = useMemo(() => {
     if (!searchQuery.trim()) return []
     const q = searchQuery.toLowerCase().trim()
-    return products
-      .filter((p) => {
-        const matchBarcode = p.barcode?.toLowerCase().includes(q)
-        const matchFa = p.name_fa.toLowerCase().includes(q)
-        const matchEn = p.name_en?.toLowerCase().includes(q)
-        const matchPs = p.name_ps?.toLowerCase().includes(q)
-        const matchCat = p.category_name?.toLowerCase().includes(q)
-        return Boolean(matchBarcode || matchFa || matchEn || matchPs || matchCat)
-      })
+    return productIndex
+      .filter((entry) => entry.haystack.includes(q))
+      .map((entry) => entry.product)
       .slice(0, 15)
-  }, [products, searchQuery])
+  }, [productIndex, searchQuery])
 
   // Handle outside click to close dropdown
   useEffect(() => {

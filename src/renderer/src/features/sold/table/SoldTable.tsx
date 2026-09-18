@@ -149,6 +149,7 @@ export function SoldTable({
       data={sales}
       rowKey={(s) => s.id}
       searchable
+      searchFields={['invoice_no', 'customer_name', 'customer_phone', 'payment_mode']}
       searchPlaceholder={t('sold.searchPlaceholder')}
       pageSize={10}
     />
