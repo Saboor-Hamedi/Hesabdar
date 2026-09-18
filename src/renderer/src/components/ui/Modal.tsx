@@ -16,6 +16,7 @@ export interface ModalProps {
   bodyClassName?: string
   style?: React.CSSProperties
   zIndex?: number
+  compactHeader?: boolean
 }
 
 /**
@@ -23,9 +24,9 @@ export interface ModalProps {
  * - 16px border radius (rounded-2xl)
  * - Soft deep shadow (0 25px 50px -12px rgba(0,0,0,0.15))
  * - Backdrop overlay rgba(0,0,0,0.4) with blur
- * - Clean header without colored backgrounds, H2 title (20-24px), 13px subtitle
+ * - Clean header without colored backgrounds, refined typography
  * - Top-right badge slot and minimalist X close icon
- * - Standardized 32px padding (px-8)
+ * - Compact header option for thermal receipts and dense dialogs
  */
 export function Modal({
   isOpen,
@@ -39,6 +40,7 @@ export function Modal({
   bodyClassName = '',
   style,
   zIndex = 50,
+  compactHeader = false,
 }: ModalProps) {
   // Listen to Escape key to dismiss modal
   useEffect(() => {
@@ -89,25 +91,47 @@ export function Modal({
         `}
       >
         {/* Header with Title, optional top-right Badge, and Minimalist Close Button */}
-        <div className="flex items-start justify-between px-8 pt-7 pb-4 bg-white shrink-0 no-print">
-          <div className="flex-1 pr-4">
-            <h2 className="text-xl font-bold text-[#1F2937] tracking-tight leading-snug">{title}</h2>
-            {subtitle && <p className="text-[13px] text-[#6B7280] font-normal mt-1 leading-normal">{subtitle}</p>}
+        <div
+          className={`flex items-start justify-between bg-white shrink-0 no-print ${
+            compactHeader ? 'px-5 pt-4 pb-2.5' : 'px-6 pt-5 pb-3'
+          }`}
+        >
+          <div className="flex-1 pr-3">
+            <h2
+              className={`font-bold text-[#1F2937] tracking-tight leading-snug ${
+                compactHeader ? 'text-base' : 'text-lg sm:text-xl'
+              }`}
+            >
+              {title}
+            </h2>
+            {subtitle && (
+              <p
+                className={`text-[#6B7280] font-normal leading-normal ${
+                  compactHeader ? 'text-xs mt-0.5' : 'text-xs sm:text-[13px] mt-1'
+                }`}
+              >
+                {subtitle}
+              </p>
+            )}
           </div>
-          <div className="flex items-center gap-3 shrink-0 pt-0.5">
+          <div className="flex items-center gap-2 shrink-0 pt-0.5">
             {badge && <div className="shrink-0">{badge}</div>}
             <button
               onClick={onClose}
               className="text-[#9CA3AF] hover:text-[#111827] p-1.5 rounded-lg hover:bg-gray-100 transition-colors focus:outline-none cursor-pointer"
               aria-label="Close"
             >
-              <X className="w-5 h-5" />
+              <X className={compactHeader ? 'w-4 h-4' : 'w-5 h-5'} />
             </button>
           </div>
         </div>
 
         {/* Modal Body with standardized padding */}
-        <div className={`px-8 pb-8 pt-2 max-h-[85vh] overflow-y-auto print:p-0 print:max-h-none print:overflow-visible ${bodyClassName}`}>
+        <div
+          className={`max-h-[85vh] overflow-y-auto print:p-0 print:max-h-none print:overflow-visible ${
+            compactHeader ? 'px-5 pb-5 pt-1' : 'px-6 pb-6 pt-1.5'
+          } ${bodyClassName}`}
+        >
           {children}
         </div>
       </div>

@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import type { Product, UnitType } from '../../../core/types'
+import type { CatalogItem } from '../../../core/products/catalogData'
 import {
   getProducts,
   addProduct,
@@ -57,6 +58,25 @@ export function useProducts() {
       sell_price: 0,
       stock_qty: 0,
       reorder_level: 5,
+    })
+    setErrors({})
+    setIsModalOpen(true)
+  }, [])
+
+  // Open modal pre-filled from standard catalog item
+  const openCreateModalWithCatalogItem = useCallback((item: CatalogItem) => {
+    setEditingProduct(null)
+    setForm({
+      barcode: item.barcode || '',
+      name_fa: item.name_fa,
+      name_ps: item.name_ps || '',
+      name_en: item.name_en || '',
+      category_id: 1,
+      unit: item.unit || 'pcs',
+      cost_price: item.suggested_cost || 0,
+      sell_price: item.suggested_price || 0,
+      stock_qty: item.default_stock || 0,
+      reorder_level: 10,
     })
     setErrors({})
     setIsModalOpen(true)
@@ -186,6 +206,7 @@ export function useProducts() {
     setForm,
     errors,
     openCreateModal,
+    openCreateModalWithCatalogItem,
     openEditModal,
     closeModal,
     submitProduct,

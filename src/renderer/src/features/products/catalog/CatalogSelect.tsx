@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useMemo } from 'react'
-import { Search, ChevronDown, Check, X, Sparkles } from 'lucide-react'
+import { Search, ChevronDown, Check, X } from 'lucide-react'
 import { COMMON_CATALOG_ITEMS, type CatalogItem } from '../../../core/products/catalogData'
 
 interface CatalogSelectProps {
@@ -91,8 +91,7 @@ export function CatalogSelect({
   return (
     <div ref={containerRef} className="relative w-full text-xs" onKeyDown={handleKeyDown}>
       <label className="text-[11px] font-semibold text-gray-700 mb-1 flex items-center justify-between">
-        <span className="flex items-center gap-1.5 text-emerald-800">
-          <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
+        <span className="text-emerald-800 font-semibold">
           Quick Catalog Preset (Auto-fills English, Persian, Pashto &amp; Unit)
         </span>
         <span className="text-[10px] font-normal text-gray-400">

@@ -1,4 +1,26 @@
 import type { Product, Sale, Customer, CustomerPayment, Supplier, UnitType } from '../types'
+import { COMMON_CATALOG_ITEMS } from '../products/catalogData'
+
+/**
+ * Clean default starter commodities for fresh app installation.
+ * Ensures POS and Inventory searches work instantly with realistic Afghan store goods.
+ */
+export const INITIAL_DEFAULT_PRODUCTS: Product[] = COMMON_CATALOG_ITEMS.slice(0, 10).map((item, index) => ({
+  id: index + 1,
+  barcode: item.barcode,
+  name_fa: item.name_fa,
+  name_ps: item.name_ps,
+  name_en: item.name_en,
+  category_id: index + 1,
+  category_name: item.category,
+  unit: item.unit,
+  cost_price: item.suggested_cost,
+  sell_price: item.suggested_price,
+  stock_qty: item.default_stock,
+  reorder_level: 10,
+  is_active: 1,
+  created_at: new Date().toISOString(),
+}))
 
 /**
  * Storage keys for persistent local shop data
@@ -39,11 +61,21 @@ export function onStoreChange(callback: StoreListener): () => void {
 export function getProducts(): Product[] {
   try {
     const raw = localStorage.getItem(STORAGE_KEYS.PRODUCTS)
-    if (!raw) return []
-    return JSON.parse(raw) as Product[]
+    if (!raw) {
+      localStorage.setItem(STORAGE_KEYS.PRODUCTS, JSON.stringify(INITIAL_DEFAULT_PRODUCTS))
+      localStorage.setItem('hesabdar_products_seeded_v1', 'true')
+      return INITIAL_DEFAULT_PRODUCTS
+    }
+    const parsed = JSON.parse(raw) as Product[]
+    if (Array.isArray(parsed) && parsed.length === 0 && !localStorage.getItem('hesabdar_products_seeded_v1')) {
+      localStorage.setItem(STORAGE_KEYS.PRODUCTS, JSON.stringify(INITIAL_DEFAULT_PRODUCTS))
+      localStorage.setItem('hesabdar_products_seeded_v1', 'true')
+      return INITIAL_DEFAULT_PRODUCTS
+    }
+    return parsed
   } catch (err) {
     console.error('Failed to load products from store:', err)
-    return []
+    return INITIAL_DEFAULT_PRODUCTS
   }
 }
 

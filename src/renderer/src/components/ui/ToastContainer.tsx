@@ -25,61 +25,29 @@ export function ToastContainer() {
         const isError = toast.type === 'error'
         const isWarning = toast.type === 'warning'
 
-        const borderColor = isSuccess
-          ? 'border-emerald-300'
-          : isError
-          ? 'border-rose-300'
-          : isWarning
-          ? 'border-amber-300'
-          : 'border-blue-300'
-
-        const bgColor = isSuccess
-          ? 'bg-emerald-50'
-          : isError
-          ? 'bg-rose-50'
-          : isWarning
-          ? 'bg-amber-50'
-          : 'bg-blue-50'
-
-        const textColor = isSuccess
-          ? 'text-emerald-900'
-          : isError
-          ? 'text-rose-900'
-          : isWarning
-          ? 'text-amber-900'
-          : 'text-blue-900'
-
-        const iconColor = isSuccess
-          ? 'text-emerald-600'
-          : isError
-          ? 'text-rose-600'
-          : isWarning
-          ? 'text-amber-600'
-          : 'text-blue-600'
-
         return (
           <div
             key={toast.id}
-            className={`pointer-events-auto flex items-start gap-2.5 p-3 rounded-[5px] border shadow-md transition-all animate-in slide-in-from-top-2 duration-200 ${bgColor} ${borderColor} ${textColor}`}
+            className="pointer-events-auto flex items-center gap-3 p-3.5 bg-white/95 backdrop-blur-md border border-gray-200/90 rounded-xl shadow-[0_10px_25px_-5px_rgba(0,0,0,0.1),0_8px_10px_-6px_rgba(0,0,0,0.05)] transition-all animate-in fade-in-0 slide-in-from-top-2 duration-150"
           >
-            <div className="shrink-0 mt-0.5">
-              {isSuccess && <CheckCircle2 className={`w-4 h-4 ${iconColor}`} />}
-              {isError && <AlertCircle className={`w-4 h-4 ${iconColor}`} />}
-              {isWarning && <AlertTriangle className={`w-4 h-4 ${iconColor}`} />}
-              {!isSuccess && !isError && !isWarning && <Info className={`w-4 h-4 ${iconColor}`} />}
+            <div className="shrink-0 flex items-center justify-center">
+              {isSuccess && <CheckCircle2 className="w-4.5 h-4.5 text-emerald-600" />}
+              {isError && <AlertCircle className="w-4.5 h-4.5 text-rose-600" />}
+              {isWarning && <AlertTriangle className="w-4.5 h-4.5 text-amber-500" />}
+              {!isSuccess && !isError && !isWarning && <Info className="w-4.5 h-4.5 text-blue-500" />}
             </div>
 
             <div className="flex-1 min-w-0 flex flex-col gap-0.5">
               {toast.title && (
-                <span className="font-semibold text-xs leading-none">{toast.title}</span>
+                <span className="font-semibold text-xs text-gray-900 leading-tight">{toast.title}</span>
               )}
-              <span className="text-xs leading-snug">{toast.message}</span>
+              <span className="text-xs text-gray-600 leading-snug">{toast.message}</span>
             </div>
 
             <button
               type="button"
               onClick={() => dismissNotification(toast.id)}
-              className="shrink-0 p-0.5 rounded-[5px] text-gray-400 hover:text-gray-700 transition-colors"
+              className="shrink-0 p-1 flex items-center justify-center text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer"
             >
               <X className="w-3.5 h-3.5" />
             </button>

@@ -1,9 +1,16 @@
 import { z } from 'zod'
 
 /**
- * Afghan phone regex: accepts 07XXXXXXXX, +937XXXXXXXX, 00937XXXXXXXX
+ * Afghan & International phone regex:
+ * - Afghan mobile: 07XXXXXXXX (exactly 10 digits)
+ * - Afghan mobile without 0: 7XXXXXXXX (exactly 9 digits)
+ * - Afghan mobile with +93: +937XXXXXXXX
+ * - Afghan mobile with 0093: 00937XXXXXXXX
+ * - Afghan landline: 020XXXXXXX / +9320XXXXXXX
+ * - International format with +: +[1-9][0-9]{7,14} (8 to 15 digits)
  */
-export const afghanPhoneRegex = /^(?:\+93|0093|0)?7[0-9]{8}$/
+export const afghanPhoneRegex =
+  /^(?:(?:\+93|0093|0)?7[0-9]{8}|(?:\+93|0)?20[0-9]{6,7}|\+[1-9][0-9]{7,14})$/
 
 /**
  * Barcode regex: supports standard alphanumeric barcodes 4-32 characters
@@ -77,7 +84,7 @@ export const CustomerSchema = z.object({
   phone: z
     .string()
     .trim()
-    .regex(afghanPhoneRegex, 'Invalid Afghan phone number (e.g. 0799123456 or +93799123456)')
+    .regex(afghanPhoneRegex, 'Invalid phone number (Afghan mobile must be 10 digits, e.g. 07XXXXXXXX or +937XXXXXXXX)')
     .optional()
     .or(z.literal(''))
     .nullable(),
@@ -100,7 +107,7 @@ export const SupplierSchema = z.object({
   phone: z
     .string()
     .trim()
-    .regex(afghanPhoneRegex, 'Invalid phone number format')
+    .regex(afghanPhoneRegex, 'Invalid phone number (Afghan mobile must be 10 digits, e.g. 07XXXXXXXX or +937XXXXXXXX)')
     .optional()
     .or(z.literal(''))
     .nullable(),

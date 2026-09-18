@@ -3,12 +3,14 @@ import { useTranslation } from 'react-i18next'
 import { Receipt } from 'lucide-react'
 import { getSales, deleteSale, getCustomers, onStoreChange } from '../../../core/store'
 import type { Sale, Customer } from '../../../core/types'
+import { PageHeader } from '../../../components/layout/PageHeader'
 import { SoldMetrics } from '../metrics/SoldMetrics'
 import { SoldTable } from '../table/SoldTable'
 import { InvoiceModal } from '../details/InvoiceModal'
 
 /**
  * SoldView: Cleanly decomposed view for managing all completed customer invoices and sold items.
+ * Standardized with full-viewport layout, sticky table headers, and fixed pagination.
  */
 export function SoldView() {
   const { t } = useTranslation()
@@ -42,26 +44,26 @@ export function SoldView() {
   }
 
   return (
-    <div className="flex flex-col gap-4 max-w-7xl mx-auto select-none">
-      {/* Page Header */}
-      <div>
-        <h2 className="text-sm font-bold text-gray-800 flex items-center gap-2">
-          <Receipt className="w-4 h-4 text-emerald-600" />
-          {t('sold.title')}
-        </h2>
-        <p className="text-[11px] text-gray-400 mt-0.5">{t('sold.subtitle')}</p>
-      </div>
+    <div className="flex flex-col h-full min-h-0 gap-3.5 max-w-7xl mx-auto w-full select-none">
+      {/* Unified Page Header */}
+      <PageHeader
+        title={t('sold.title')}
+        subtitle={t('sold.subtitle')}
+        icon={Receipt}
+      />
 
-      {/* 1. KPI Metric Summary Cards */}
+      {/* 1. Standardized KPI Metric Summary Cards */}
       <SoldMetrics sales={sales} />
 
-      {/* 2. Invoices Data Table */}
-      <SoldTable
-        sales={sales}
-        customers={customers}
-        onViewReceipt={handleViewReceipt}
-        onVoidSale={handleVoidSale}
-      />
+      {/* 2. Full-Viewport Sticky Invoices Data Table */}
+      <div className="flex-1 min-h-0 flex flex-col mt-1">
+        <SoldTable
+          sales={sales}
+          customers={customers}
+          onViewReceipt={handleViewReceipt}
+          onVoidSale={handleVoidSale}
+        />
+      </div>
 
       {/* 3. Detailed Invoice Receipt Inspection Modal */}
       <InvoiceModal

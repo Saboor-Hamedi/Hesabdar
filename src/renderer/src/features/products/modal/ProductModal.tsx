@@ -1,13 +1,11 @@
 import React from 'react'
 import { useTranslation } from 'react-i18next'
-import { Plus, Check } from 'lucide-react'
+import { Plus, Check, BookOpen, Package } from 'lucide-react'
 import type { ProductFormValues } from '../../../core/validation/schemas'
 import type { Product, UnitType } from '../../../core/types'
-import { COMMON_CATALOG_ITEMS, type CatalogItem } from '../../../core/products/catalogData'
 import { Modal } from '../../../components/ui/Modal'
 import { Button } from '../../../components/ui/Button'
 import { Input } from '../../../components/ui/Input'
-import { CatalogSelect } from '../catalog/CatalogSelect'
 
 interface ProductModalProps {
   isOpen: boolean
@@ -15,15 +13,14 @@ interface ProductModalProps {
   form: ProductFormValues
   errors: Record<string, string>
   editingProduct?: Product | null
-  onSelectCatalogItem: (item: CatalogItem) => void
-  onEnglishNameChange: (val: string) => void
-  onPersianNameChange: (val: string) => void
   onChangeForm: React.Dispatch<React.SetStateAction<ProductFormValues>>
   onSubmit: (e: React.FormEvent) => void
+  onOpenCatalog?: () => void
 }
 
 /**
- * ProductModal: Spacious, trilingual product entry & editing modal (900px x 700px).
+ * ProductModal: Executive trilingual product entry & editing modal (920px x 700px).
+ * Styled consistently with DebtPaymentModal with top card profile and structured decks.
  */
 export function ProductModal({
   isOpen,
@@ -31,11 +28,9 @@ export function ProductModal({
   form,
   errors,
   editingProduct,
-  onSelectCatalogItem,
-  onEnglishNameChange,
-  onPersianNameChange,
   onChangeForm,
   onSubmit,
+  onOpenCatalog,
 }: ProductModalProps) {
   const { t } = useTranslation()
   const isEditing = Boolean(editingProduct)
@@ -55,7 +50,11 @@ export function ProductModal({
           <span className="text-xs font-mono font-semibold px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200/60 shadow-2xs">
             Product #{editingProduct?.id}
           </span>
-        ) : undefined
+        ) : (
+          <span className="text-xs font-semibold px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200/60 shadow-2xs">
+            Inventory Master
+          </span>
+        )
       }
       style={{ width: '920px', maxWidth: '95vw', maxHeight: '92vh' }}
       className="flex flex-col"
@@ -63,38 +62,70 @@ export function ProductModal({
     >
       <form onSubmit={onSubmit} className="flex flex-col justify-between h-full gap-6">
         <div className="flex flex-col gap-5">
-          {/* Top Fast-Searchable Catalog Preset Dropdown */}
-          <div className="p-4 bg-gray-50 border border-gray-100 rounded-xl">
-            <CatalogSelect
-              onSelect={onSelectCatalogItem}
-              selectedItemName={form.name_en || form.name_fa}
-            />
+          {/* Top Profile Header Card matching DebtPaymentModal */}
+          <div className="p-4 bg-gray-50 border border-gray-100 rounded-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shrink-0">
+            <div className="flex items-center gap-3.5">
+              <div className="w-11 h-11 rounded-xl bg-[#5A8F7B] text-white flex items-center justify-center font-bold text-base shadow-xs shrink-0">
+                <Package className="w-5 h-5" />
+              </div>
+              <div className="flex flex-col">
+                <span className="text-sm font-bold text-gray-900">
+                  {form.name_fa || form.name_en || (isEditing ? 'Product Master Record' : 'New Merchandise Entry')}
+                </span>
+                <div className="flex items-center gap-2 mt-0.5 text-xs text-gray-500">
+                  <span className="font-mono">{form.barcode ? `Barcode: ${form.barcode}` : 'No Barcode Assigned'}</span>
+                  <span>•</span>
+                  <span>Unit: {form.unit}</span>
+                </div>
+              </div>
+            </div>
 
-            {/* Quick Popular Commodity Chips */}
-            <div className="flex items-center gap-2 flex-wrap mt-3 pt-2.5 border-t border-gray-200/60">
-              <span className="text-[11px] text-gray-500 font-medium">Popular Afghan Items:</span>
-              {COMMON_CATALOG_ITEMS.slice(0, 8).map((item) => (
-                <button
-                  key={item.id}
-                  type="button"
-                  onClick={() => onSelectCatalogItem(item)}
-                  className="text-xs px-3 py-1 rounded-full bg-white border border-gray-200/80 hover:bg-[#5A8F7B] hover:text-white hover:border-[#5A8F7B] text-gray-700 transition-all shadow-2xs cursor-pointer active:scale-95 font-medium"
-                >
-                  {item.name_en} / {item.name_fa}
-                </button>
-              ))}
+            <div className="text-end shrink-0">
+              <span className="text-[11px] font-semibold text-gray-500 uppercase tracking-[0.05em] block">
+                {form.sell_price > 0 ? 'Selling Price' : 'Inventory Price'}
+              </span>
+              <span
+                className={`text-xl font-bold font-mono mt-0.5 block ${
+                  form.sell_price > form.cost_price
+                    ? 'text-emerald-700'
+                    : form.sell_price > 0
+                      ? 'text-amber-700'
+                      : 'text-gray-600'
+                }`}
+              >
+                {form.sell_price > 0 ? `${form.sell_price.toLocaleString()} AFN` : '0 AFN'}
+              </span>
             </div>
           </div>
 
-          {/* Section 1: Item Names across Languages */}
-          <div className="flex flex-col gap-4">
+          {!isEditing && onOpenCatalog && (
+            <div className="flex items-center justify-between px-4 py-2.5 bg-emerald-50/70 border border-emerald-200/60 rounded-xl">
+              <div className="flex items-center gap-2 text-xs text-emerald-950 font-medium">
+                <BookOpen className="w-4 h-4 text-emerald-700" />
+                <span>Standard Afghan commodities available with names, units &amp; barcodes.</span>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  onClose()
+                  onOpenCatalog()
+                }}
+                className="text-xs font-semibold text-emerald-800 hover:text-emerald-950 underline underline-offset-2 cursor-pointer transition-colors"
+              >
+                Browse Catalog Table &rarr;
+              </button>
+            </div>
+          )}
+
+          {/* Section 1: Item Names across Languages in Structured Deck */}
+          <div className="p-5 border border-gray-100 rounded-xl bg-gray-50/50 flex flex-col gap-4">
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              {/* English Name with Auto-Suggest */}
+              {/* English Name */}
               <Input
                 label="Name in English"
                 placeholder="e.g. Cooking Oil, Rice, Sugar..."
                 value={form.name_en || ''}
-                onChange={(e) => onEnglishNameChange(e.target.value)}
+                onChange={(e) => onChangeForm((f) => ({ ...f, name_en: e.target.value }))}
                 error={errors.name_en}
               />
 
@@ -103,7 +134,7 @@ export function ProductModal({
                 label="نام به دری / فارسی"
                 placeholder="مثلاً: روغن نباتی، برنج..."
                 value={form.name_fa}
-                onChange={(e) => onPersianNameChange(e.target.value)}
+                onChange={(e) => onChangeForm((f) => ({ ...f, name_fa: e.target.value }))}
                 error={errors.name_fa}
                 required
               />
@@ -134,7 +165,7 @@ export function ProductModal({
                 <select
                   value={form.unit}
                   onChange={(e) => onChangeForm((f) => ({ ...f, unit: e.target.value as UnitType }))}
-                  className="w-full h-9 px-3 text-xs rounded-lg transition-all duration-150 bg-[#F9FAFB] hover:bg-[#F3F4F6] text-[#1F2937] border border-transparent focus:border-[#5A8F7B]/40 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#5A8F7B]/20 cursor-pointer"
+                  className="w-full h-9 px-3 text-xs rounded-lg transition-all duration-150 bg-white hover:bg-gray-50 text-[#1F2937] border border-gray-200 focus:border-[#5A8F7B]/40 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#5A8F7B]/20 cursor-pointer shadow-2xs"
                 >
                   <option value="pcs">{t('products.unitPcs')}</option>
                   <option value="kg">{t('products.unitKg')}</option>
@@ -159,16 +190,16 @@ export function ProductModal({
                       category_id: e.target.value ? Number(e.target.value) : undefined,
                     }))
                   }
-                  className="w-full h-9 px-3 text-xs rounded-lg transition-all duration-150 bg-[#F9FAFB] hover:bg-[#F3F4F6] text-[#1F2937] placeholder:text-gray-400 border border-transparent focus:border-[#5A8F7B]/40 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#5A8F7B]/20"
+                  className="w-full h-9 px-3 text-xs rounded-lg transition-all duration-150 bg-white hover:bg-gray-50 text-[#1F2937] placeholder:text-gray-400 border border-gray-200 focus:border-[#5A8F7B]/40 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#5A8F7B]/20 shadow-2xs"
                 />
               </div>
             </div>
           </div>
 
-          {/* Section 2: Pricing & Stock Inventory */}
-          <div className="pt-4 border-t border-gray-100 flex flex-col gap-3.5">
+          {/* Section 2: Pricing & Stock Inventory in Structured Deck */}
+          <div className="p-5 border border-gray-100 rounded-xl bg-gray-50/50 flex flex-col gap-4">
             <div className="flex items-center justify-between">
-              <span className="text-[11px] font-semibold uppercase tracking-[0.05em] text-[#6B7280]">
+              <span className="text-xs font-bold text-gray-800 uppercase tracking-[0.05em]">
                 Pricing &amp; Stock Quantities
               </span>
               {form.sell_price > 0 && (
@@ -183,7 +214,7 @@ export function ProductModal({
                     Gain: {form.sell_price - form.cost_price} AFN ({Math.round(((form.sell_price - form.cost_price) / form.sell_price) * 100)}% margin)
                   </span>
                   {form.stock_qty > 0 && (
-                    <span className="text-xs font-mono text-gray-500 bg-gray-100 px-2.5 py-0.5 rounded-full">
+                    <span className="text-xs font-mono text-gray-500 bg-white px-2.5 py-0.5 rounded-full border border-gray-200">
                       Stock Value: {(form.cost_price * form.stock_qty).toLocaleString()} AFN
                     </span>
                   )}
@@ -240,14 +271,14 @@ export function ProductModal({
           </div>
         </div>
 
-        {/* Modal Actions */}
+        {/* Modal Actions matching DebtPaymentModal */}
         <div className="flex items-center justify-between pt-5 border-t border-gray-100 shrink-0">
           <span className="text-[11px] text-gray-400">
             {isEditing
               ? 'Changes will be updated instantly across inventory and POS.'
               : 'Window remains open for continuous, rapid inventory entry.'}
           </span>
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-3">
             <Button variant="ghost" type="button" onClick={onClose}>
               Cancel
             </Button>

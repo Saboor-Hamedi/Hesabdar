@@ -1,5 +1,9 @@
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { Settings } from 'lucide-react'
+import { PageHeader } from '../../../components/layout/PageHeader'
 import { useSettings } from '../hooks/useSettings'
+import { SettingTabs, type SettingTabId } from './SettingTabs'
 import { TitlebarIconCard } from '../icon/TitlebarIconCard'
 import { LanguageCard } from '../language/LanguageCard'
 import { StoreProfileCard } from '../profile/StoreProfileCard'
@@ -11,6 +15,7 @@ import { AppUpdateCard } from '../update/AppUpdateCard'
  */
 export function SettingsView() {
   const { t } = useTranslation()
+  const [activeTab, setActiveTab] = useState<SettingTabId>('profile')
   const {
     iconUrl,
     language,
@@ -26,41 +31,58 @@ export function SettingsView() {
   } = useSettings()
 
   return (
-    <div className="flex flex-col gap-4 max-w-4xl mx-auto select-none">
-      {/* Page Header */}
-      <div>
-        <h2 className="text-sm font-bold text-gray-800">{t('settings.title')}</h2>
-        <p className="text-[11px] text-gray-400 mt-0.5">{t('settings.subtitle')}</p>
+    <div className="flex flex-col h-full min-h-0 gap-3.5 max-w-5xl mx-auto w-full select-none pr-1 pb-2">
+      {/* Unified Page Header */}
+      <PageHeader
+        title={t('settings.title')}
+        subtitle={t('settings.subtitle')}
+        icon={Settings}
+      />
+
+      {/* Main Settings Body: Left Navigation Tabs + Right Active Tab Content */}
+      <div className="flex-1 min-h-0 flex flex-col md:flex-row gap-4">
+        {/* Left Side Navigation Tabs */}
+        <div className="w-full md:w-64 shrink-0 h-full flex flex-col">
+          <SettingTabs activeTab={activeTab} onChangeTab={setActiveTab} />
+        </div>
+
+        {/* Right Side Active Panel with full vertical room and zero squishing */}
+        <div className="flex-1 min-w-0 overflow-y-auto pr-1 pb-4">
+          {activeTab === 'profile' && (
+            <StoreProfileCard
+              form={form}
+              errors={errors}
+              savedSuccess={savedSuccess}
+              onChangeForm={setForm}
+              onSave={saveProfile}
+            />
+          )}
+
+          {activeTab === 'language' && (
+            <LanguageCard
+              currentLanguage={language}
+              onSwitchLanguage={switchLanguage}
+            />
+          )}
+
+          {activeTab === 'icon' && (
+            <TitlebarIconCard
+              iconUrl={iconUrl}
+              loadingIcon={loadingIcon}
+              onPickIcon={pickIcon}
+              onResetIcon={resetIcon}
+            />
+          )}
+
+          {activeTab === 'backup' && (
+            <BackupCard />
+          )}
+
+          {activeTab === 'update' && (
+            <AppUpdateCard />
+          )}
+        </div>
       </div>
-
-      {/* 1. App Titlebar Icon Card */}
-      <TitlebarIconCard
-        iconUrl={iconUrl}
-        loadingIcon={loadingIcon}
-        onPickIcon={pickIcon}
-        onResetIcon={resetIcon}
-      />
-
-      {/* 2. Application Language Card */}
-      <LanguageCard
-        currentLanguage={language}
-        onSwitchLanguage={switchLanguage}
-      />
-
-      {/* 3. Shop Profile & Business Info */}
-      <StoreProfileCard
-        form={form}
-        errors={errors}
-        savedSuccess={savedSuccess}
-        onChangeForm={setForm}
-        onSave={saveProfile}
-      />
-
-      {/* 4. Database Backup & Safety */}
-      <BackupCard />
-
-      {/* 5. Software & App Updates */}
-      <AppUpdateCard />
     </div>
   )
 }

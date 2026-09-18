@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Users, Plus } from 'lucide-react'
 import { Button } from '../../../components/ui/Button'
+import { PageHeader } from '../../../components/layout/PageHeader'
 import { CustomerSchema, type CustomerFormValues } from '../../../core/validation/schemas'
 import { validateForm } from '../../../core/validation/validator'
 import { formatCurrency } from '../../../core/utils/formatters'
@@ -137,44 +138,43 @@ export function CustomersView() {
   }
 
   return (
-    <div className="flex flex-col gap-4 max-w-7xl mx-auto select-none">
-      {/* Page Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-sm font-bold text-gray-800 flex items-center gap-2">
-            <Users className="w-4 h-4 text-emerald-600" />
-            {t('customers.title')}
-          </h2>
-          <p className="text-[11px] text-gray-400 mt-0.5">{t('customers.subtitle')}</p>
-        </div>
-
-        <Button
-          variant="primary"
-          onClick={handleOpenCreateCustomer}
-          icon={<Plus className="w-3.5 h-3.5" />}
-        >
-          {t('customers.addCustomer')}
-        </Button>
-      </div>
+    <div className="flex flex-col h-full min-h-0 gap-3.5 max-w-7xl mx-auto w-full select-none">
+      {/* Unified Page Header */}
+      <PageHeader
+        title={t('customers.title')}
+        subtitle={t('customers.subtitle')}
+        icon={Users}
+        action={
+          <Button
+            variant="primary"
+            onClick={handleOpenCreateCustomer}
+            icon={<Plus className="w-3.5 h-3.5" />}
+          >
+            {t('customers.addCustomer')}
+          </Button>
+        }
+      />
 
       {/* 1. KPI Summary Cards */}
       <CustomerMetrics customers={customers} />
 
-      {/* 2. Customer Accounts Data Table */}
-      <CustomersTable
-        customers={customers}
-        onOpenPaymentModal={(c) => {
-          setPayingCustomer(c)
-          setPaymentAmount(c.balance || 0)
-        }}
-        onOpenLedger={(c) => setLedgerCustomer(c)}
-        onEditCustomer={handleOpenEditCustomer}
-        onDeleteCustomer={(id) => {
-          if (window.confirm('Delete customer account?')) {
-            deleteCustomer(id)
-          }
-        }}
-      />
+      {/* 2. Full-Viewport Sticky Customer Accounts Data Table */}
+      <div className="flex-1 min-h-0 flex flex-col mt-1">
+        <CustomersTable
+          customers={customers}
+          onOpenPaymentModal={(c) => {
+            setPayingCustomer(c)
+            setPaymentAmount(c.balance || 0)
+          }}
+          onOpenLedger={(c) => setLedgerCustomer(c)}
+          onEditCustomer={handleOpenEditCustomer}
+          onDeleteCustomer={(id) => {
+            if (window.confirm('Delete customer account?')) {
+              deleteCustomer(id)
+            }
+          }}
+        />
+      </div>
 
       {/* 3. Add/Edit Customer Modal (900px x 700px) */}
       <CustomerModal

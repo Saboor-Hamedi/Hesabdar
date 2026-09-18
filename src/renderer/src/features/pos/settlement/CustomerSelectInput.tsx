@@ -58,38 +58,34 @@ export function CustomerSelectInput({
   }, [])
 
   return (
-    <div ref={containerRef} className="relative flex-1">
+    <div ref={containerRef} className="relative flex-1 min-w-0">
       {selectedCustomer ? (
         // Selected customer card badge
-        <div className="h-7.5 px-2 bg-emerald-50/70 border border-emerald-300/80 rounded-[5px] flex items-center justify-between gap-1 text-xs">
-          <div className="flex items-center gap-1.5 min-w-0">
+        <div className="h-7.5 px-2 bg-emerald-50/70 border border-emerald-300/80 rounded-[5px] flex items-center justify-between gap-1 text-xs w-full min-w-0 overflow-hidden">
+          <div className="flex items-center gap-1.5 min-w-0 flex-1 overflow-hidden">
             <User className="w-3.5 h-3.5 text-emerald-700 shrink-0" />
-            <span className="font-semibold text-emerald-950 truncate text-[11px]">
+            <span className="font-semibold text-emerald-950 truncate text-[11px] min-w-0">
               {selectedCustomer.name}
             </span>
-            {selectedCustomer.phone && (
-              <span className="text-[10px] text-gray-500 font-mono hidden sm:inline">
-                {selectedCustomer.phone}
+            {(selectedCustomer.balance || 0) > 0 && (
+              <span
+                className="text-[9px] font-mono px-1 py-0.2 rounded font-semibold shrink-0 bg-amber-100 text-amber-900 border border-amber-200 truncate max-w-[80px]"
+                title={`${t('customers.balance')}: ${formatCurrency(selectedCustomer.balance)}`}
+              >
+                {formatCurrency(selectedCustomer.balance)}
               </span>
             )}
-            <span
-              className={`text-[9px] font-mono px-1 py-0.2 rounded font-semibold shrink-0 ${
-                (selectedCustomer.balance || 0) > 0
-                  ? 'bg-amber-100 text-amber-900 border border-amber-200'
-                  : (selectedCustomer.balance || 0) < 0
-                    ? 'bg-emerald-100 text-emerald-800 border border-emerald-300'
-                    : 'bg-gray-100 text-gray-700'
-              }`}
-            >
-              {(selectedCustomer.balance || 0) > 0
-                ? `${t('customers.balance')}: ${formatCurrency(selectedCustomer.balance)}`
-                : (selectedCustomer.balance || 0) < 0
-                  ? `${t('customers.creditCustomer')}: +${formatCurrency(Math.abs(selectedCustomer.balance))}`
-                  : `${t('customers.settled')} (0 AFN)`}
-            </span>
+            {(selectedCustomer.balance || 0) < 0 && (
+              <span
+                className="text-[9px] font-mono px-1 py-0.2 rounded font-semibold shrink-0 bg-emerald-100 text-emerald-800 border border-emerald-300 truncate max-w-[80px]"
+                title={`${t('customers.creditCustomer')}: +${formatCurrency(Math.abs(selectedCustomer.balance))}`}
+              >
+                +{formatCurrency(Math.abs(selectedCustomer.balance))}
+              </span>
+            )}
           </div>
 
-          <div className="flex items-center gap-1 shrink-0">
+          <div className="flex items-center gap-0.5 shrink-0">
             {onOpenCustomerLedger && (
               <button
                 type="button"
@@ -208,15 +204,15 @@ export function CustomerSelectInput({
                 <div className="text-end shrink-0 ms-2">
                   {(c.balance || 0) > 0 ? (
                     <span className="text-[10px] font-mono font-bold text-amber-700 bg-amber-50 border border-amber-200 px-1.5 py-0.5 rounded">
-                      {t('customers.balance')}: {formatCurrency(c.balance)}
+                      {formatCurrency(c.balance)}
                     </span>
                   ) : (c.balance || 0) < 0 ? (
                     <span className="text-[10px] font-mono font-bold text-emerald-700 bg-emerald-50 border border-emerald-300 px-1.5 py-0.5 rounded">
-                      {t('customers.creditCustomer')}: +{formatCurrency(Math.abs(c.balance))}
+                      +{formatCurrency(Math.abs(c.balance))}
                     </span>
                   ) : (
-                    <span className="text-[10px] font-mono text-gray-500 bg-gray-50 px-1.5 py-0.5 rounded">
-                      {t('customers.settled')} (0 AFN)
+                    <span className="text-[10px] font-mono text-gray-400">
+                      0 AFN
                     </span>
                   )}
                 </div>

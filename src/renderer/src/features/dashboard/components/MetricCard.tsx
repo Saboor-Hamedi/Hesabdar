@@ -7,40 +7,70 @@ export interface MetricCardProps {
   subtitle?: string
   trendPercentage?: number
   icon: ReactNode
+  className?: string
 }
 
 /**
- * Sleek Metric Card with 8px border radius, calm borders, and clear trend indicator.
+ * MetricCard: Compact KPI Metric Card designed to optimize vertical screen space in Dashboard.
  */
-export function MetricCard({ title, value, subtitle, trendPercentage, icon }: MetricCardProps) {
+export function MetricCard({
+  title,
+  value,
+  subtitle,
+  trendPercentage,
+  icon,
+  className = '',
+}: MetricCardProps) {
   const isPositive = trendPercentage != null && trendPercentage >= 0
 
   return (
-    <div className="bg-white border border-gray-200/80 rounded-[8px] p-3.5 flex flex-col justify-between shadow-xs select-none">
-      <div className="flex items-center justify-between mb-1.5">
-        <span className="text-xs font-medium text-gray-500">{title}</span>
-        <div className="p-1.5 rounded-[6px] bg-gray-50 text-gray-700 border border-gray-100">
+    <div
+      className={`w-full h-full min-h-[64px] bg-white border border-gray-200/80 rounded-xl p-2.5 shadow-xs hover:shadow-sm transition-all duration-150 flex flex-col justify-between select-none ${className}`}
+    >
+      {/* Top Row: Label and Icon */}
+      <div className="flex items-center justify-between gap-1.5">
+        <span className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider truncate">
+          {title}
+        </span>
+        <div className="w-5.5 h-5.5 rounded-md border border-gray-100 bg-gray-50 flex items-center justify-center shrink-0">
           {icon}
         </div>
       </div>
 
-      <div className="flex items-baseline justify-between mt-1 gap-2 flex-wrap">
-        <span className="text-lg font-bold text-gray-900 font-mono tracking-tight">{value}</span>
+      {/* Middle Row: Large Monospace Value */}
+      <div className="my-0.5 flex items-baseline justify-between gap-2">
+        <span className="text-base sm:text-lg font-bold font-mono text-gray-900 tracking-tight truncate">
+          {value}
+        </span>
+      </div>
+
+      {/* Bottom Row: Subtitle and Trend Pill */}
+      <div className="flex items-center justify-between gap-1.5 text-[9.5px] min-h-[16px]">
+        {subtitle ? (
+          <span className="text-gray-400 truncate leading-none">{subtitle}</span>
+        ) : (
+          <span />
+        )}
+
         {trendPercentage != null && (
           <span
-            className={`inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-[6px] border ${
+            className={`inline-flex items-center gap-0.5 font-semibold px-1.5 py-0.5 rounded-[4px] border shrink-0 text-[9px] ${
               isPositive
-                ? 'bg-emerald-50 text-emerald-800 border-emerald-200/70'
-                : 'bg-rose-50 text-rose-700 border-rose-200/70'
+                ? 'bg-emerald-50 text-emerald-700 border-emerald-200/60'
+                : 'bg-rose-50 text-rose-700 border-rose-200/60'
             }`}
           >
-            {isPositive ? <TrendingUp className="w-3 h-3 text-emerald-600" /> : <TrendingDown className="w-3 h-3 text-rose-600" />}
-            {Math.abs(trendPercentage)}%
+            {isPositive ? (
+              <TrendingUp className="w-2.5 h-2.5 text-emerald-600" />
+            ) : (
+              <TrendingDown className="w-2.5 h-2.5 text-rose-600" />
+            )}
+            <span>{Math.abs(trendPercentage)}%</span>
           </span>
         )}
       </div>
-
-      {subtitle && <p className="text-[11px] text-gray-400 mt-1 font-medium">{subtitle}</p>}
     </div>
   )
 }
+
+export default MetricCard

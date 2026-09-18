@@ -76,6 +76,7 @@ export function InvoiceModal({
       title="Invoice Details"
       subtitle={`Invoice #${sale.invoice_no}`}
       maxWidth="max-w-[360px]"
+      compactHeader
     >
       <div className="flex flex-col gap-2.5">
         <ThermalReceipt

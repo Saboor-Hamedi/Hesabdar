@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { CheckCircle2, Loader2, AlertCircle, Send, RefreshCw } from 'lucide-react'
 import { Revoke } from './Revoke'
+import { Input } from '../../components/ui/Input'
 
 type Status = 'idle' | 'submitting' | 'pending' | 'approved' | 'rejected' | 'revoked' | 'error'
 
@@ -230,44 +231,38 @@ export function ActivationView({ onActivated }: Props) {
               </p>
 
               <div className="space-y-4">
-                <div>
-                  <label className="block text-xs font-semibold text-gray-600 mb-1.5">Full Name</label>
-                  <input
-                    type="text"
-                    required
-                    value={fullName}
-                    onChange={e => setFullName(e.target.value)}
-                    placeholder="e.g. Haji Mohammad Qasim"
-                    disabled={isLoading}
-                    className="w-full h-10 px-3 text-sm border border-gray-200 rounded-lg bg-gray-50 focus:outline-none focus:border-[#5A8F7B] focus:ring-2 focus:ring-[#5A8F7B]/20 disabled:opacity-50"
-                  />
-                </div>
+                <Input
+                  label="Full Name"
+                  type="text"
+                  required
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                  placeholder="e.g. Haji Mohammad Qasim"
+                  disabled={isLoading}
+                  variant="outline"
+                />
 
-                <div>
-                  <label className="block text-xs font-semibold text-gray-600 mb-1.5">Email Address</label>
-                  <input
-                    type="email"
-                    required
-                    value={email}
-                    onChange={e => setEmail(e.target.value)}
-                    placeholder="e.g. qasim@gmail.com"
-                    disabled={isLoading}
-                    className="w-full h-10 px-3 text-sm border border-gray-200 rounded-lg bg-gray-50 focus:outline-none focus:border-[#5A8F7B] focus:ring-2 focus:ring-[#5A8F7B]/20 disabled:opacity-50"
-                  />
-                </div>
+                <Input
+                  label="Email Address"
+                  type="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="e.g. qasim@gmail.com"
+                  disabled={isLoading}
+                  variant="outline"
+                />
 
-                <div>
-                  <label className="block text-xs font-semibold text-gray-600 mb-1.5">Phone Number</label>
-                  <input
-                    type="tel"
-                    required
-                    value={phone}
-                    onChange={e => setPhone(e.target.value)}
-                    placeholder="e.g. +93 700 123 456"
-                    disabled={isLoading}
-                    className="w-full h-10 px-3 text-sm border border-gray-200 rounded-lg bg-gray-50 focus:outline-none focus:border-[#5A8F7B] focus:ring-2 focus:ring-[#5A8F7B]/20 disabled:opacity-50"
-                  />
-                </div>
+                <Input
+                  label="Phone Number"
+                  type="tel"
+                  required
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  placeholder="e.g. 0799123456 or +93 700 123 456"
+                  disabled={isLoading}
+                  variant="outline"
+                />
               </div>
 
               {status === 'error' && (

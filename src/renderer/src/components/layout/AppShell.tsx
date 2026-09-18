@@ -168,7 +168,7 @@ export function AppShell() {
         <ActivityBar active={active} onChange={handleTabChange} isAdmin={isAdmin} />
 
         {/* Content View Pane */}
-        <main className="flex-1 overflow-auto p-4 bg-[#fafafa]">
+        <main className="flex-1 overflow-hidden p-4 bg-[#fafafa] flex flex-col min-h-0">
           {renderContent()}
         </main>
       </div>

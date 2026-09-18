@@ -64,7 +64,7 @@ export function SettlementPanel({
   return (
     <div className="bg-white border border-gray-200/80 rounded-[8px] p-2.5 shadow-xs flex flex-col gap-1.5 shrink-0">
       {/* 1. Customer Search & Payment Method Selector */}
-      <div className="flex items-center gap-1.5">
+      <div className="flex items-center gap-1.5 min-w-0 w-full">
         <CustomerSelectInput
           customers={customers}
           selectedCustomerId={isCheckoutComplete ? null : selectedCustomerId}

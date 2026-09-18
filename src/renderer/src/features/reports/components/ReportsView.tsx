@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { BarChart3, Download } from 'lucide-react'
 import { Button } from '../../../components/ui/Button'
+import { PageHeader } from '../../../components/layout/PageHeader'
 import { getSales, getCustomers, getSuppliers, getProducts, onStoreChange } from '../../../core/store'
 import { notify } from '../../../core/notifications'
 import { FinancialCards } from '../metrics/FinancialCards'
@@ -86,25 +87,22 @@ export function ReportsView() {
   }
 
   return (
-    <div className="flex flex-col gap-4 max-w-7xl mx-auto select-none">
-      {/* Page Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-sm font-bold text-gray-800 flex items-center gap-2">
-            <BarChart3 className="w-4 h-4 text-emerald-600" />
-            {t('reports.title')}
-          </h2>
-          <p className="text-[11px] text-gray-400 mt-0.5">{t('reports.subtitle')}</p>
-        </div>
-
-        <Button
-          variant="outline"
-          onClick={handleExportSalesCSV}
-          icon={<Download className="w-3.5 h-3.5" />}
-        >
-          Export Sales CSV
-        </Button>
-      </div>
+    <div className="flex flex-col h-full min-h-0 gap-3.5 max-w-7xl mx-auto w-full select-none overflow-y-auto pr-1">
+      {/* Unified Page Header */}
+      <PageHeader
+        title={t('reports.title')}
+        subtitle={t('reports.subtitle')}
+        icon={BarChart3}
+        action={
+          <Button
+            variant="outline"
+            onClick={handleExportSalesCSV}
+            icon={<Download className="w-3.5 h-3.5" />}
+          >
+            Export Sales CSV
+          </Button>
+        }
+      />
 
       {/* 1. Financial Performance Ledger Cards */}
       <FinancialCards

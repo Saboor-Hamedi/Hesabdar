@@ -223,7 +223,7 @@ export function AdminLicensesView() {
   }
 
   return (
-    <div className="space-y-5 select-none max-w-7xl mx-auto pb-10">
+    <div className="h-full flex flex-col min-h-0 gap-3.5 select-none max-w-7xl mx-auto w-full overflow-y-auto pr-1 pb-6">
       {/* Top Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gray-200/60 pb-4">
         <div>
