@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { CheckCircle2, Loader2, AlertCircle, Send } from 'lucide-react'
+import { CheckCircle2, Loader2, AlertCircle, Send, RefreshCw } from 'lucide-react'
 
 type Status = 'idle' | 'submitting' | 'pending' | 'approved' | 'rejected' | 'error'
 
@@ -13,6 +13,23 @@ export function ActivationView({ onActivated }: Props) {
   const [phone, setPhone] = useState('')
   const [status, setStatus] = useState<Status>('idle')
   const [errorMsg, setErrorMsg] = useState('')
+  const [checkingNow, setCheckingNow] = useState(false)
+  const [notice, setNotice] = useState('')
+
+  // Check current status on mount (detect already pending or approved)
+  useEffect(() => {
+    window.api?.license?.check?.().then((res: any) => {
+      if (res?.valid) {
+        setStatus('approved')
+        setTimeout(() => onActivated(res), 1000)
+      } else if (res?.pending) {
+        setStatus('pending')
+        if (res.full_name) setFullName(res.full_name)
+        if (res.email) setEmail(res.email)
+        if (res.phone) setPhone(res.phone)
+      }
+    }).catch(() => {})
+  }, [onActivated])
 
   useEffect(() => {
     // Listen for real-time approval from Main process
@@ -26,11 +43,47 @@ export function ActivationView({ onActivated }: Props) {
       else if (newStatus === 'pending') setStatus('pending')
     })
 
+    // Polling fallback when pending (in case Realtime WebSocket disconnects or drops)
+    let pollTimer: any = null
+    if (status === 'pending') {
+      pollTimer = setInterval(async () => {
+        try {
+          const res = await window.api?.license?.check?.()
+          if (res?.valid) {
+            clearInterval(pollTimer)
+            setStatus('approved')
+            setTimeout(() => onActivated(res), 1200)
+          }
+        } catch {}
+      }, 3500)
+    }
+
     return () => {
       offActivated?.()
       offStatus?.()
+      if (pollTimer) clearInterval(pollTimer)
     }
-  }, [onActivated])
+  }, [status, onActivated])
+
+  async function handleManualCheck() {
+    setCheckingNow(true)
+    setNotice('')
+    try {
+      const res = await window.api?.license?.check?.()
+      if (res?.valid) {
+        setStatus('approved')
+        setTimeout(() => onActivated(res), 1000)
+      } else {
+        setTimeout(() => {
+          setCheckingNow(false)
+          setNotice('Checked just now — still pending approval in dashboard.')
+          setTimeout(() => setNotice(''), 4000)
+        }, 500)
+      }
+    } catch {
+      setCheckingNow(false)
+    }
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -113,9 +166,45 @@ export function ActivationView({ onActivated }: Props) {
                 Your activation request has been received.<br />
                 Please wait while your license is being reviewed.
               </p>
+
+              {(fullName || phone) && (
+                <div className="mt-4 p-3 bg-gray-50 rounded-xl border border-gray-100 text-left text-xs space-y-1">
+                  {fullName && (
+                    <div className="flex justify-between text-gray-600">
+                      <span className="text-gray-400">Owner:</span>
+                      <span className="font-medium text-gray-800">{fullName}</span>
+                    </div>
+                  )}
+                  {phone && (
+                    <div className="flex justify-between text-gray-600">
+                      <span className="text-gray-400">Phone:</span>
+                      <span className="font-medium text-gray-800">{phone}</span>
+                    </div>
+                  )}
+                </div>
+              )}
+
               <p className="text-xs text-gray-400 mt-4">
-                This window will update automatically when approved.
+                This window updates automatically once approved.
               </p>
+
+              <div className="mt-5 flex flex-col items-center">
+                <button
+                  type="button"
+                  onClick={handleManualCheck}
+                  disabled={checkingNow}
+                  className="w-full max-w-xs h-10 bg-[#5A8F7B] hover:bg-[#4A7C6F] active:scale-[0.98] disabled:opacity-60 text-white text-xs font-semibold rounded-xl shadow-sm transition-all flex items-center justify-center gap-2 cursor-pointer"
+                >
+                  <RefreshCw className={`w-3.5 h-3.5 ${checkingNow ? 'animate-spin' : ''}`} />
+                  <span>{checkingNow ? 'Checking Status...' : 'Refresh Status'}</span>
+                </button>
+
+                {notice && (
+                  <p className="mt-2 text-xs text-emerald-600 font-medium transition-all">
+                    {notice}
+                  </p>
+                )}
+              </div>
             </div>
           )}
 

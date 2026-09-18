@@ -4,7 +4,6 @@ import {
   Download,
   CheckCircle2,
   AlertCircle,
-  Sparkles,
   ArrowUpCircle,
   HardDrive
 } from 'lucide-react'
@@ -141,7 +140,7 @@ export function AppUpdateCard() {
               onClick={handleRestartAndInstall}
               className="px-3.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer shadow-md"
             >
-              <Sparkles className="w-3.5 h-3.5" />
+              {/* <Sparkles className="w-3.5 h-3.5" /> */}
               Restart & Install Now
             </button>
           ) : null}

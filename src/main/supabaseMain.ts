@@ -154,8 +154,15 @@ export function subscribeToApproval(
 
         onStatusChange?.(newRow.status)
 
-        if (newRow.status === 'approved' && newRow.license_token) {
-          onApproved(newRow.license_token)
+        if (newRow.status === 'approved' || newRow.is_approved) {
+          if (newRow.license_token) {
+            onApproved(newRow.license_token)
+          } else {
+            // Admin approved in Supabase Table Editor without webhook — trigger token generation
+            requestApprovalToken(newRow).then((token) => {
+              if (token) onApproved(token)
+            })
+          }
         }
       }
     )
@@ -167,6 +174,41 @@ export function unsubscribeApproval(): void {
   if (activeChannel && client) {
     client.removeChannel(activeChannel)
     activeChannel = null
+  }
+}
+
+// Trigger Edge Function to generate & sign license token if admin approved in dashboard
+export async function requestApprovalToken(device: {
+  hwid: string
+  full_name: string
+  email: string
+  phone: string
+}): Promise<string | null> {
+  try {
+    const url = `${SUPABASE_URL}/functions/v1/approve-device`
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        record: {
+          hwid: device.hwid,
+          full_name: device.full_name,
+          email: device.email,
+          phone: device.phone,
+          status: 'approved'
+        }
+      })
+    })
+    if (!res.ok) {
+      console.error('approve-device edge function returned status:', res.status)
+      return null
+    }
+    // Re-fetch updated row from devices table to get license_token
+    const updated = await getDeviceRecord(device.hwid)
+    return updated?.license_token || null
+  } catch (err) {
+    console.error('requestApprovalToken error:', err)
+    return null
   }
 }
 

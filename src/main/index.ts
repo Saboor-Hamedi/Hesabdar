@@ -16,6 +16,7 @@ import {
   subscribeToApproval,
   unsubscribeApproval,
   getDeviceRecord,
+  requestApprovalToken,
   SUPABASE_URL,
   SUPABASE_KEY
 } from './supabaseMain'
@@ -143,8 +144,12 @@ app.whenReady().then(async () => {
   if (licenseStatus !== 'valid') {
     try {
       const hwid = generateHWID()
-      const device = await getDeviceRecord(hwid)
-      if (device?.status === 'approved' && device?.license_token) {
+      let device = await getDeviceRecord(hwid)
+      if (device && (device.status === 'approved' || device.is_approved) && !device.license_token) {
+        const token = await requestApprovalToken(device)
+        if (token) device.license_token = token
+      }
+      if (device && (device.status === 'approved' || device.is_approved) && device.license_token) {
         const payload: LicensePayload = JSON.parse(
           Buffer.from(device.license_token, 'base64').toString('utf-8')
         )
@@ -164,8 +169,12 @@ app.whenReady().then(async () => {
     }
     try {
       const hwid = generateHWID()
-      const device = await getDeviceRecord(hwid)
-      if (device?.status === 'approved' && device?.license_token) {
+      let device = await getDeviceRecord(hwid)
+      if (device && (device.status === 'approved' || device.is_approved) && !device.license_token) {
+        const token = await requestApprovalToken(device)
+        if (token) device.license_token = token
+      }
+      if (device && (device.status === 'approved' || device.is_approved) && device.license_token) {
         const payload: LicensePayload = JSON.parse(
           Buffer.from(device.license_token, 'base64').toString('utf-8')
         )
@@ -173,6 +182,9 @@ app.whenReady().then(async () => {
         licenseStatus = 'valid'
         licenseIdentity = { full_name: payload.full_name, email: payload.email, phone: payload.phone }
         return { valid: true, ...licenseIdentity }
+      }
+      if (device?.status === 'pending') {
+        return { valid: false, pending: true, full_name: device.full_name, email: device.email, phone: device.phone }
       }
     } catch {}
     return { valid: false }

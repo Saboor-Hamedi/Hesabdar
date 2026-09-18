@@ -1,165 +1,236 @@
-Run npx electron-builder --linux --publish always
-  • electron-builder  version=26.15.3 os=6.17.0-1022-azure
-  • loaded configuration  file=/home/runner/work/Hesabdar/Hesabdar/electron-builder.yml
-  • skipped dependencies rebuild  reason=npmRebuild is set to false
-  • packaging       platform=linux arch=x64 electron=39.8.10 appOutDir=dist/linux-unpacked
-  • downloaded      label=electron progress=100%
-  • downloaded electron zip extracted successfully  output=/home/runner/work/Hesabdar/Hesabdar/dist/linux-unpacked
-  • searching for node modules  pm=npm searchDir=/home/runner/work/Hesabdar/Hesabdar
-  • duplicate dependency references  dependencies=["debug@4.4.3","@types/node@22.20.3","@types/node@22.20.3","@types/responselike@1.0.3","@types/node@22.20.3","get-stream@5.2.0","responselike@2.0.1","debug@4.4.3","@types/node@22.20.3","debug@4.4.3","once@1.4.0","electron@39.8.10"]
-  • building        target=AppImage arch=x64 file=dist/hesabdar-1.0.6.AppImage
-  • electron uses desktopName as app_id / WM_CLASS for window association. Without it desktop environments may not link running windows to this .desktop entry. Set desktopName in package.json and linux.syncDesktopName: true to fix.  reason=desktopName is not set in package.json docs=https://www.electron.build/linux#window-association-desktopname--syncdesktopname
-  • default Electron icon is used  reason=application icon is not set
-  • downloaded      label=appimage-12.0.1.7z progress=100%
-  • downloaded      label=7zip-linux-x64.tar.gz progress=100%
-  • building embedded block map  file=dist/hesabdar-1.0.6.AppImage
-  • building        target=deb arch=x64 file=dist/hesabdar-1.0.6.deb
-  • publishing      publisher=Github (owner: Saboor-Hamedi, project: Hesabdar, version: 1.0.6)
-  • adding autoupdate files for: deb  resourceDir=dist/linux-unpacked/resources
-  • uploading       file=hesabdar-1.0.6.AppImage provider=github
-  • electron uses desktopName as app_id / WM_CLASS for window association. Without it desktop environments may not link running windows to this .desktop entry. Set desktopName in package.json and linux.syncDesktopName: true to fix.  reason=desktopName is not set in package.json docs=https://www.electron.build/linux#window-association-desktopname--syncdesktopname
-  • downloaded      label=fpm-1.17.0-ruby-3.4.3-linux-amd64.7z progress=100%
-  • creating GitHub release  reason=release doesn't exist tag=v1.0.6 version=1.0.6
-  • uploading       file=hesabdar-1.0.6.deb provider=github
-  ⨯ Cannot cleanup: 
+# Agent Prompt: How to Diagnose & Improve an Existing Application Icon in an Electron Project
 
-Error #1 --------------------------------------------------------------------------------
-HttpError: 422 Unprocessable Entity
-"method: post url: https://api.github.com/repos/Saboor-Hamedi/Hesabdar/releases\n\n          Data:\n          {\n  \"message\": \"Validation Failed\",\n  \"errors\": [\n    {\n      \"resource\": \"Release\",\n      \"code\": \"already_exists\",\n      \"field\": \"tag_name\"\n    }\n  ],\n  \"documentation_url\": \"https://docs.github.com/rest/releases/releases#create-a-release\",\n  \"status\": \"422\"\n}\n          "
-Headers: {
-  "date": "Thu, 17 Sep 2026 14:16:15 GMT",
-  "content-type": "application/json; charset=utf-8",
-  "content-length": "209",
-  "x-github-media-type": "github.v3; format=json",
-  "x-accepted-github-permissions": "contents=write; contents=write,workflows=write",
-  "x-github-api-version-selected": "2022-11-28",
-  "access-control-expose-headers": "ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset, Warning",
-  "access-control-allow-origin": "*",
-  "strict-transport-security": "max-age=31536000; includeSubdomains; preload",
-  "x-frame-options": "deny",
-  "x-content-type-options": "nosniff",
-  "x-xss-protection": "0",
-  "referrer-policy": "origin-when-cross-origin, strict-origin-when-cross-origin",
-  "content-security-policy": "default-src 'none'",
-  "vary": "Accept-Encoding, Accept, X-Requested-With",
-  "server": "github.com",
-  "x-ratelimit-limit": "5000",
-  "x-ratelimit-remaining": "4941",
-  "x-ratelimit-reset": "1789656724",
-  "x-ratelimit-used": "59",
-  "x-ratelimit-resource": "core",
-  "x-github-request-id": "5400:3911CF:9D4A7F:B81EB8:6AABF62E",
-  "x-github-edge-region": "westus3"
-}
-    at createHttpError (/home/runner/work/Hesabdar/Hesabdar/node_modules/builder-util-runtime/src/httpExecutor.ts:66:10)
-    at IncomingMessage.<anonymous> (/home/runner/work/Hesabdar/Hesabdar/node_modules/builder-util-runtime/src/httpExecutor.ts:241:13)
-    at IncomingMessage.emit (node:events:536:35)
-    at endReadableNT (node:internal/streams/readable:1698:12)
-    at processTicksAndRejections (node:internal/process/task_queues:82:21)
+> **Agent Prompt / Instruction**:
+> Copy and paste this prompt directly into your agent working on any existing Electron project to diagnose, upgrade, and optimize its application icon for high-clarity display on Windows, macOS, and Linux taskbars.
 
-Error #2 --------------------------------------------------------------------------------
-HttpError: 422 Unprocessable Entity
-"method: post url: https://api.github.com/repos/Saboor-Hamedi/Hesabdar/releases\n\n          Data:\n          {\n  \"message\": \"Validation Failed\",\n  \"errors\": [\n    {\n      \"resource\": \"Release\",\n      \"code\": \"already_exists\",\n      \"field\": \"tag_name\"\n    }\n  ],\n  \"documentation_url\": \"https://docs.github.com/rest/releases/releases#create-a-release\",\n  \"status\": \"422\"\n}\n          "
-Headers: {
-  "date": "Thu, 17 Sep 2026 14:16:15 GMT",
-  "content-type": "application/json; charset=utf-8",
-  "content-length": "209",
-  "x-github-media-type": "github.v3; format=json",
-  "x-accepted-github-permissions": "contents=write; contents=write,workflows=write",
-  "x-github-api-version-selected": "2022-11-28",
-  "access-control-expose-headers": "ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset, Warning",
-  "access-control-allow-origin": "*",
-  "strict-transport-security": "max-age=31536000; includeSubdomains; preload",
-  "x-frame-options": "deny",
-  "x-content-type-options": "nosniff",
-  "x-xss-protection": "0",
-  "referrer-policy": "origin-when-cross-origin, strict-origin-when-cross-origin",
-  "content-security-policy": "default-src 'none'",
-  "vary": "Accept-Encoding, Accept, X-Requested-With",
-  "server": "github.com",
-  "x-ratelimit-limit": "5000",
-  "x-ratelimit-remaining": "4941",
-  "x-ratelimit-reset": "1789656724",
-  "x-ratelimit-used": "59",
-  "x-ratelimit-resource": "core",
-  "x-github-request-id": "5400:3911CF:9D4A7F:B81EB8:6AABF62E",
-  "x-github-edge-region": "westus3"
+---
+
+```markdown
+You are tasked with improving the existing desktop application icon in this Electron project. 
+Currently, the icon may look blurry, tiny, or poorly visible on the operating system taskbar, dock, or window switcher (Alt+Tab).
+
+Follow these exact steps to diagnose and improve the existing icon:
+
+---
+
+### Step 1: Diagnose the Existing Icon
+
+1. Locate the current icon file (typically in `resources/icon.png`, `assets/icon.png`, or `build/icon.png`).
+2. Inspect the icon:
+   - **Is it a marketing poster / card?** Does it have brand text, slogans, or wide margins around a small central symbol? At 24×24px on the taskbar, text turns into illegible noise and the logo becomes microscopic.
+   - **Does it have a solid square background?** Solid black/white boxes clash with Windows 11/10 taskbars and macOS Docks.
+   - **Is the central symbol too small?** The symbol should fill ~85–90% of the canvas.
+   - **Are multi-platform formats missing?** Windows requires a multi-layered `.ico` (16, 24, 32, 48, 64, 128, 256px). macOS requires `.icns`. Linux requires 512×512 PNG and standard size packs.
+
+---
+
+### Step 2: Install Image Utilities
+
+Ensure the project has the required icon generation dependencies installed in `devDependencies`:
+
+```bash
+npm install --save-dev jimp icon-gen
+```
+
+---
+
+### Step 3: Implement the Auto-Enhancement Script
+
+Create `scripts/make-icons.js` (or update existing) with logic that automatically:
+1. Detects if the current image is an unoptimized poster/card with solid background corners.
+2. Extracts and crops strictly the central emblem/symbol (ignoring peripheral text).
+3. Converts the solid background to transparent with smooth edge antialiasing.
+4. Centers and scales the emblem to occupy **86% of the master canvas**, so it pops out prominently on small taskbars.
+5. Uses high-quality **Bicubic resampling** across all standard sizes: `[16, 24, 32, 48, 64, 128, 256, 512, 1024]`.
+6. Compiles native `.ico` for Windows and `.icns` for macOS.
+
+```javascript
+#!/usr/bin/env node
+
+const fs = require('fs');
+const path = require('path');
+const Jimp = require('jimp');
+const icongen = require('icon-gen');
+
+const SIZES = [16, 24, 32, 48, 64, 128, 256, 512, 1024];
+
+async function prepareEmblem(inputPath) {
+  const rawImage = await Jimp.read(inputPath);
+  const w = rawImage.bitmap.width;
+  const h = rawImage.bitmap.height;
+
+  // Check if corners have a solid background (card / poster style)
+  const cornerColor = Jimp.intToRGBA(rawImage.getPixelColor(10, 10));
+  const isSolidCard = cornerColor.a > 200 && cornerColor.r < 50 && cornerColor.g < 55 && cornerColor.b < 70;
+
+  if (isSolidCard) {
+    console.log('   Detected solid card. Isolating central emblem for taskbar visibility...');
+
+    // Scan top 65% area to locate central symbol and ignore lower text
+    let minX = w, maxX = 0, minY = h, maxY = 0;
+    const scanLimitY = Math.floor(h * 0.65);
+
+    for (let y = 0; y < scanLimitY; y++) {
+      for (let x = 0; x < w; x++) {
+        const c = Jimp.intToRGBA(rawImage.getPixelColor(x, y));
+        const isBg = c.r < 40 && c.g < 45 && c.b < 60;
+        if (!isBg) {
+          if (x < minX) minX = x;
+          if (x > maxX) maxX = x;
+          if (y < minY) minY = y;
+          if (y > maxY) maxY = y;
+        }
+      }
+    }
+
+    const cropX = Math.max(0, minX - 2);
+    const cropY = Math.max(0, minY - 2);
+    const cropW = Math.min(w - cropX, (maxX - minX) + 4);
+    const cropH = Math.min(h - cropY, (maxY - minY) + 4);
+
+    const emblemCrop = rawImage.clone().crop(cropX, cropY, cropW, cropH);
+
+    // Make outer background transparent with antialiasing
+    const bgR = cornerColor.r, bgG = cornerColor.g, bgB = cornerColor.b;
+    emblemCrop.scan(0, 0, emblemCrop.bitmap.width, emblemCrop.bitmap.height, function (x, y, idx) {
+      const r = this.bitmap.data[idx + 0];
+      const g = this.bitmap.data[idx + 1];
+      const b = this.bitmap.data[idx + 2];
+
+      const dist = Math.sqrt((r - bgR) ** 2 + (g - bgG) ** 2 + (b - bgB) ** 2);
+      if (dist < 26) {
+        this.bitmap.data[idx + 3] = 0;
+      } else if (dist < 42) {
+        const alpha = (dist - 26) / (42 - 26);
+        this.bitmap.data[idx + 3] = Math.floor(alpha * 255);
+      }
+    });
+
+    // Scale emblem to fill ~86% of a 1024x1024 master canvas
+    const masterSize = 1024;
+    const targetH = Math.round(masterSize * 0.86);
+    const targetW = Math.round(cropW * (targetH / cropH));
+    emblemCrop.resize(targetW, targetH, Jimp.RESIZE_BICUBIC);
+
+    const master = new Jimp(masterSize, masterSize, 0x00000000);
+    const posX = Math.floor((masterSize - targetW) / 2);
+    const posY = Math.floor((masterSize - targetH) / 2);
+    master.composite(emblemCrop, posX, posY);
+
+    return master;
+  } else {
+    return rawImage.clone().resize(1024, 1024, Jimp.RESIZE_BICUBIC);
+  }
 }
-    at createHttpError (/home/runner/work/Hesabdar/Hesabdar/node_modules/builder-util-runtime/src/httpExecutor.ts:66:10)
-    at IncomingMessage.<anonymous> (/home/runner/work/Hesabdar/Hesabdar/node_modules/builder-util-runtime/src/httpExecutor.ts:241:13)
-    at IncomingMessage.emit (node:events:536:35)
-    at endReadableNT (node:internal/streams/readable:1698:12)
-    at processTicksAndRejections (node:internal/process/task_queues:82:21)  failedTask=build stackTrace=Error: Cannot cleanup: 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    Error #1 --------------------------------------------------------------------------------
-HttpError: 422 Unprocessable Entity
-"method: post url: https://api.github.com/repos/Saboor-Hamedi/Hesabdar/releases\n\n          Data:\n          {\n  \"message\": \"Validation Failed\",\n  \"errors\": [\n    {\n      \"resource\": \"Release\",\n      \"code\": \"already_exists\",\n      \"field\": \"tag_name\"\n    }\n  ],\n  \"documentation_url\": \"https://docs.github.com/rest/releases/releases#create-a-release\",\n  \"status\": \"422\"\n}\n          "
-Headers: {
-  "date": "Thu, 17 Sep 2026 14:16:15 GMT",
-  "content-type": "application/json; charset=utf-8",
-  "content-length": "209",
-  "x-github-media-type": "github.v3; format=json",
-  "x-accepted-github-permissions": "contents=write; contents=write,workflows=write",
-  "x-github-api-version-selected": "2022-11-28",
-  "access-control-expose-headers": "ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset, Warning",
-  "access-control-allow-origin": "*",
-  "strict-transport-security": "max-age=31536000; includeSubdomains; preload",
-  "x-frame-options": "deny",
-  "x-content-type-options": "nosniff",
-  "x-xss-protection": "0",
-  "referrer-policy": "origin-when-cross-origin, strict-origin-when-cross-origin",
-  "content-security-policy": "default-src 'none'",
-  "vary": "Accept-Encoding, Accept, X-Requested-With",
-  "server": "github.com",
-  "x-ratelimit-limit": "5000",
-  "x-ratelimit-remaining": "4941",
-  "x-ratelimit-reset": "1789656724",
-  "x-ratelimit-used": "59",
-  "x-ratelimit-resource": "core",
-  "x-github-request-id": "5400:3911CF:9D4A7F:B81EB8:6AABF62E",
-  "x-github-edge-region": "westus3"
+
+async function main() {
+  const rootDir = path.resolve(__dirname, '..');
+  const inputPath = path.join(rootDir, 'resources', 'icon.png');
+  const buildDir = path.join(rootDir, 'build');
+  const iconsDir = path.join(buildDir, 'icons');
+  const stagingDir = path.join(rootDir, 'build', '.icon-staging');
+
+  if (!fs.existsSync(inputPath)) {
+    console.error(`❌ Source icon not found at: ${inputPath}`);
+    process.exit(1);
+  }
+
+  console.log(`🎨 Processing source icon: ${inputPath}...`);
+  const masterImage = await prepareEmblem(inputPath);
+
+  [buildDir, iconsDir, stagingDir].forEach((dir) => {
+    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+  });
+
+  console.log('📐 Generating multi-resolution PNGs with Bicubic smoothing...');
+  for (const size of SIZES) {
+    const resized = masterImage.clone().resize(size, size, Jimp.RESIZE_BICUBIC);
+    const stagingFile = path.join(stagingDir, `${size}.png`);
+    await resized.writeAsync(stagingFile);
+
+    const linuxIconFile = path.join(iconsDir, `${size}x${size}.png`);
+    await resized.writeAsync(linuxIconFile);
+  }
+
+  const png512 = masterImage.clone().resize(512, 512, Jimp.RESIZE_BICUBIC);
+  await png512.writeAsync(path.join(buildDir, 'icon.png'));
+  await png512.writeAsync(inputPath);
+
+  console.log('🪟 Generating Windows multi-resolution icon (.ico)...');
+  await icongen(stagingDir, buildDir, {
+    ico: { name: 'icon' },
+    report: false
+  });
+  fs.copyFileSync(
+    path.join(buildDir, 'icon.ico'),
+    path.join(rootDir, 'resources', 'icon.ico')
+  );
+
+  console.log('🍎 Generating macOS icon (.icns)...');
+  await icongen(stagingDir, buildDir, {
+    icns: { name: 'icon' },
+    report: false
+  });
+
+  fs.rmSync(stagingDir, { recursive: true, force: true });
+
+  console.log('\n🎉 Application icons generated with maximum clarity!');
+  console.log('   - Windows (.ico): build/icon.ico, resources/icon.ico');
+  console.log('   - macOS (.icns):   build/icon.icns');
+  console.log('   - Linux (.png):    build/icon.png, build/icons/*');
 }
-    at createHttpError (/home/runner/work/Hesabdar/Hesabdar/node_modules/builder-util-runtime/src/httpExecutor.ts:66:10)
-    at IncomingMessage.<anonymous> (/home/runner/work/Hesabdar/Hesabdar/node_modules/builder-util-runtime/src/httpExecutor.ts:241:13)
-    at IncomingMessage.emit (node:events:536:35)
-    at endReadableNT (node:internal/streams/readable:1698:12)
-    at processTicksAndRejections (node:internal/process/task_queues:82:21)
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    Error #2 --------------------------------------------------------------------------------
-HttpError: 422 Unprocessable Entity
-"method: post url: https://api.github.com/repos/Saboor-Hamedi/Hesabdar/releases\n\n          Data:\n          {\n  \"message\": \"Validation Failed\",\n  \"errors\": [\n    {\n      \"resource\": \"Release\",\n      \"code\": \"already_exists\",\n      \"field\": \"tag_name\"\n    }\n  ],\n  \"documentation_url\": \"https://docs.github.com/rest/releases/releases#create-a-release\",\n  \"status\": \"422\"\n}\n          "
-Headers: {
-  "date": "Thu, 17 Sep 2026 14:16:15 GMT",
-  "content-type": "application/json; charset=utf-8",
-  "content-length": "209",
-  "x-github-media-type": "github.v3; format=json",
-  "x-accepted-github-permissions": "contents=write; contents=write,workflows=write",
-  "x-github-api-version-selected": "2022-11-28",
-  "access-control-expose-headers": "ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset, Warning",
-  "access-control-allow-origin": "*",
-  "strict-transport-security": "max-age=31536000; includeSubdomains; preload",
-  "x-frame-options": "deny",
-  "x-content-type-options": "nosniff",
-  "x-xss-protection": "0",
-  "referrer-policy": "origin-when-cross-origin, strict-origin-when-cross-origin",
-  "content-security-policy": "default-src 'none'",
-  "vary": "Accept-Encoding, Accept, X-Requested-With",
-  "server": "github.com",
-  "x-ratelimit-limit": "5000",
-  "x-ratelimit-remaining": "4941",
-  "x-ratelimit-reset": "1789656724",
-  "x-ratelimit-used": "59",
-  "x-ratelimit-resource": "core",
-  "x-github-request-id": "5400:3911CF:9D4A7F:B81EB8:6AABF62E",
-  "x-github-edge-region": "westus3"
-}
-    at createHttpError (/home/runner/work/Hesabdar/Hesabdar/node_modules/builder-util-runtime/src/httpExecutor.ts:66:10)
-    at IncomingMessage.<anonymous> (/home/runner/work/Hesabdar/Hesabdar/node_modules/builder-util-runtime/src/httpExecutor.ts:241:13)
-    at IncomingMessage.emit (node:events:536:35)
-    at endReadableNT (node:internal/streams/readable:1698:12)
-    at processTicksAndRejections (node:internal/process/task_queues:82:21)
-    at throwError (/home/runner/work/Hesabdar/Hesabdar/node_modules/builder-util/src/asyncTaskManager.ts:88:11)
-    at checkErrors (/home/runner/work/Hesabdar/Hesabdar/node_modules/builder-util/src/asyncTaskManager.ts:53:9)
-    at AsyncTaskManager.awaitTasks (/home/runner/work/Hesabdar/Hesabdar/node_modules/builder-util/src/asyncTaskManager.ts:58:5)
-    at PublishManager.awaitTasks (/home/runner/work/Hesabdar/Hesabdar/node_modules/app-builder-lib/src/publish/PublishManager.ts:247:28)
-    at /home/runner/work/Hesabdar/Hesabdar/node_modules/app-builder-lib/src/index.ts:151:32
-    at executeFinally (/home/runner/work/Hesabdar/Hesabdar/node_modules/builder-util/src/promise.ts:23:9)
-Error: Process completed with exit code 1.
+
+main().catch((err) => {
+  console.error('❌ Failed to generate icons:', err);
+  process.exit(1);
+});
+```
+
+---
+
+### Step 4: Wire Build Scripts & Electron Runtime
+
+1. **In `package.json`**:
+   Add `"make:icon": "node scripts/make-icons.js"` to `"scripts"`.
+
+2. **In Main Process (`src/main/index.ts` or `src/main.js`)**:
+   Check `createWindow()`:
+   * **Do NOT** limit icon to Linux: remove `...(process.platform === 'linux' ? { icon } : {})`.
+   * Set `icon` unconditionally so the custom icon appears during development on Windows & Linux:
+     ```typescript
+     const mainWindow = new BrowserWindow({
+       ...
+       icon, // Points to resources/icon.png
+     })
+     ```
+   * Set `app.setAppUserModelId('com.yourcompany.app')` inside `app.whenReady()` to bind the Windows taskbar pinned icon correctly.
+
+3. **In `electron-builder.yml`**:
+   Explicitly link icon paths for all platforms:
+   ```yaml
+   directories:
+     buildResources: build
+
+   win:
+     icon: build/icon.ico
+
+   mac:
+     icon: build/icon.icns
+
+   linux:
+     icon: build/icons
+   ```
+
+---
+
+### Step 5: Execute & Verify
+Run the generator:
+```bash
+npm run make:icon
+```
+Then verify with:
+```bash
+npm run typecheck
+npm run build
+```
+```
