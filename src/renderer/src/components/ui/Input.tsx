@@ -232,8 +232,8 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             value={value}
             placeholder={placeholder}
             className={`
-              w-full h-9 px-3 text-xs rounded-lg transition-all duration-150
-              ${isNumber ? 'font-mono' : ''}
+              w-full h-9 px-3 text-xs rounded-lg transition-colors duration-150
+              ${isNumber ? 'font-mono [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none' : ''}
               ${
                 variant === 'light'
                   ? 'bg-[#F9FAFB] hover:bg-[#F3F4F6] text-[#1F2937] placeholder:text-gray-400 border border-transparent focus:border-[#5A8F7B]/40 focus:bg-white'
@@ -241,7 +241,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
               }
               focus:outline-none focus:ring-2 focus:ring-[#5A8F7B]/20
               ${startIcon ? 'ps-8' : ''}
-              ${hasValidationIcon || endIcon || suffix ? (suffix ? 'pe-18' : 'pe-8') : ''}
+              ${suffix ? (showValidationMark ? 'pe-18' : 'pe-12') : showValidationMark || endIcon ? 'pe-8' : 'pe-3'}
               ${
                 validation?.isValid
                   ? 'border-emerald-500/60 focus:border-emerald-600 focus:ring-emerald-500/20'
@@ -258,11 +258,11 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             {...props}
           />
 
-          {/* Static currency or text suffix */}
+          {/* Static currency or text suffix - 100% solid position */}
           {suffix && (
             <span
               className={`absolute text-xs font-mono font-medium text-[#6B7280] pointer-events-none select-none ${
-                hasValidationIcon ? 'end-8' : 'end-3'
+                showValidationMark ? 'end-7' : 'end-3'
               }`}
             >
               {suffix}

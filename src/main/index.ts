@@ -26,6 +26,12 @@ import {
   SUPABASE_KEY
 } from './supabaseMain'
 import { setupUpdater } from './updater'
+import {
+  getCatalogItems,
+  seedCatalogItems,
+  searchCatalogItems,
+  type CatalogItem
+} from './catalogManager'
 
 const getLanguageFilePath = (): string => join(app.getPath('userData'), 'language.json')
 const getSettingsFilePath = (): string => join(app.getPath('userData'), 'settings.json')
@@ -552,6 +558,25 @@ app.whenReady().then(async () => {
 
   // IPC test
   ipcMain.on('ping', () => console.log('pong'))
+
+  // ── Catalog IPC ──────────────────────────────────────────────────────────
+  // Returns all catalog items from catalog.json in userData.
+  // If catalog.json is missing/empty, returns [] — renderer falls back to built-in seed.
+  ipcMain.handle('catalog:getAll', async () => {
+    return await getCatalogItems()
+  })
+
+  // Bulk-seed catalog items into catalog.json (only writes if file is empty / missing).
+  // Renderer calls this on first launch, passing the built-in 64+ item array.
+  ipcMain.handle('catalog:seed', async (_e, items: CatalogItem[]) => {
+    return await seedCatalogItems(items)
+  })
+
+  // Full-text search across all catalog fields (English, Dari, Pashto, barcode, category).
+  ipcMain.handle('catalog:search', async (_e, query: string) => {
+    return await searchCatalogItems(query)
+  })
+  // ── End Catalog IPC ───────────────────────────────────────────────────────
 
   createWindow()
   setupUpdater()

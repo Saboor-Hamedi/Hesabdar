@@ -1,6 +1,9 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect, useCallback } from 'react'
 import { Search, Plus, Check, X, ArrowUpRight, Package } from 'lucide-react'
-import { COMMON_CATALOG_ITEMS, type CatalogItem } from '../../../core/products/catalogData'
+import {
+  initAndGetCatalog,
+  type CatalogItem
+} from '../../../core/products/catalogData'
 import type { Product } from '../../../core/types'
 import { Modal } from '../../../components/ui/Modal'
 import { Button } from '../../../components/ui/Button'
@@ -14,6 +17,22 @@ interface CatalogTableModalProps {
   onSelectForCustomize?: (item: CatalogItem) => void
 }
 
+/** Normalized search index entry — built once when catalog loads, never rebuilt on search */
+interface IndexEntry {
+  item: CatalogItem
+  /** Single pre-lowercased string: "name_en|name_fa|name_ps|barcode|category" */
+  haystack: string
+}
+
+function buildIndex(items: CatalogItem[]): IndexEntry[] {
+  return items.map((item) => ({
+    item,
+    haystack: [item.name_en, item.name_fa, item.name_ps, item.barcode, item.category]
+      .join('|')
+      .toLowerCase()
+  }))
+}
+
 export function CatalogTableModal({
   isOpen,
   onClose,
@@ -23,41 +42,57 @@ export function CatalogTableModal({
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedCategory, setSelectedCategory] = useState<string>('All')
   const [recentlyAddedIds, setRecentlyAddedIds] = useState<Set<string>>(new Set())
+  const [catalogItems, setCatalogItems] = useState<CatalogItem[]>([])
+  const [searchIndex, setSearchIndex] = useState<IndexEntry[]>([])
 
-  // Distinct categories from catalog
+  // Load from disk once per open; build index immediately after
+  useEffect(() => {
+    if (!isOpen) return
+    let cancelled = false
+    initAndGetCatalog().then((items) => {
+      if (cancelled) return
+      setCatalogItems(items)
+      setSearchIndex(buildIndex(items))
+    })
+    return () => { cancelled = true }
+  }, [isOpen])
+
+  // Distinct categories — derived from the loaded items, not recomputed on every search
   const categories = useMemo(() => {
+    const seen = new Set<string>()
+    catalogItems.forEach((it) => seen.add(it.category))
+    return ['All', ...Array.from(seen)]
+  }, [catalogItems])
+
+  // O(1) inventory lookup by barcode+name — pre-built Set for instant membership test
+  const inventorySet = useMemo(() => {
     const set = new Set<string>()
-    COMMON_CATALOG_ITEMS.forEach((it) => set.add(it.category))
-    return ['All', ...Array.from(set)]
-  }, [])
+    existingProducts.forEach((p) => {
+      if (p.barcode) set.add(`bc:${p.barcode}`)
+      if (p.name_fa) set.add(`fa:${p.name_fa.trim().toLowerCase()}`)
+      if (p.name_en) set.add(`en:${p.name_en.trim().toLowerCase()}`)
+    })
+    return set
+  }, [existingProducts])
 
-  // Check if an item already exists in the user's inventory
-  const isItemInInventory = (item: CatalogItem) => {
+  const isItemInInventory = useCallback((item: CatalogItem): boolean => {
     if (recentlyAddedIds.has(item.id)) return true
-    return existingProducts.some(
-      (p) =>
-        (p.barcode && p.barcode === item.barcode) ||
-        p.name_fa.trim().toLowerCase() === item.name_fa.trim().toLowerCase() ||
-        (p.name_en && item.name_en && p.name_en.trim().toLowerCase() === item.name_en.trim().toLowerCase())
+    return (
+      (!!item.barcode && inventorySet.has(`bc:${item.barcode}`)) ||
+      inventorySet.has(`fa:${item.name_fa.trim().toLowerCase()}`) ||
+      (!!item.name_en && inventorySet.has(`en:${item.name_en.trim().toLowerCase()}`))
     )
-  }
+  }, [recentlyAddedIds, inventorySet])
 
-  // Filtered items based on search query and category
+  // Fast search: single-pass over the pre-built index, one contains() call per item
   const filteredItems = useMemo(() => {
     const q = searchQuery.trim().toLowerCase()
-    return COMMON_CATALOG_ITEMS.filter((item) => {
-      const matchesCat = selectedCategory === 'All' || item.category === selectedCategory
-      if (!matchesCat) return false
-      if (!q) return true
-      return (
-        item.name_en.toLowerCase().includes(q) ||
-        item.name_fa.toLowerCase().includes(q) ||
-        item.name_ps.toLowerCase().includes(q) ||
-        item.barcode.toLowerCase().includes(q) ||
-        item.category.toLowerCase().includes(q)
-      )
-    })
-  }, [searchQuery, selectedCategory])
+    const byCategory = selectedCategory === 'All'
+      ? searchIndex
+      : searchIndex.filter((e) => e.item.category === selectedCategory)
+    if (!q) return byCategory.map((e) => e.item)
+    return byCategory.filter((e) => e.haystack.includes(q)).map((e) => e.item)
+  }, [searchQuery, selectedCategory, searchIndex])
 
   // One-click quick add into store
   const handleQuickAdd = (item: CatalogItem) => {
@@ -105,7 +140,7 @@ export function CatalogTableModal({
       subtitle="Pre-configured Afghan commodities with English, Dari, and Pashto names, units, and standard market pricing."
       badge={
         <span className="text-xs font-mono font-semibold px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200/60 shadow-2xs">
-          {COMMON_CATALOG_ITEMS.length} Commodities
+          {catalogItems.length} Commodities
         </span>
       }
       style={{ width: '940px', maxWidth: '95vw', height: '700px', maxHeight: '92vh' }}
@@ -270,7 +305,7 @@ export function CatalogTableModal({
         {/* Footer Actions matching DebtPaymentModal */}
         <div className="flex items-center justify-between pt-4 border-t border-gray-100 shrink-0">
           <span className="text-[11px] text-gray-400">
-            Showing {filteredItems.length} of {COMMON_CATALOG_ITEMS.length} standard commodities • Click Add to register instantly
+            Showing {filteredItems.length} of {catalogItems.length} standard commodities • Click Add to register instantly
           </span>
           <div className="flex items-center gap-3">
             <Button variant="ghost" onClick={onClose}>

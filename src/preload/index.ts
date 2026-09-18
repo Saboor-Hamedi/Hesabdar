@@ -89,6 +89,11 @@ const api = {
       ipcRenderer.on('admin:devices-changed', handler)
       return () => ipcRenderer.off('admin:devices-changed', handler)
     }
+  },
+  catalog: {
+    getAll: (): Promise<any[]> => ipcRenderer.invoke('catalog:getAll'),
+    seed: (items: any[]): Promise<{ seeded: number }> => ipcRenderer.invoke('catalog:seed', items),
+    search: (query: string): Promise<any[]> => ipcRenderer.invoke('catalog:search', query)
   }
 }
 

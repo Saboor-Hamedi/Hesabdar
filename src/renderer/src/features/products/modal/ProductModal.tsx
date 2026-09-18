@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { Plus, Check, BookOpen, Package } from 'lucide-react'
 import type { ProductFormValues } from '../../../core/validation/schemas'
 import type { Product, UnitType } from '../../../core/types'
+import { COMMON_CATALOG_ITEMS } from '../../../core/products/catalogData'
 import { Modal } from '../../../components/ui/Modal'
 import { Button } from '../../../components/ui/Button'
 import { Input } from '../../../components/ui/Input'
@@ -34,6 +35,38 @@ export function ProductModal({
 }: ProductModalProps) {
   const { t } = useTranslation()
   const isEditing = Boolean(editingProduct)
+
+  // Smart English name search: auto-fills Persian & Pashto if matched, but clearing English NEVER wipes them out
+  const handleEnglishNameChange = (val: string) => {
+    onChangeForm((prev) => {
+      const next = { ...prev, name_en: val }
+      const q = val.trim().toLowerCase()
+
+      // When user types at least 3 characters in English (e.g. "wheat", "rice", "oil", "sugar", "tea")
+      if (q.length >= 3) {
+        const match = COMMON_CATALOG_ITEMS.find((it) => {
+          const en = it.name_en.toLowerCase()
+          return (
+            en === q ||
+            en.startsWith(q) ||
+            en.split(/[\s\-\(\)\/]+/).some((w) => w.length >= 3 && (w.startsWith(q) || q.startsWith(w)))
+          )
+        })
+
+        if (match) {
+          next.name_fa = match.name_fa
+          next.name_ps = match.name_ps
+          if (!next.barcode) next.barcode = match.barcode
+          if (!next.unit || next.unit === 'pcs') next.unit = match.unit
+          if (!next.cost_price || next.cost_price === 0) next.cost_price = match.suggested_cost
+          if (!next.sell_price || next.sell_price === 0) next.sell_price = match.suggested_price
+          if (!next.stock_qty || next.stock_qty === 0) next.stock_qty = match.default_stock
+        }
+      }
+      // If cleared or shorter than 3 chars, do not alter name_fa or name_ps so users can freely re-write
+      return next
+    })
+  }
 
   return (
     <Modal
@@ -125,7 +158,7 @@ export function ProductModal({
                 label="Name in English"
                 placeholder="e.g. Cooking Oil, Rice, Sugar..."
                 value={form.name_en || ''}
-                onChange={(e) => onChangeForm((f) => ({ ...f, name_en: e.target.value }))}
+                onChange={(e) => handleEnglishNameChange(e.target.value)}
                 error={errors.name_en}
               />
 

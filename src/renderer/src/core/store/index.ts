@@ -5,7 +5,7 @@ import { COMMON_CATALOG_ITEMS } from '../products/catalogData'
  * Clean default starter commodities for fresh app installation.
  * Ensures POS and Inventory searches work instantly with realistic Afghan store goods.
  */
-export const INITIAL_DEFAULT_PRODUCTS: Product[] = COMMON_CATALOG_ITEMS.slice(0, 10).map((item, index) => ({
+export const INITIAL_DEFAULT_PRODUCTS: Product[] = COMMON_CATALOG_ITEMS.slice(0, 25).map((item, index) => ({
   id: index + 1,
   barcode: item.barcode,
   name_fa: item.name_fa,

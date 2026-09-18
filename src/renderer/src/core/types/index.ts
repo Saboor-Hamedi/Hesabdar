@@ -24,6 +24,19 @@ export interface Category {
   name_en?: string | null
 }
 
+export interface CatalogItem {
+  id: string
+  barcode: string
+  name_fa: string
+  name_ps: string
+  name_en: string
+  unit: UnitType
+  category: string
+  suggested_cost: number
+  suggested_price: number
+  default_stock: number
+}
+
 export interface Customer {
   id: number
   name: string
