@@ -45,6 +45,14 @@ export interface AppAPI {
     onStatusChange: (cb: (status: any, data?: any) => void) => () => void
     onProgress: (cb: (progress: any) => void) => () => void
   }
+  admin?: {
+    getDevices: () => Promise<any[]>
+    getCurrentHwid: () => Promise<string>
+    approveDevice: (hwid: string) => Promise<{ success: boolean; error?: string }>
+    revokeDevice: (hwid: string) => Promise<{ success: boolean; error?: string }>
+    deleteDevice: (hwid: string) => Promise<{ success: boolean; error?: string }>
+    onDevicesChanged: (cb: () => void) => () => void
+  }
   products?: any
 }
 

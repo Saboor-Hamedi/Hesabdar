@@ -8,6 +8,7 @@ import {
   Truck,
   BarChart3,
   Settings,
+  ShieldCheck,
 } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 
@@ -30,17 +31,21 @@ export const ACTIVITY_ITEMS: ActivityItem[] = [
 interface Props {
   active: string
   onChange: (id: string) => void
+  isAdmin?: boolean
 }
 
 /**
  * ActivityBar: Side icon rail with live translations and 5px radius buttons.
  */
-export function ActivityBar({ active, onChange }: Props) {
+export function ActivityBar({ active, onChange, isAdmin = false }: Props) {
   const { t } = useTranslation()
+  const items = isAdmin
+    ? [...ACTIVITY_ITEMS, { id: 'admin', icon: ShieldCheck }]
+    : ACTIVITY_ITEMS
 
   return (
     <nav className="flex w-14 flex-col items-center gap-2.5 border-e border-gray-200/60 bg-[#FAFAFA] py-3 select-none">
-      {ACTIVITY_ITEMS.map(({ id, icon: Icon }) => {
+      {items.map(({ id, icon: Icon }) => {
         const isActive = active === id
         const label = t(`nav.${id}`)
         return (

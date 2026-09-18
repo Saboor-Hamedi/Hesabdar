@@ -12,7 +12,8 @@
     "customers": "مشتریان",
     "suppliers": "تأمین‌کنندگان",
     "reports": "گزارشات",
-    "settings": "تنظیمات"
+    "settings": "تنظیمات",
+    "admin": "لایسنس‌ها"
   },
   "common": {
     "add": "افزودن",
@@ -241,7 +242,8 @@
     "dateTime": "تاریخ و ساعت",
     "payment": "نوع پرداخت",
     "total": "مجموع کل",
-    "showingToOf": "نمایش {{from}} تا {{to}} از مجموع {{total}}"
+    "showingToOf": "نمایش {{from}} تا {{to}} از مجموع {{total}}",
+    "perPage": "در هر صفحه"
   },
   "sold": {
     "title": "فاکتورهای تکمیل‌شده و فروشات",

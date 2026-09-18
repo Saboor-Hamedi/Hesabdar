@@ -77,6 +77,18 @@ const api = {
       ipcRenderer.on('update:progress', handler)
       return () => ipcRenderer.off('update:progress', handler)
     }
+  },
+  admin: {
+    getDevices: () => ipcRenderer.invoke('admin:get-devices'),
+    getCurrentHwid: () => ipcRenderer.invoke('admin:get-current-hwid'),
+    approveDevice: (hwid: string) => ipcRenderer.invoke('admin:approve-device', hwid),
+    revokeDevice: (hwid: string) => ipcRenderer.invoke('admin:revoke-device', hwid),
+    deleteDevice: (hwid: string) => ipcRenderer.invoke('admin:delete-device', hwid),
+    onDevicesChanged: (cb: () => void) => {
+      const handler = () => cb()
+      ipcRenderer.on('admin:devices-changed', handler)
+      return () => ipcRenderer.off('admin:devices-changed', handler)
+    }
   }
 }
 

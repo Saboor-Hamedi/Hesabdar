@@ -7,6 +7,7 @@ import {
   checkLicense,
   generateHWID,
   saveLicense,
+  deleteLicense,
   backgroundRevocationCheck,
   type LicensePayload
 } from './licenseManager'
@@ -14,9 +15,13 @@ import {
   signInAnonymously,
   registerDevice,
   subscribeToApproval,
-  unsubscribeApproval,
+  subscribeToDeviceLifecycle,
   getDeviceRecord,
-  requestApprovalToken,
+  getAllDevices,
+  approveDeviceByAdmin,
+  revokeDeviceByAdmin,
+  deleteDeviceByAdmin,
+  subscribeToAllDevices,
   SUPABASE_URL,
   SUPABASE_KEY
 } from './supabaseMain'
@@ -139,55 +144,125 @@ app.whenReady().then(async () => {
   let licenseIdentity = licenseResult.valid
     ? { full_name: licenseResult.full_name!, email: licenseResult.email!, phone: licenseResult.phone! }
     : null
+  let isAdmin = process.env.IS_ADMIN === 'true' || process.env.VITE_IS_ADMIN === 'true'
 
-  // If local license is missing, check if Supabase already approved this machine
-  if (licenseStatus !== 'valid') {
-    try {
-      const hwid = generateHWID()
-      let device = await getDeviceRecord(hwid)
-      if (device && (device.status === 'approved' || device.is_approved) && !device.license_token) {
-        const token = await requestApprovalToken(device)
-        if (token) device.license_token = token
-      }
-      if (device && (device.status === 'approved' || device.is_approved) && device.license_token) {
-        const payload: LicensePayload = JSON.parse(
-          Buffer.from(device.license_token, 'base64').toString('utf-8')
-        )
-        await saveLicense(payload)
-        licenseStatus = 'valid'
-        licenseIdentity = { full_name: payload.full_name, email: payload.email, phone: payload.phone }
-      }
-    } catch (err) {
-      console.error('Remote check on startup error:', err)
+  try {
+    const hwid = generateHWID()
+    let device = await getDeviceRecord(hwid)
+    if (device && (device.is_admin || device.role === 'admin')) {
+      isAdmin = true
     }
+
+    if (isAdmin) {
+      // Admin is permanently licensed and exempt from customer licensing checks
+      licenseStatus = 'valid'
+      licenseIdentity = {
+        full_name: device?.full_name || 'Administrator',
+        email: device?.email || 'admin@hesabdar.local',
+        phone: device?.phone || ''
+      }
+      subscribeToAllDevices(() => {
+        BrowserWindow.getAllWindows().forEach((w) => {
+          w.webContents.send('admin:devices-changed')
+        })
+      })
+    } else {
+      // Customer machine check
+      if (device && (device.status === 'revoked' || device.status === 'rejected' || device.is_approved === false)) {
+        await deleteLicense()
+        licenseStatus = 'locked'
+        licenseIdentity = null
+      } else if (licenseStatus !== 'valid') {
+        const isDeviceApproved = device && device.status === 'approved' && device.is_approved === true && device.status !== 'revoked'
+        if (isDeviceApproved && device.license_token) {
+          try {
+            const payload: LicensePayload = JSON.parse(
+              Buffer.from(device.license_token, 'base64').toString('utf-8')
+            )
+            await saveLicense(payload)
+            licenseStatus = 'valid'
+            licenseIdentity = { full_name: payload.full_name, email: payload.email, phone: payload.phone }
+          } catch {}
+        }
+      }
+
+      // Continuous Realtime listener for customer device updates (instant approve & instant revoke)
+      subscribeToDeviceLifecycle(hwid, {
+        onApproved: async (licenseToken: string) => {
+          try {
+            const payload: LicensePayload = JSON.parse(
+              Buffer.from(licenseToken, 'base64').toString('utf-8')
+            )
+            await saveLicense(payload)
+            licenseStatus = 'valid'
+            licenseIdentity = { full_name: payload.full_name, email: payload.email, phone: payload.phone }
+            BrowserWindow.getAllWindows().forEach((w) =>
+              w.webContents.send('license:activated', licenseIdentity)
+            )
+          } catch (err) {
+            console.error('Realtime approval save error:', err)
+          }
+        },
+        onRevoked: async () => {
+          await deleteLicense()
+          licenseStatus = 'locked'
+          licenseIdentity = null
+          BrowserWindow.getAllWindows().forEach((w) =>
+            w.webContents.send('license:revoked')
+          )
+        },
+        onStatusChange: (status: string) => {
+          BrowserWindow.getAllWindows().forEach((w) =>
+            w.webContents.send('license:status-change', status)
+          )
+        }
+      })
+    }
+  } catch (err) {
+    console.error('Remote check on startup error:', err)
   }
 
   // IPC: renderer asks for license status on mount
   ipcMain.handle('license:check', async () => {
-    if (licenseStatus === 'valid') {
-      return { valid: true, ...licenseIdentity }
+    if (isAdmin) {
+      return { valid: true, isAdmin: true, ...licenseIdentity }
     }
+
+    if (licenseStatus === 'valid') {
+      return { valid: true, isAdmin: false, ...licenseIdentity }
+    }
+
     try {
       const hwid = generateHWID()
       let device = await getDeviceRecord(hwid)
-      if (device && (device.status === 'approved' || device.is_approved) && !device.license_token) {
-        const token = await requestApprovalToken(device)
-        if (token) device.license_token = token
+      if (device && (device.is_admin || device.role === 'admin')) {
+        isAdmin = true
+        return { valid: true, isAdmin: true, ...licenseIdentity }
       }
-      if (device && (device.status === 'approved' || device.is_approved) && device.license_token) {
+
+      if (device && (device.status === 'revoked' || device.status === 'rejected' || device.is_approved === false)) {
+        await deleteLicense()
+        licenseStatus = 'locked'
+        licenseIdentity = null
+        return { valid: false, status: 'revoked', isAdmin: false }
+      }
+
+      if (device?.status === 'pending') {
+        return { valid: false, pending: true, full_name: device.full_name, email: device.email, phone: device.phone, isAdmin: false }
+      }
+
+      if (device && device.status === 'approved' && device.is_approved === true && device.license_token) {
         const payload: LicensePayload = JSON.parse(
           Buffer.from(device.license_token, 'base64').toString('utf-8')
         )
         await saveLicense(payload)
         licenseStatus = 'valid'
         licenseIdentity = { full_name: payload.full_name, email: payload.email, phone: payload.phone }
-        return { valid: true, ...licenseIdentity }
-      }
-      if (device?.status === 'pending') {
-        return { valid: false, pending: true, full_name: device.full_name, email: device.email, phone: device.phone }
+        return { valid: true, isAdmin: false, ...licenseIdentity }
       }
     } catch {}
-    return { valid: false }
+
+    return { valid: false, isAdmin: false }
   })
 
   // IPC: renderer gets identity after activation
@@ -220,12 +295,10 @@ app.whenReady().then(async () => {
             licenseStatus = 'valid'
             licenseIdentity = { full_name: payload.full_name, email: payload.email, phone: payload.phone }
 
-            // Notify renderer to unlock
+            // Notify renderer of activation success
             BrowserWindow.getAllWindows().forEach(w =>
               w.webContents.send('license:activated', licenseIdentity)
             )
-
-            unsubscribeApproval()
           } catch (err) {
             console.error('Failed to save license after approval:', err)
           }
@@ -242,6 +315,76 @@ app.whenReady().then(async () => {
     } catch (e: any) {
       return { success: false, error: e?.message || 'Unknown error' }
     }
+  })
+
+  // ── Admin Device Management IPC ──────────────────────────────────────────
+  ipcMain.handle('admin:get-devices', async () => {
+    if (!isAdmin) return []
+    return await getAllDevices()
+  })
+
+  ipcMain.handle('admin:get-current-hwid', async () => {
+    return generateHWID()
+  })
+
+  ipcMain.handle('admin:approve-device', async (_e, hwid: string) => {
+    if (!isAdmin) return { success: false, error: 'Unauthorized' }
+    const myHwid = generateHWID()
+    if (hwid === myHwid) {
+      return { success: false, error: 'Administrator machine does not need manual approval.' }
+    }
+    const target = await getDeviceRecord(hwid)
+    if (target?.is_admin) {
+      return { success: false, error: 'Administrator device does not need manual approval.' }
+    }
+
+    const result = await approveDeviceByAdmin(hwid)
+    if (result.success) {
+      BrowserWindow.getAllWindows().forEach((w) => {
+        w.webContents.send('admin:devices-changed')
+      })
+    }
+    return result
+  })
+
+  ipcMain.handle('admin:revoke-device', async (_e, hwid: string) => {
+    if (!isAdmin) return { success: false, error: 'Unauthorized' }
+    const myHwid = generateHWID()
+    if (hwid === myHwid) {
+      return { success: false, error: 'You cannot revoke the Administrator account.' }
+    }
+    const target = await getDeviceRecord(hwid)
+    if (target?.is_admin) {
+      return { success: false, error: 'Cannot revoke an administrator account.' }
+    }
+
+    const result = await revokeDeviceByAdmin(hwid)
+    if (result.success) {
+      BrowserWindow.getAllWindows().forEach((w) => {
+        w.webContents.send('admin:devices-changed')
+      })
+    }
+    return result
+  })
+
+  ipcMain.handle('admin:delete-device', async (_e, hwid: string) => {
+    if (!isAdmin) return { success: false, error: 'Unauthorized' }
+    const myHwid = generateHWID()
+    if (hwid === myHwid) {
+      return { success: false, error: 'You cannot delete the Administrator account.' }
+    }
+    const target = await getDeviceRecord(hwid)
+    if (target?.is_admin) {
+      return { success: false, error: 'Cannot delete an administrator device.' }
+    }
+
+    const result = await deleteDeviceByAdmin(hwid)
+    if (result.success) {
+      BrowserWindow.getAllWindows().forEach((w) => {
+        w.webContents.send('admin:devices-changed')
+      })
+    }
+    return result
   })
   // ── End License Bootstrap ─────────────────────────────────────────────────
 
@@ -413,18 +556,21 @@ app.whenReady().then(async () => {
   createWindow()
   setupUpdater()
 
-  // Background revocation check — 8 seconds after startup, non-blocking
-  if (licenseStatus === 'valid' && licenseIdentity) {
-    setTimeout(async () => {
+  // Periodic background revocation check for customer machines (initial check at 4s, recurring every 25s)
+  if (!isAdmin) {
+    const runCustomerRevocationCheck = async () => {
       const hwid = generateHWID()
       await backgroundRevocationCheck(hwid, SUPABASE_URL, SUPABASE_KEY, () => {
         licenseStatus = 'locked'
         licenseIdentity = null
-        BrowserWindow.getAllWindows().forEach(w =>
+        BrowserWindow.getAllWindows().forEach((w) =>
           w.webContents.send('license:revoked')
         )
       })
-    }, 8000)
+    }
+
+    setTimeout(runCustomerRevocationCheck, 4000)
+    setInterval(runCustomerRevocationCheck, 25000)
   }
 
   app.on('activate', function () {

@@ -1,6 +1,7 @@
-import { useMemo, useState, type ReactNode } from 'react'
+import { useMemo, useState, useEffect, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
-import { ChevronLeft, ChevronRight, Search } from 'lucide-react'
+import { Search } from 'lucide-react'
+import { Pagination } from './Pagination'
 
 /**
  * Column definition for generic DataTable
@@ -48,6 +49,12 @@ export function DataTable<T>({
   const [search, setSearch] = useState('')
   const [sort, setSort] = useState<{ key: string; dir: 'asc' | 'desc' } | null>(null)
   const [page, setPage] = useState(1)
+  const [currentPageSize, setCurrentPageSize] = useState(pageSize || 10)
+
+  // Keep internal page size in sync if prop changes
+  useEffect(() => {
+    if (pageSize) setCurrentPageSize(pageSize)
+  }, [pageSize])
 
   // Filter data based on search term
   const filtered = useMemo(() => {
@@ -79,11 +86,10 @@ export function DataTable<T>({
   }, [filtered, sort])
 
   // Paginate sorted data
-  const totalPages = Math.max(1, Math.ceil(sorted.length / pageSize))
   const paginated = useMemo(() => {
-    const start = (page - 1) * pageSize
-    return sorted.slice(start, start + pageSize)
-  }, [sorted, page, pageSize])
+    const start = (page - 1) * currentPageSize
+    return sorted.slice(start, start + currentPageSize)
+  }, [sorted, page, currentPageSize])
 
   const alignClass = (a?: Column<T>['align']) =>
     a === 'center' ? 'text-center' : a === 'end' ? 'text-end' : 'text-start'
@@ -173,35 +179,14 @@ export function DataTable<T>({
       </div>
 
       {/* Pagination Footer */}
-      {totalPages > 1 && (
-        <div className="flex items-center justify-between text-[11px] text-gray-500 px-1">
-          <span>
-            {t('table.showingToOf', {
-              from: Math.min((page - 1) * pageSize + 1, sorted.length),
-              to: Math.min(page * pageSize, sorted.length),
-              total: sorted.length,
-            })}
-          </span>
-          <div className="flex items-center gap-1">
-            <button
-              onClick={() => setPage((p) => Math.max(1, p - 1))}
-              disabled={page === 1}
-              className="p-1 rounded-[5px] border border-gray-200 hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
-            >
-              <ChevronLeft className="w-3.5 h-3.5" />
-            </button>
-            <span className="px-2 py-0.5 text-xs font-medium text-gray-700 bg-gray-100 rounded-[5px]">
-              {page} / {totalPages}
-            </span>
-            <button
-              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-              disabled={page === totalPages}
-              className="p-1 rounded-[5px] border border-gray-200 hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
-            >
-              <ChevronRight className="w-3.5 h-3.5" />
-            </button>
-          </div>
-        </div>
+      {sorted.length > 0 && (
+        <Pagination
+          currentPage={page}
+          totalItems={sorted.length}
+          pageSize={currentPageSize}
+          onPageChange={setPage}
+          onPageSizeChange={setCurrentPageSize}
+        />
       )}
     </div>
   )

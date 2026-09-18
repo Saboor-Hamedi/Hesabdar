@@ -122,22 +122,24 @@ export async function registerDevice(params: {
   }
 }
 
-// Subscribe to approval — isolated Realtime channel filtered to this exact HWID
-export function subscribeToApproval(
+// Subscribe to device lifecycle changes (approval AND revocation) in Realtime
+export function subscribeToDeviceLifecycle(
   hwid: string,
-  onApproved: (licenseToken: string) => void,
-  onStatusChange?: (status: string) => void
+  callbacks: {
+    onApproved: (licenseToken: string) => void
+    onRevoked: () => void
+    onStatusChange?: (status: string) => void
+  }
 ): void {
   const sb = getClient()
 
-  // Clean up any existing channel
   if (activeChannel) {
     sb.removeChannel(activeChannel)
     activeChannel = null
   }
 
   activeChannel = sb
-    .channel(`device-approval-${hwid}`)
+    .channel(`device-lifecycle-${hwid}`)
     .on(
       'postgres_changes',
       {
@@ -148,25 +150,42 @@ export function subscribeToApproval(
       },
       (payload) => {
         const newRow = payload.new as any
+        if (!newRow || newRow.hwid !== hwid) return
 
-        // Extra safety: verify this packet is truly for our machine
-        if (newRow?.hwid !== hwid) return
+        callbacks.onStatusChange?.(newRow.status)
 
-        onStatusChange?.(newRow.status)
+        // Immediate revocation: if status is revoked/rejected or is_approved is false
+        if (newRow.status === 'revoked' || newRow.status === 'rejected' || newRow.is_approved === false) {
+          callbacks.onRevoked()
+          return
+        }
 
-        if (newRow.status === 'approved' || newRow.is_approved) {
+        // Immediate approval: if status is approved AND is_approved is true
+        if (newRow.status === 'approved' && newRow.is_approved === true) {
           if (newRow.license_token) {
-            onApproved(newRow.license_token)
+            callbacks.onApproved(newRow.license_token)
           } else {
-            // Admin approved in Supabase Table Editor without webhook — trigger token generation
             requestApprovalToken(newRow).then((token) => {
-              if (token) onApproved(token)
+              if (token) callbacks.onApproved(token)
             })
           }
         }
       }
     )
     .subscribe()
+}
+
+// Backwards-compatible wrapper for request-activation flow
+export function subscribeToApproval(
+  hwid: string,
+  onApproved: (licenseToken: string) => void,
+  onStatusChange?: (status: string) => void
+): void {
+  subscribeToDeviceLifecycle(hwid, {
+    onApproved,
+    onRevoked: () => {},
+    onStatusChange
+  })
 }
 
 // Clean up Realtime channel
@@ -241,6 +260,129 @@ export async function getDeviceRecord(hwid: string): Promise<any | null> {
     return data
   } catch {
     return null
+  }
+}
+
+// ── Admin Functions ──────────────────────────────────────────────────────────
+
+let allDevicesChannel: RealtimeChannel | null = null
+
+// Fetch all registered devices ordered by creation date
+export async function getAllDevices(): Promise<any[]> {
+  try {
+    const sb = getClient()
+    const { data, error } = await sb
+      .from('devices')
+      .select('id, hwid, full_name, email, phone, machine_name, os_platform, app_version, status, is_approved, is_admin, created_at, updated_at')
+      .order('created_at', { ascending: false })
+      .limit(2000)
+    if (error) {
+      console.error('getAllDevices error:', error)
+      return []
+    }
+    return data || []
+  } catch (err) {
+    console.error('getAllDevices exception:', err)
+    return []
+  }
+}
+
+// Admin approves a device: calls Edge Function to mint Ed25519 token & update status
+export async function approveDeviceByAdmin(hwid: string): Promise<{ success: boolean; error?: string }> {
+  try {
+    const device = await getDeviceRecord(hwid)
+    if (!device) return { success: false, error: 'Device not found' }
+
+    const token = await requestApprovalToken(device)
+    const sb = getClient()
+    const updatePayload: any = { status: 'approved', is_approved: true }
+    if (token) {
+      updatePayload.license_token = token
+    }
+    const { error } = await sb
+      .from('devices')
+      .update(updatePayload)
+      .eq('hwid', hwid)
+    if (error) return { success: false, error: error.message }
+    return { success: true }
+  } catch (err: any) {
+    return { success: false, error: err?.message || 'Approval failed' }
+  }
+}
+
+// Admin revokes a device: sets status to revoked, is_approved to false, license_token to null
+export async function revokeDeviceByAdmin(hwid: string): Promise<{ success: boolean; error?: string }> {
+  try {
+    const sb = getClient()
+    const { data, error } = await sb
+      .from('devices')
+      .update({ status: 'revoked', is_approved: false, license_token: null })
+      .eq('hwid', hwid)
+      .select('hwid, status, is_approved')
+    if (error) return { success: false, error: error.message }
+    if (!data || data.length === 0) {
+      return {
+        success: false,
+        error: 'Supabase RLS blocked the update. Please execute the SQL policy in Supabase SQL Editor to allow UPDATE on devices table.'
+      }
+    }
+    return { success: true }
+  } catch (err: any) {
+    return { success: false, error: err?.message || 'Revocation failed' }
+  }
+}
+
+// Admin deletes a device record from Supabase
+export async function deleteDeviceByAdmin(hwid: string): Promise<{ success: boolean; error?: string }> {
+  try {
+    const sb = getClient()
+    const { data, error } = await sb
+      .from('devices')
+      .delete()
+      .eq('hwid', hwid)
+      .select('hwid')
+    if (error) return { success: false, error: error.message }
+    if (!data || data.length === 0) {
+      return {
+        success: false,
+        error: 'Supabase RLS blocked the delete. Please execute the SQL policy in Supabase SQL Editor to allow DELETE on devices table.'
+      }
+    }
+    return { success: true }
+  } catch (err: any) {
+    return { success: false, error: err?.message || 'Deletion failed' }
+  }
+}
+
+// Subscribe to Realtime changes across all devices (for live admin table updates)
+export function subscribeToAllDevices(onChange: () => void): void {
+  const sb = getClient()
+  if (allDevicesChannel) {
+    sb.removeChannel(allDevicesChannel)
+    allDevicesChannel = null
+  }
+
+  allDevicesChannel = sb
+    .channel('admin-all-devices')
+    .on(
+      'postgres_changes',
+      {
+        event: '*',
+        schema: 'public',
+        table: 'devices'
+      },
+      () => {
+        onChange()
+      }
+    )
+    .subscribe()
+}
+
+// Unsubscribe Realtime admin channel
+export function unsubscribeAllDevices(): void {
+  if (allDevicesChannel && client) {
+    client.removeChannel(allDevicesChannel)
+    allDevicesChannel = null
   }
 }
 

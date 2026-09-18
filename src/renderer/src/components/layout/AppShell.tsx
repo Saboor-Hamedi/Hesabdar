@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { ActivityBar } from './ActivityBar'
 import { TitleBar, TITLEBAR_HEIGHT } from '../titlebar/TitleBar'
 import { ActivationView } from '../../features/activation/ActivationView'
+import { Revoke } from '../../features/activation/Revoke'
 import { POSView } from '../../features/pos/components/POSView'
 import { SoldView } from '../../features/sold/components/SoldView'
 import { ProductsView } from '../../features/products/components/ProductsView'
@@ -10,6 +11,7 @@ import { CustomersView } from '../../features/customers/components/CustomersView
 import { SuppliersView } from '../../features/suppliers/components/SuppliersView'
 import { ReportsView } from '../../features/reports/components/ReportsView'
 import { SettingsView } from '../../features/settings/components/SettingsView'
+import { AdminLicensesView } from '../../features/admin/AdminLicensesView'
 import { ToastContainer } from '../ui/ToastContainer'
 
 const TAB_STORAGE_KEY = 'hesabdar_active_tab'
@@ -22,11 +24,20 @@ const TAB_STORAGE_KEY = 'hesabdar_active_tab'
 export function AppShell() {
   const [checking, setChecking] = useState(true)
   const [licensed, setLicensed] = useState(false)
+  const [isRevoked, setIsRevoked] = useState(false)
+  const [isAdmin, setIsAdmin] = useState(false)
 
   useEffect(() => {
     window.api?.license?.check?.().then((result: any) => {
       if (result?.valid) {
         setLicensed(true)
+        setIsRevoked(false)
+      } else if (result?.status === 'revoked') {
+        setLicensed(false)
+        setIsRevoked(true)
+      }
+      if (result?.isAdmin) {
+        setIsAdmin(true)
       }
       setChecking(false)
     }).catch(() => {
@@ -35,10 +46,28 @@ export function AppShell() {
 
     const offRevoked = window.api?.license?.onRevoked?.(() => {
       setLicensed(false)
+      setIsRevoked(true)
+    })
+
+    const offActivated = window.api?.license?.onActivated?.(() => {
+      setIsRevoked(false)
+      setLicensed(true)
+    })
+
+    const offStatus = window.api?.license?.onStatusChange?.((newStatus: string) => {
+      if (newStatus === 'revoked' || newStatus === 'rejected') {
+        setLicensed(false)
+        setIsRevoked(true)
+      } else if (newStatus === 'approved') {
+        setIsRevoked(false)
+        setLicensed(true)
+      }
     })
 
     return () => {
       offRevoked?.()
+      offActivated?.()
+      offStatus?.()
     }
   }, [])
 
@@ -79,6 +108,8 @@ export function AppShell() {
         return <ReportsView />
       case 'settings':
         return <SettingsView />
+      case 'admin':
+        return isAdmin ? <AdminLicensesView /> : <POSView />
       default:
         return <POSView />
     }
@@ -95,11 +126,30 @@ export function AppShell() {
     )
   }
 
+  if (isRevoked) {
+    return (
+      <div className="flex h-screen w-screen flex-col overflow-hidden bg-[#fafafa]">
+        <TitleBar />
+        <Revoke
+          onApproved={() => {
+            setIsRevoked(false)
+            setLicensed(true)
+          }}
+        />
+      </div>
+    )
+  }
+
   if (!licensed) {
     return (
       <div className="flex h-screen w-screen flex-col overflow-hidden bg-[#fafafa]">
         <TitleBar />
-        <ActivationView onActivated={() => setLicensed(true)} />
+        <ActivationView
+          onActivated={() => {
+            setIsRevoked(false)
+            setLicensed(true)
+          }}
+        />
       </div>
     )
   }
@@ -115,7 +165,7 @@ export function AppShell() {
         style={{ paddingTop: TITLEBAR_HEIGHT }}
       >
         {/* Left vertical navigation icon rail */}
-        <ActivityBar active={active} onChange={handleTabChange} />
+        <ActivityBar active={active} onChange={handleTabChange} isAdmin={isAdmin} />
 
         {/* Content View Pane */}
         <main className="flex-1 overflow-auto p-4 bg-[#fafafa]">

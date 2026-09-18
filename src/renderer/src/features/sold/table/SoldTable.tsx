@@ -150,7 +150,7 @@ export function SoldTable({
       rowKey={(s) => s.id}
       searchable
       searchPlaceholder={t('sold.searchPlaceholder')}
-      pageSize={12}
+      pageSize={10}
     />
   )
 }

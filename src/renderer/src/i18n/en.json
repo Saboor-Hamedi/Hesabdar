@@ -12,7 +12,8 @@
     "customers": "Customers",
     "suppliers": "Suppliers",
     "reports": "Reports",
-    "settings": "Settings"
+    "settings": "Settings",
+    "admin": "Licenses"
   },
   "common": {
     "add": "Add",
@@ -241,7 +242,8 @@
     "dateTime": "Date & Time",
     "payment": "Payment",
     "total": "Total",
-    "showingToOf": "Showing {{from}} to {{to}} of {{total}}"
+    "showingToOf": "Showing {{from}} to {{to}} of {{total}}",
+    "perPage": "per page"
   },
   "sold": {
     "title": "Completed Sales & Invoices",

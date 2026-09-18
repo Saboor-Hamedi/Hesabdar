@@ -150,7 +150,7 @@ export function ProductsTable({
       rowKey={(p) => p.id}
       searchable
       searchPlaceholder={t('products.searchPlaceholder')}
-      pageSize={12}
+      pageSize={10}
     />
   )
 }

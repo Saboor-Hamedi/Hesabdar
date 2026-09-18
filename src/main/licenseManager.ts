@@ -126,6 +126,15 @@ export async function saveLicense(payload: LicensePayload): Promise<void> {
 }
 
 // ---------------------------------------------------------------------------
+// Delete license from disk on revocation
+// ---------------------------------------------------------------------------
+export async function deleteLicense(): Promise<void> {
+  try {
+    await fs.unlink(getLicenseFilePath())
+  } catch {}
+}
+
+// ---------------------------------------------------------------------------
 // Check license — decrypt, verify signature, verify HWID binding
 // ---------------------------------------------------------------------------
 export async function checkLicense(): Promise<LicenseCheckResult> {
@@ -201,12 +210,13 @@ export async function backgroundRevocationCheck(
 
     const { data, error } = await supabase
       .from('devices')
-      .select('status')
+      .select('status, is_approved')
       .eq('hwid', hwid)
       .single()
 
     if (error) return // Network unavailable or other error — keep running
-    if (data?.status === 'revoked') {
+    if (data?.status === 'revoked' || data?.status === 'rejected' || data?.is_approved === false) {
+      await deleteLicense()
       onRevoked()
     }
   } catch {

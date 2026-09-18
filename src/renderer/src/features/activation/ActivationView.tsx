@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react'
 import { CheckCircle2, Loader2, AlertCircle, Send, RefreshCw } from 'lucide-react'
+import { Revoke } from './Revoke'
 
-type Status = 'idle' | 'submitting' | 'pending' | 'approved' | 'rejected' | 'error'
+type Status = 'idle' | 'submitting' | 'pending' | 'approved' | 'rejected' | 'revoked' | 'error'
 
 interface Props {
   onActivated: (identity: { full_name: string; email: string; phone: string }) => void
@@ -16,12 +17,14 @@ export function ActivationView({ onActivated }: Props) {
   const [checkingNow, setCheckingNow] = useState(false)
   const [notice, setNotice] = useState('')
 
-  // Check current status on mount (detect already pending or approved)
+  // Check current status on mount (detect already pending, approved, or revoked)
   useEffect(() => {
     window.api?.license?.check?.().then((res: any) => {
       if (res?.valid) {
         setStatus('approved')
         setTimeout(() => onActivated(res), 1000)
+      } else if (res?.status === 'revoked') {
+        setStatus('revoked')
       } else if (res?.pending) {
         setStatus('pending')
         if (res.full_name) setFullName(res.full_name)
@@ -40,7 +43,9 @@ export function ActivationView({ onActivated }: Props) {
 
     const offStatus = window.api?.license?.onStatusChange?.((newStatus: string) => {
       if (newStatus === 'rejected') setStatus('rejected')
+      else if (newStatus === 'revoked') setStatus('revoked')
       else if (newStatus === 'pending') setStatus('pending')
+      else if (newStatus === 'approved') setStatus('approved')
     })
 
     // Polling fallback when pending (in case Realtime WebSocket disconnects or drops)
@@ -73,10 +78,13 @@ export function ActivationView({ onActivated }: Props) {
       if (res?.valid) {
         setStatus('approved')
         setTimeout(() => onActivated(res), 1000)
+      } else if (res?.status === 'revoked') {
+        setStatus('revoked')
+        setCheckingNow(false)
       } else {
         setTimeout(() => {
           setCheckingNow(false)
-          setNotice('Checked just now — still pending approval in dashboard.')
+          setNotice('Checked just now — still awaiting approval in dashboard.')
           setTimeout(() => setNotice(''), 4000)
         }, 500)
       }
@@ -106,8 +114,12 @@ export function ActivationView({ onActivated }: Props) {
     }
   }
 
-  const isSubmitted = status === 'pending' || status === 'approved' || status === 'rejected'
+  const isSubmitted = status === 'pending' || status === 'approved' || status === 'rejected' || status === 'revoked'
   const isLoading = status === 'submitting'
+
+  if (status === 'revoked') {
+    return <Revoke onApproved={() => window.api?.license?.check?.().then((res: any) => res?.valid && onActivated(res))} />
+  }
 
   return (
     <div className="fixed inset-0 top-[30px] bg-gradient-to-br from-[#F0F5F3] to-[#E8F0EE] flex items-center justify-center z-40 select-none overflow-y-auto">
@@ -137,6 +149,7 @@ export function ActivationView({ onActivated }: Props) {
               <p className="text-gray-500 text-sm">Your copy of Hesabdar is now activated. Opening...</p>
             </div>
           )}
+
 
           {/* Rejected State */}
           {status === 'rejected' && (

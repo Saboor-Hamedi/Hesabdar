@@ -12,7 +12,8 @@
     "customers": "پېرودونکي",
     "suppliers": "عرضه کوونکي",
     "reports": "راپورونه",
-    "settings": "تنظیمات"
+    "settings": "تنظیمات",
+    "admin": "جوازونه"
   },
   "common": {
     "add": "اضافه کول",
@@ -241,7 +242,8 @@
     "dateTime": "نېټه او وخت",
     "payment": "د تادیې ډول",
     "total": "ټوله بیه",
-    "showingToOf": "له {{from}} څخه تر {{to}} پورې ښودل له ټولټال {{total}}"
+    "showingToOf": "له {{from}} څخه تر {{to}} پورې ښودل له ټولټال {{total}}",
+    "perPage": "په هر مخ کې"
   },
   "sold": {
     "title": "بشپړ شوي بلونه او پلورل شوي",

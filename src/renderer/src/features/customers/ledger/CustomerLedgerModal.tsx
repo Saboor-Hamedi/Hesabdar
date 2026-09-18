@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
   Search,
@@ -11,6 +11,7 @@ import type { Customer, Sale, CustomerPayment } from '../../../core/types'
 import { getSales, getCustomerPayments } from '../../../core/store'
 import { Modal } from '../../../components/ui/Modal'
 import { Button } from '../../../components/ui/Button'
+import { Pagination } from '../../../components/ui/Pagination'
 import { formatCurrency } from '../../../core/utils/formatters'
 import { CustomerStatementPrint, type LedgerEntry } from './CustomerStatementPrint'
 
@@ -141,6 +142,18 @@ export function CustomerLedgerModal({
       currentBalance: customer.balance !== undefined && customer.balance !== 0 ? customer.balance : netBalance,
     }
   }, [customer])
+
+  const [page, setPage] = useState(1)
+  const [pageSize, setPageSize] = useState(10)
+
+  useEffect(() => {
+    setPage(1)
+  }, [customer?.id])
+
+  const paginatedEntries = useMemo(() => {
+    const start = (page - 1) * pageSize
+    return entries.slice(start, start + pageSize)
+  }, [entries, page, pageSize])
 
   if (!customer) return null
 
@@ -383,7 +396,7 @@ export function CustomerLedgerModal({
                       </td>
                     </tr>
                   ) : (
-                    entries.map((entry, idx) => (
+                    paginatedEntries.map((entry, idx) => (
                       <tr
                         key={entry.id || idx}
                         className={`hover:bg-gray-50/80 transition-colors ${
@@ -437,6 +450,18 @@ export function CustomerLedgerModal({
                   )}
                 </tbody>
               </table>
+
+              {entries.length > 0 && (
+                <div className="border-t border-gray-100 bg-gray-50/40">
+                  <Pagination
+                    currentPage={page}
+                    totalItems={entries.length}
+                    pageSize={pageSize}
+                    onPageChange={setPage}
+                    onPageSizeChange={setPageSize}
+                  />
+                </div>
+              )}
             </div>
           ) : (
             <CustomerStatementPrint
