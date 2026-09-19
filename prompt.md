@@ -1,24 +1,47 @@
-📋 Prompt: Fix Checkout Panel Overflow & "Exact" Badge Layout
-Task: Refactor the Right Sidebar (Checkout Panel) to eliminate vertical scrolling and properly integrate the "Exact Settlement" feature. The panel must fit all elements perfectly within the viewport height without scrolling.
-1. Fix the Layout Overflow (Critical)
-Issue: The checkout section has a vertical scrollbar, causing the "Exact Settlement" badge to be hidden or cut off at the bottom.
-Fix:
-Change the checkout container to use flex flex-col with h-full (or flex-1).
-Set the internal content wrapper to overflow-y-auto only if necessary, but ideally, adjust spacing so everything fits naturally.
-Reduce Vertical Padding: Decrease the gap between "Subtotal", "Discount", and "Total Payable" from gap-4 (16px) to gap-2 (8px) or gap-3 (12px). These fields don't need that much breathing room.
-Compact Inputs: Reduce the height of the "Discount" and "Cash Paid" inputs from h-12 (48px) to h-10 (40px). This saves ~16px of vertical space immediately.
-2. Redesign the "Exact Settlement" Feature
-Current Issue: The "Exact Settlement" box looks like a separate, floating card that gets pushed off-screen. It feels disconnected from the "Cash Paid" input.
-Fix: Integrate it directly into the "Cash Paid" row.
-Layout: Create a single row for payment: [Label: Cash Paid] [Input Field] [Exact Button].
-The "Exact" Button: Instead of a large box below, make "Exact" a small, pill-shaped button or icon inside or next to the Cash Paid input.
-Style: Small green badge with checkmark icon + text "Exact (تکمیل)".
-Interaction: When clicked, it fills the input with the total and turns solid green.
-Alternative (If keeping the box): If you prefer the box style, place it above the "Total Payable" line as a "Quick Actions" bar, or make it a collapsible section that only expands when the user clicks a "Payment Options" link.
-3. Visual Hierarchy & Spacing
-Total Payable: This is the most important number. Give it the most space. Increase its font size slightly and add mt-2 (margin-top) to separate it from the discount field.
-Checkout Button: Ensure the "CHECKOUT (F12)" button is sticky at the bottom (mt-auto) so it’s always visible and clickable, even if the screen is resized.
-Calculator: Ensure the calculator doesn't shrink too much. Set a min-height on the calculator container so the keys remain tappable.
-4. Typography & Alignment
-Numbers: Ensure "1,440 AFN" in Subtotal, Total, and Input are all Right-Aligned and use Monospaced Font.
-Labels: "Subtotal", "Discount", "Total Payable", "Cash Paid" should be Left-Aligned and vertically centered with their respective values/inputs.
+These are the things which do not have dari and pashto:
+
+
+Excel Database Backup & Restore
+Export complete store records to a beautiful multi-sheet Excel file (.xlsx) or restore database from Excel
+customers | 0)
+sales 16 @ items 36
+suppliers 0
+Restore from Excel File
+Load a previously exported Excel (.xlsx) file to restore inventory,
+.prices, customers, and invoices
+Upload & Restore (.xlsx)
+Ready@ Excel Data Engine (.xlsx) @
+Formatted sheets: Overview, Products, Customers, Suppliers,
+.Sales, and Line Items
+Export Excel Backup (.xlsx)
+Generates a clean, styled Excel workbook with styled headers
+.and dedicated sheets for all records
+Download Excel Backup (.xlsx)
+___
+Check for Updates
+vl.o.14 Software Updates
+Check for new features, improvements, and security updates
+__
+vl.e.14
+Hesabdar POS
+Store & Inventory Management
+___
+Business info & receipts
+é.æl.a.i C.ae.? 9 d-oli*
+Farsi, Pashto, English
+019..iL
+Window icon & receipt logo
+Database & Backup
+Excel export & snapshots
+Software Updates
+Version & release sync
+
+__
+Change period via the Dual Calendar in the title bar
+(matching transactions 5) Financial statements filtered by: Today
+Estimated Payable Tax
+Compliant @
+AFN AFN 54
+(BRT FY.)
+Standard Afghan business receipt tax estimated automatically from gross sales turnover (1 ,340 AFN AFN)
+

@@ -102,7 +102,7 @@ export function ProductModal({
           </span>
         )
       }
-      style={{ width: '920px', maxWidth: '95vw', maxHeight: '92vh' }}
+      style={{ width: '920px', maxWidth: '95vw', height: '688px', maxHeight: '92vh' }}
       className="flex flex-col"
       bodyClassName="flex-1 flex flex-col p-8 overflow-y-auto"
     >

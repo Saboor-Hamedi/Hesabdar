@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import {
   FileSpreadsheet,
   Download,
@@ -29,6 +30,7 @@ import { notify } from '../../../core/notifications'
  * Exports comprehensive multi-sheet workbooks and allows instant restoration.
  */
 export function BackupCard() {
+  const { t } = useTranslation()
   const fileInputRef = useRef<HTMLInputElement | null>(null)
   const [downloading, setDownloading] = useState(false)
   const [restoring, setRestoring] = useState(false)
@@ -55,7 +57,7 @@ export function BackupCard() {
         if (result.success) {
           notify({
             type: 'success',
-            title: 'Excel Backup Saved',
+            title: t('settings.backupSuccess'),
             message: `Workbook saved to: ${result.filePath}`,
           })
           return
@@ -77,7 +79,7 @@ export function BackupCard() {
 
       notify({
         type: 'success',
-        title: 'Excel Backup Downloaded',
+        title: t('settings.backupSuccess'),
         message: 'Multi-sheet Excel backup downloaded with complete inventory, invoices, and accounts.',
       })
     } catch (err) {
@@ -94,9 +96,7 @@ export function BackupCard() {
 
   // Handle restoring data
   const handleTriggerRestore = async () => {
-    const confirmed = window.confirm(
-      'Warning: Restoring from Excel will update or overwrite store data. Do you wish to continue?'
-    )
+    const confirmed = window.confirm(t('settings.restoreConfirm'))
     if (!confirmed) return
 
     // 1. Native Electron Open File Dialog
@@ -122,7 +122,7 @@ export function BackupCard() {
           if (success) {
             notify({
               type: 'success',
-              title: 'Database Restored',
+              title: t('settings.restoreSuccess'),
               message: 'All records restored from Excel workbook.',
             })
             setTimeout(() => {
@@ -165,7 +165,7 @@ export function BackupCard() {
           if (success) {
             notify({
               type: 'success',
-              title: 'Database Restored',
+              title: t('settings.restoreSuccess'),
               message: 'Store records restored from JSON backup.',
             })
             setTimeout(() => window.location.reload(), 800)
@@ -188,7 +188,7 @@ export function BackupCard() {
           if (success) {
             notify({
               type: 'success',
-              title: 'Excel Restored',
+              title: t('settings.restoreSuccess'),
               message: 'Products, customers, suppliers, and sales successfully imported.',
             })
             setTimeout(() => window.location.reload(), 800)
@@ -217,8 +217,8 @@ export function BackupCard() {
 
   return (
     <Card
-      title="Excel Database Backup & Restore"
-      subtitle="Export complete store records to a beautiful multi-sheet Excel file (.xlsx) or restore database from Excel"
+      title={t('settings.backupTitle')}
+      subtitle={t('settings.backupDesc')}
     >
       <div className="flex flex-col gap-3 py-1">
         {/* Live Shop Records Strip */}
@@ -231,14 +231,14 @@ export function BackupCard() {
               <div className="flex items-center gap-2">
                 <span className="text-xs font-bold text-gray-800 dark:text-slate-100 flex items-center gap-1">
                   <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-                  Excel Data Engine (.xlsx)
+                  {t('settings.excelEngineReady')}
                 </span>
                 <span className="text-[10px] px-1.5 py-0.5 rounded-[3px] bg-emerald-100 dark:bg-emerald-900/60 text-emerald-800 dark:text-emerald-300 font-medium flex items-center gap-0.5">
-                  <CheckCircle2 className="w-2.5 h-2.5" /> Ready
+                  <CheckCircle2 className="w-2.5 h-2.5" /> {t('settings.excelReady')}
                 </span>
               </div>
               <p className="text-[11px] text-gray-500 dark:text-slate-400 mt-0.5">
-                Formatted sheets: Overview, Products, Customers, Suppliers, Sales, and Line Items.
+                {t('settings.excelSheetsDesc')}
               </p>
             </div>
           </div>
@@ -246,16 +246,16 @@ export function BackupCard() {
           {/* Quick dataset indicators */}
           <div className="flex items-center gap-2 flex-wrap text-[10px] font-mono text-gray-600 dark:text-slate-300">
             <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-[4px]">
-              <Package className="w-3 h-3 text-emerald-600 dark:text-emerald-400" /> {productsCount} items
+              <Package className="w-3 h-3 text-emerald-600 dark:text-emerald-400" /> {productsCount} {t('settings.items')}
             </span>
             <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-[4px]">
-              <Receipt className="w-3 h-3 text-blue-600 dark:text-blue-400" /> {salesCount} sales
+              <Receipt className="w-3 h-3 text-blue-600 dark:text-blue-400" /> {salesCount} {t('settings.sales')}
             </span>
             <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-[4px]">
-              <Users className="w-3 h-3 text-purple-600 dark:text-purple-400" /> {customersCount} customers
+              <Users className="w-3 h-3 text-purple-600 dark:text-purple-400" /> {customersCount} {t('settings.customers_count')}
             </span>
             <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-[4px]">
-              <Truck className="w-3 h-3 text-amber-600 dark:text-amber-400" /> {suppliersCount} suppliers
+              <Truck className="w-3 h-3 text-amber-600 dark:text-amber-400" /> {suppliersCount} {t('settings.suppliers_count')}
             </span>
           </div>
         </div>
@@ -270,11 +270,11 @@ export function BackupCard() {
                   <Download className="w-4 h-4" />
                 </div>
                 <h4 className="text-xs font-bold text-gray-800 dark:text-slate-100">
-                  Export Excel Backup (.xlsx)
+                  {t('settings.exportExcelTitle')}
                 </h4>
               </div>
               <p className="text-[11px] text-gray-500 dark:text-slate-400 leading-relaxed">
-                Generates a clean, styled Excel workbook with styled headers and dedicated sheets for all records.
+                {t('settings.exportExcelDesc')}
               </p>
             </div>
 
@@ -285,7 +285,7 @@ export function BackupCard() {
               icon={<Download className="w-3.5 h-3.5" />}
               className="w-full h-8.5 text-xs font-semibold"
             >
-              Download Excel Backup (.xlsx)
+              {t('settings.exportExcelBtn')}
             </Button>
           </div>
 
@@ -297,11 +297,11 @@ export function BackupCard() {
                   <Upload className="w-4 h-4" />
                 </div>
                 <h4 className="text-xs font-bold text-gray-800 dark:text-slate-100">
-                  Restore from Excel File
+                  {t('settings.restoreExcelTitle')}
                 </h4>
               </div>
               <p className="text-[11px] text-gray-500 dark:text-slate-400 leading-relaxed">
-                Load a previously exported Excel (.xlsx) file to restore inventory, prices, customers, and invoices.
+                {t('settings.restoreExcelDesc')}
               </p>
             </div>
 
@@ -320,7 +320,7 @@ export function BackupCard() {
               icon={<Upload className="w-3.5 h-3.5 text-gray-600 dark:text-slate-400" />}
               className="w-full h-8.5 text-xs font-semibold"
             >
-              Upload &amp; Restore (.xlsx)
+              {t('settings.restoreExcelBtn')}
             </Button>
           </div>
         </div>

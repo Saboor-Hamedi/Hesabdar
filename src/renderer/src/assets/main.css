@@ -38,6 +38,53 @@
   background: transparent;
 }
 
+/* ── Global <select> — consistent, no OS flash ── */
+select {
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.6rem center;
+  padding-right: 2rem !important;
+  border-radius: 5px;
+  border: 1px solid #e2e8f0;
+  background-color: #ffffff;
+  color: #374151;
+  font-size: 0.75rem;
+  font-family: inherit;
+  cursor: pointer;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  outline: none;
+}
+select:focus {
+  border-color: #4a7c6f;
+  box-shadow: 0 0 0 2px rgba(74, 124, 111, 0.15);
+}
+select:hover {
+  border-color: #94a3b8;
+}
+
+/* Dark mode select */
+.dark select {
+  background-color: #1e293b;
+  border-color: #334155;
+  color: #e2e8f0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+}
+.dark select:focus {
+  border-color: #5a8f7b;
+  box-shadow: 0 0 0 2px rgba(90, 143, 123, 0.15);
+}
+.dark select:hover {
+  border-color: #475569;
+}
+/* RTL: move arrow to left side */
+[dir="rtl"] select {
+  background-position: left 0.6rem center;
+  padding-right: 0.5rem !important;
+  padding-left: 2rem !important;
+}
+
 html, body, #root {
   height: 100%;
   width: 100%;

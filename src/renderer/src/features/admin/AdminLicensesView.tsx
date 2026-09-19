@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import {
   ShieldCheck,
   Search,
@@ -35,9 +36,14 @@ export interface DeviceItem {
   is_approved?: boolean
 }
 
+// Module-level cache — survives tab switches, reset on explicit Refresh
+let _devicesCache: DeviceItem[] = []
+
 export function AdminLicensesView() {
-  const [devices, setDevices] = useState<DeviceItem[]>([])
-  const [loading, setLoading] = useState(true)
+  const { t } = useTranslation()
+  // Initialize from cache so re-visiting the tab doesn't show skeleton
+  const [devices, setDevices] = useState<DeviceItem[]>(_devicesCache)
+  const [loading, setLoading] = useState(_devicesCache.length === 0)
   const [refreshing, setRefreshing] = useState(false)
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState<'all' | 'pending' | 'approved' | 'revoked'>('all')
@@ -53,7 +59,7 @@ export function AdminLicensesView() {
   }, [search, statusFilter])
 
   const loadDevices = async (isManual = false) => {
-    if (isManual || devices.length > 0) {
+    if (isManual || _devicesCache.length > 0) {
       setRefreshing(true)
     } else {
       setLoading(true)
@@ -61,6 +67,7 @@ export function AdminLicensesView() {
     try {
       const data = await window.api?.admin?.getDevices?.()
       if (Array.isArray(data)) {
+        _devicesCache = data
         setDevices(data)
       }
     } catch (err: any) {
@@ -77,7 +84,10 @@ export function AdminLicensesView() {
   }
 
   useEffect(() => {
-    loadDevices()
+    // Only fetch if cache is empty (first ever visit); otherwise just refresh quietly
+    if (_devicesCache.length === 0) {
+      loadDevices()
+    }
     window.api?.admin?.getCurrentHwid?.().then((hwid: string) => {
       if (hwid) setCurrentHwid(hwid)
     }).catch(() => {})
@@ -223,147 +233,145 @@ export function AdminLicensesView() {
   }
 
   return (
-    <div className="h-full flex flex-col min-h-0 gap-3.5 select-none max-w-7xl mx-auto w-full overflow-y-auto pr-1 pb-6">
+    <div className="h-full flex flex-col min-h-0 gap-3 select-none max-w-7xl mx-auto w-full overflow-y-auto pr-1 pb-6">
       {/* Top Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gray-200/60 pb-4">
-        <div>
-          <div className="flex items-center gap-2.5">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#4A7C6F]/12 text-[#3D665B]">
-              <ShieldCheck className="h-5 w-5" />
-            </div>
-            <div>
-              <h1 className="text-xl font-bold text-gray-900 dark:text-slate-100 tracking-tight">License Management</h1>
-              <p className="text-xs text-gray-500 dark:text-slate-400">Review customer requests, activate licenses, and manage connected machines</p>
-            </div>
+      <div className="flex items-center justify-between gap-4 pb-3 border-b border-gray-200/60 dark:border-slate-800">
+        <div className="flex items-center gap-2.5">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#4A7C6F]/10 dark:bg-[#4A7C6F]/20 text-[#4A7C6F] dark:text-[#68A590]">
+            <ShieldCheck className="h-4.5 w-4.5" />
+          </div>
+          <div>
+            <h1 className="text-base font-bold text-gray-900 dark:text-slate-100 tracking-tight">{t('admin.title')}</h1>
+            <p className="text-[11px] text-gray-400 dark:text-slate-500">{t('admin.subtitle')}</p>
           </div>
         </div>
 
         <button
           onClick={() => loadDevices(true)}
           disabled={loading || refreshing}
-          className="inline-flex items-center gap-2 px-3.5 py-2 text-xs font-semibold text-gray-700 dark:text-slate-200 bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-800 active:scale-[0.98] disabled:opacity-50 transition-all shadow-sm cursor-pointer self-start sm:self-auto"
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-gray-600 dark:text-slate-300 bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded-[5px] hover:bg-gray-50 dark:hover:bg-slate-800 active:scale-[0.98] disabled:opacity-50 transition-all shadow-xs cursor-pointer"
         >
-          <RefreshCw className={`w-3.5 h-3.5 ${refreshing ? 'animate-spin text-[#4A7C6F] dark:text-[#68A590]' : 'text-gray-500 dark:text-slate-400'}`} />
-          <span>{refreshing ? 'Refreshing...' : 'Refresh List'}</span>
+          <RefreshCw className={`w-3.5 h-3.5 ${refreshing ? 'animate-spin text-[#4A7C6F]' : 'text-gray-400'}`} />
+          <span>{refreshing ? t('admin.refreshing') : t('admin.refresh')}</span>
         </button>
       </div>
 
       {/* Metrics Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
-        <div className="bg-white dark:bg-slate-900 border border-gray-200/70 dark:border-slate-800 rounded-xl p-4 shadow-sm flex items-center justify-between">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        <div className="bg-white dark:bg-slate-900 border border-gray-200/70 dark:border-slate-800 rounded-xl p-3.5 shadow-xs flex items-center justify-between">
           <div>
-            <p className="text-xs font-medium text-gray-500 dark:text-slate-400">Total Registered</p>
-            <p className="text-2xl font-bold text-gray-900 dark:text-slate-100 mt-0.5">{metrics.total}</p>
+            <p className="text-[11px] font-medium text-gray-400 dark:text-slate-500">{t('admin.totalRegistered')}</p>
+            <p className="text-xl font-bold text-gray-900 dark:text-slate-100 mt-0.5">{metrics.total}</p>
           </div>
-          <div className="w-10 h-10 rounded-lg bg-gray-100 dark:bg-slate-800 flex items-center justify-center text-gray-600 dark:text-slate-300">
-            <Users className="w-5 h-5" />
+          <div className="w-8 h-8 rounded-lg bg-gray-100 dark:bg-slate-800 flex items-center justify-center text-gray-500 dark:text-slate-400">
+            <Users className="w-4 h-4" />
           </div>
         </div>
 
-        <div className="bg-white dark:bg-slate-900 border border-amber-200/70 dark:border-amber-800/60 rounded-xl p-4 shadow-sm flex items-center justify-between">
+        <div className="bg-white dark:bg-slate-900 border border-amber-200/60 dark:border-amber-800/50 rounded-xl p-3.5 shadow-xs flex items-center justify-between">
           <div>
-            <p className="text-xs font-medium text-amber-700 dark:text-amber-400">Pending Review</p>
+            <p className="text-[11px] font-medium text-amber-600 dark:text-amber-400">{t('admin.pendingReview')}</p>
             <div className="flex items-center gap-2 mt-0.5">
-              <p className="text-2xl font-bold text-amber-800 dark:text-amber-300">{metrics.pending}</p>
+              <p className="text-xl font-bold text-amber-700 dark:text-amber-300">{metrics.pending}</p>
               {metrics.pending > 0 && (
-                <span className="flex h-2.5 w-2.5 relative">
+                <span className="flex h-2 w-2 relative">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-amber-500"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
                 </span>
               )}
             </div>
           </div>
-          <div className="w-10 h-10 rounded-lg bg-amber-50 dark:bg-amber-950/50 flex items-center justify-center text-amber-600 dark:text-amber-400">
-            <Clock className="w-5 h-5" />
+          <div className="w-8 h-8 rounded-lg bg-amber-50 dark:bg-amber-950/40 flex items-center justify-center text-amber-500 dark:text-amber-400">
+            <Clock className="w-4 h-4" />
           </div>
         </div>
 
-        <div className="bg-white dark:bg-slate-900 border border-emerald-200/70 dark:border-emerald-800/60 rounded-xl p-4 shadow-sm flex items-center justify-between">
+        <div className="bg-white dark:bg-slate-900 border border-emerald-200/60 dark:border-emerald-800/50 rounded-xl p-3.5 shadow-xs flex items-center justify-between">
           <div>
-            <p className="text-xs font-medium text-emerald-700 dark:text-emerald-400">Active Licenses</p>
-            <p className="text-2xl font-bold text-emerald-800 dark:text-emerald-300 mt-0.5">{metrics.approved}</p>
+            <p className="text-[11px] font-medium text-emerald-600 dark:text-emerald-400">{t('admin.activeLicenses')}</p>
+            <p className="text-xl font-bold text-emerald-700 dark:text-emerald-300 mt-0.5">{metrics.approved}</p>
           </div>
-          <div className="w-10 h-10 rounded-lg bg-emerald-50 dark:bg-emerald-950/50 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
-            <CheckCircle2 className="w-5 h-5" />
+          <div className="w-8 h-8 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 flex items-center justify-center text-emerald-500 dark:text-emerald-400">
+            <CheckCircle2 className="w-4 h-4" />
           </div>
         </div>
 
-        <div className="bg-white dark:bg-slate-900 border border-gray-200/70 dark:border-slate-800 rounded-xl p-4 shadow-sm flex items-center justify-between">
+        <div className="bg-white dark:bg-slate-900 border border-gray-200/70 dark:border-slate-800 rounded-xl p-3.5 shadow-xs flex items-center justify-between">
           <div>
-            <p className="text-xs font-medium text-rose-600 dark:text-rose-400">Revoked / Rejected</p>
-            <p className="text-2xl font-bold text-rose-700 dark:text-rose-300 mt-0.5">{metrics.revoked}</p>
+            <p className="text-[11px] font-medium text-rose-500 dark:text-rose-400">{t('admin.revokedRejected')}</p>
+            <p className="text-xl font-bold text-rose-600 dark:text-rose-300 mt-0.5">{metrics.revoked}</p>
           </div>
-          <div className="w-10 h-10 rounded-lg bg-rose-50 dark:bg-rose-950/50 flex items-center justify-center text-rose-600 dark:text-rose-400">
-            <XCircle className="w-5 h-5" />
+          <div className="w-8 h-8 rounded-lg bg-rose-50 dark:bg-rose-950/40 flex items-center justify-center text-rose-500 dark:text-rose-400">
+            <XCircle className="w-4 h-4" />
           </div>
         </div>
       </div>
 
       {/* Filter and Search Bar */}
-      <div className="bg-white dark:bg-slate-900 border border-gray-200/70 dark:border-slate-800 rounded-xl p-3.5 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-3">
+      <div className="bg-white dark:bg-slate-900 border border-gray-200/70 dark:border-slate-800 rounded-xl p-2.5 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-2.5">
         {/* Status Filter Tabs */}
-        <div className="flex items-center gap-1.5 p-1 bg-gray-100 dark:bg-slate-800 rounded-lg w-full sm:w-auto">
+        <div className="flex items-center gap-1 p-0.5 bg-gray-100 dark:bg-slate-800 rounded-lg w-full sm:w-auto">
           <button
             onClick={() => setStatusFilter('all')}
-            className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-all cursor-pointer ${
+            className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all cursor-pointer ${
               statusFilter === 'all'
-                ? 'bg-white dark:bg-slate-700 text-gray-900 dark:text-slate-100 shadow-sm'
-                : 'text-gray-600 dark:text-slate-400 hover:text-gray-900 dark:hover:text-slate-200'
+                ? 'bg-white dark:bg-slate-700 text-gray-900 dark:text-slate-100 shadow-xs'
+                : 'text-gray-500 dark:text-slate-400 hover:text-gray-800 dark:hover:text-slate-200'
             }`}
           >
-            All ({metrics.total})
+            {t('admin.filterAll')} ({metrics.total})
           </button>
           <button
             onClick={() => setStatusFilter('pending')}
-            className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-all cursor-pointer flex items-center gap-1.5 ${
+            className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all cursor-pointer flex items-center gap-1.5 ${
               statusFilter === 'pending'
-                ? 'bg-amber-500 text-white shadow-sm'
-                : 'text-gray-600 dark:text-slate-400 hover:text-gray-900 dark:hover:text-slate-200'
+                ? 'bg-amber-500 text-white shadow-xs'
+                : 'text-gray-500 dark:text-slate-400 hover:text-gray-800 dark:hover:text-slate-200'
             }`}
           >
-            <span>Pending</span>
+            <span>{t('admin.filterPending')}</span>
             {metrics.pending > 0 && (
-              <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${statusFilter === 'pending' ? 'bg-white/20 text-white' : 'bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 font-bold'}`}>
+              <span className={`text-[10px] px-1.5 rounded-[4px] ${statusFilter === 'pending' ? 'bg-white/20 text-white' : 'bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 font-bold'}`}>
                 {metrics.pending}
               </span>
             )}
           </button>
           <button
             onClick={() => setStatusFilter('approved')}
-            className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-all cursor-pointer ${
+            className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all cursor-pointer ${
               statusFilter === 'approved'
-                ? 'bg-[#4A7C6F] text-white shadow-sm'
-                : 'text-gray-600 dark:text-slate-400 hover:text-gray-900 dark:hover:text-slate-200'
+                ? 'bg-[#4A7C6F] text-white shadow-xs'
+                : 'text-gray-500 dark:text-slate-400 hover:text-gray-800 dark:hover:text-slate-200'
             }`}
           >
-            Approved ({metrics.approved})
+            {t('admin.filterApproved')} ({metrics.approved})
           </button>
           <button
             onClick={() => setStatusFilter('revoked')}
-            className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-all cursor-pointer ${
+            className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all cursor-pointer ${
               statusFilter === 'revoked'
-                ? 'bg-rose-600 text-white shadow-sm'
-                : 'text-gray-600 dark:text-slate-400 hover:text-gray-900 dark:hover:text-slate-200'
+                ? 'bg-rose-500 text-white shadow-xs'
+                : 'text-gray-500 dark:text-slate-400 hover:text-gray-800 dark:hover:text-slate-200'
             }`}
           >
-            Revoked ({metrics.revoked})
+            {t('admin.filterRevoked')} ({metrics.revoked})
           </button>
         </div>
 
         {/* Search Input */}
-        <div className="relative w-full sm:w-72">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 dark:text-slate-500" />
+        <div className="relative w-full sm:w-64">
+          <Search className="absolute start-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400 dark:text-slate-500" />
           <input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search name, phone, PC..."
-            className="w-full pl-9 pr-4 py-1.5 text-xs border border-gray-200 dark:border-slate-700 rounded-lg bg-gray-50 dark:bg-slate-800 text-gray-900 dark:text-slate-100 placeholder:text-gray-400 dark:placeholder:text-slate-500 focus:bg-white dark:focus:bg-slate-850 focus:outline-none focus:border-[#4A7C6F] dark:focus:border-[#5A8F7B] focus:ring-2 focus:ring-[#4A7C6F]/20 transition-all"
+            placeholder={t('admin.searchPlaceholder')}
+            className="w-full ps-8 pe-8 py-1.5 text-xs border border-gray-200 dark:border-slate-700 rounded-[5px] bg-gray-50 dark:bg-slate-800 text-gray-900 dark:text-slate-100 placeholder:text-gray-400 dark:placeholder:text-slate-500 focus:bg-white dark:focus:bg-slate-850 focus:outline-none focus:border-[#4A7C6F] transition-all"
           />
           {search && (
             <button
               onClick={() => setSearch('')}
-              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 dark:text-slate-500 hover:text-gray-600 dark:hover:text-slate-300 text-xs"
+              className="absolute end-2.5 top-1/2 -translate-y-1/2 text-gray-400 dark:text-slate-500 hover:text-gray-600 dark:hover:text-slate-300 text-xs cursor-pointer"
             >
               ✕
             </button>
@@ -372,34 +380,62 @@ export function AdminLicensesView() {
       </div>
 
       {/* Table Container */}
-      <div className="bg-white dark:bg-slate-900 border border-gray-200/70 dark:border-slate-800 rounded-xl shadow-sm overflow-hidden">
+      <div className="bg-white dark:bg-slate-900 border border-gray-200/70 dark:border-slate-800 rounded-xl shadow-xs overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="bg-gray-50 dark:bg-slate-800/80 border-b border-gray-200 dark:border-slate-800 text-gray-600 dark:text-slate-300 font-semibold uppercase tracking-wider">
+            <thead className="bg-gray-50 dark:bg-slate-800/60 border-b border-gray-100 dark:border-slate-800 text-[10px] font-semibold text-gray-400 dark:text-slate-500 uppercase tracking-wider">
               <tr>
-                <th className="py-3 px-4">Customer</th>
-                <th className="py-3 px-4">Contact Info</th>
-                <th className="py-3 px-4">Device & OS</th>
-                <th className="py-3 px-4">Requested At</th>
-                <th className="py-3 px-4 text-center">Status</th>
-                <th className="py-3 px-4 text-right">Actions</th>
+                <th className="py-2.5 px-4">{t('admin.colCustomer')}</th>
+                <th className="py-2.5 px-4">{t('admin.colContact')}</th>
+                <th className="py-2.5 px-4">{t('admin.colDevice')}</th>
+                <th className="py-2.5 px-4">{t('admin.colRequestedAt')}</th>
+                <th className="py-2.5 px-4 text-center">{t('admin.colStatus')}</th>
+                <th className="py-2.5 px-4 text-end">{t('admin.colActions')}</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100 dark:divide-slate-800">
+            <tbody className="divide-y divide-gray-50 dark:divide-slate-800/80">
               {loading && devices.length === 0 ? (
-                <tr>
-                  <td colSpan={6} className="py-12 text-center text-gray-400 dark:text-slate-500">
-                    <Loader2 className="w-6 h-6 animate-spin mx-auto text-[#4A7C6F] dark:text-[#68A590] mb-2" />
-                    <span>Loading device records from Supabase...</span>
-                  </td>
-                </tr>
+                // Skeleton rows — match the real table column widths exactly
+                Array.from({ length: 5 }).map((_, i) => (
+                  <tr key={i} className="animate-pulse">
+                    {/* Customer */}
+                    <td className="py-3.5 px-4">
+                      <div className="flex items-center gap-2">
+                        <div className="h-4 w-28 rounded bg-gray-200 dark:bg-slate-700" />
+                      </div>
+                    </td>
+                    {/* Contact Info */}
+                    <td className="py-3.5 px-4">
+                      <div className="flex flex-col gap-1.5">
+                        <div className="h-3 w-32 rounded bg-gray-200 dark:bg-slate-700" />
+                        <div className="h-3 w-24 rounded bg-gray-200 dark:bg-slate-700" />
+                      </div>
+                    </td>
+                    {/* Device & OS */}
+                    <td className="py-3.5 px-4">
+                      <div className="h-3 w-24 rounded bg-gray-200 dark:bg-slate-700" />
+                    </td>
+                    {/* Requested At */}
+                    <td className="py-3.5 px-4">
+                      <div className="h-3 w-20 rounded bg-gray-200 dark:bg-slate-700" />
+                    </td>
+                    {/* Status */}
+                    <td className="py-3.5 px-4 text-center">
+                      <div className="h-5 w-16 rounded-full bg-gray-200 dark:bg-slate-700 mx-auto" />
+                    </td>
+                    {/* Actions */}
+                    <td className="py-3.5 px-4 text-right">
+                      <div className="h-6 w-20 rounded-lg bg-gray-200 dark:bg-slate-700 ms-auto" />
+                    </td>
+                  </tr>
+                ))
               ) : filteredDevices.length === 0 ? (
                 <tr>
                   <td colSpan={6} className="py-12 text-center text-gray-400 dark:text-slate-500">
                     <Laptop className="w-8 h-8 mx-auto text-gray-300 dark:text-slate-600 mb-2" />
-                    <p className="text-sm font-medium text-gray-600 dark:text-slate-300">No device records found</p>
+                    <p className="text-sm font-medium text-gray-600 dark:text-slate-300">{t('admin.noRecords')}</p>
                     <p className="text-xs text-gray-400 dark:text-slate-500 mt-1">
-                      {search ? 'Try adjusting your search criteria' : 'When customers request activation, their devices will appear here.'}
+                      {search ? t('admin.noRecordsSearch') : t('admin.noRecordsHint')}
                     </p>
                   </td>
                 </tr>
@@ -478,27 +514,23 @@ export function AdminLicensesView() {
                       {/* Status */}
                       <td className="py-3.5 px-4 text-center">
                         {isAdminDevice ? (
-                          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-[#4A7C6F]/10 dark:bg-[#4A7C6F]/25 text-[#3D665B] dark:text-[#68A590] border border-[#4A7C6F]/25 dark:border-[#4A7C6F]/40">
-                            <ShieldCheck className="w-3.5 h-3.5 text-[#4A7C6F] dark:text-[#68A590]" />
-                            Administrator
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-semibold bg-[#4A7C6F]/10 dark:bg-[#4A7C6F]/25 text-[#3D665B] dark:text-[#68A590] border border-[#4A7C6F]/25 dark:border-[#4A7C6F]/40" style={{ borderRadius: '5px' }}>
+                            Admin
                           </span>
                         ) : (
                           <>
                             {isApproved && (
-                              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-800/60">
-                                <CheckCircle2 className="w-3 h-3" />
+                              <span className="inline-flex px-2 py-0.5 text-[10px] font-semibold bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-800/60" style={{ borderRadius: '5px' }}>
                                 Approved
                               </span>
                             )}
                             {isPending && (
-                              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 border border-amber-200/80 dark:border-amber-800/60">
-                                <Clock className="w-3 h-3" />
+                              <span className="inline-flex px-2 py-0.5 text-[10px] font-semibold bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 border border-amber-200/80 dark:border-amber-800/60" style={{ borderRadius: '5px' }}>
                                 Pending
                               </span>
                             )}
                             {isRevoked && (
-                              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-rose-50 dark:bg-rose-950/50 text-rose-700 dark:text-rose-300 border border-rose-200/80 dark:border-rose-900/60">
-                                <XCircle className="w-3 h-3" />
+                              <span className="inline-flex px-2 py-0.5 text-[10px] font-semibold bg-rose-50 dark:bg-rose-950/50 text-rose-700 dark:text-rose-300 border border-rose-200/80 dark:border-rose-900/60" style={{ borderRadius: '5px' }}>
                                 Revoked
                               </span>
                             )}
@@ -507,12 +539,12 @@ export function AdminLicensesView() {
                       </td>
 
                       {/* Actions */}
-                      <td className="py-3.5 px-4 text-right">
+                      <td className="py-3.5 px-4 text-end">
                         <div className="inline-flex items-center justify-end gap-1.5">
                           {isAdminDevice ? (
-                            <span className="inline-flex items-center gap-1 px-2.5 py-1 text-xs text-gray-400 dark:text-slate-500 font-medium">
+                            <span className="inline-flex items-center gap-1 px-2 py-1 text-[11px] text-gray-400 dark:text-slate-500 font-medium">
                               <ShieldCheck className="w-3.5 h-3.5 text-[#4A7C6F] dark:text-[#68A590]" />
-                              <span>Protected</span>
+                              <span>{t('admin.actionProtected')}</span>
                             </span>
                           ) : isActionLoading ? (
                             <span className="inline-flex items-center gap-1 px-2 py-1 text-xs text-gray-400 dark:text-slate-500">
@@ -525,11 +557,12 @@ export function AdminLicensesView() {
                                 <button
                                   type="button"
                                   onClick={() => handleApprove(device)}
-                                  className="inline-flex items-center gap-1 px-2.5 py-1.5 bg-[#4A7C6F] hover:bg-[#3D665B] active:scale-[0.97] text-white font-medium rounded-lg shadow-sm transition-all cursor-pointer text-xs"
-                                  title="Approve device and grant license"
+                                  className="inline-flex items-center gap-1 px-2 py-1 bg-[#4A7C6F] hover:bg-[#3D665B] active:scale-[0.97] text-white font-medium transition-all cursor-pointer text-[11px]"
+                                  style={{ borderRadius: '5px' }}
+                                  title={t('admin.actionApprove')}
                                 >
-                                  <CheckCircle2 className="w-3.5 h-3.5" />
-                                  <span>{isRevoked ? 'Re-Approve' : 'Approve'}</span>
+                                  <CheckCircle2 className="w-3 h-3" />
+                                  <span>{t('admin.actionApprove')}</span>
                                 </button>
                               )}
 
@@ -538,11 +571,12 @@ export function AdminLicensesView() {
                                 <button
                                   type="button"
                                   onClick={() => setConfirmModal({ type: 'revoke', device })}
-                                  className="inline-flex items-center gap-1 px-2.5 py-1.5 bg-rose-50 dark:bg-rose-950/40 hover:bg-rose-100 dark:hover:bg-rose-900/50 active:scale-[0.97] text-rose-700 dark:text-rose-300 font-medium rounded-lg border border-rose-200 dark:border-rose-900/60 transition-all cursor-pointer text-xs"
-                                  title="Revoke active license"
+                                  className="inline-flex items-center gap-1 px-2 py-1 bg-rose-50 dark:bg-rose-950/40 hover:bg-rose-100 dark:hover:bg-rose-900/50 active:scale-[0.97] text-rose-600 dark:text-rose-300 font-medium border border-rose-200 dark:border-rose-900/60 transition-all cursor-pointer text-[11px]"
+                                  style={{ borderRadius: '5px' }}
+                                  title={t('admin.actionRevoke')}
                                 >
-                                  <XCircle className="w-3.5 h-3.5" />
-                                  <span>Revoke</span>
+                                  <XCircle className="w-3 h-3" />
+                                  <span>{t('admin.actionRevoke')}</span>
                                 </button>
                               )}
 
@@ -550,8 +584,8 @@ export function AdminLicensesView() {
                               <button
                                 type="button"
                                 onClick={() => setConfirmModal({ type: 'delete', device })}
-                                className="p-1.5 text-gray-400 dark:text-slate-500 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/50 rounded-lg transition-colors cursor-pointer"
-                                title="Delete device record"
+                                className="p-1.5 text-gray-400 dark:text-slate-500 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/50 rounded-[5px] transition-colors cursor-pointer"
+                                title={t('admin.actionDelete')}
                               >
                                 <Trash2 className="w-3.5 h-3.5" />
                               </button>
@@ -585,34 +619,34 @@ export function AdminLicensesView() {
         <div className="fixed inset-0 bg-black/40 backdrop-blur-xs flex items-center justify-center z-50 p-4 select-none">
           <div className="bg-white dark:bg-slate-900 rounded-2xl max-w-sm w-full p-6 shadow-2xl border border-gray-100 dark:border-slate-800 animate-in fade-in zoom-in-95 duration-150">
             <div className="flex items-center gap-3 mb-3">
-              <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
+              <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${
                 confirmModal.type === 'delete' ? 'bg-rose-100 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400' : 'bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400'
               }`}>
-                <AlertTriangle className="w-5 h-5" />
+                <AlertTriangle className="w-4.5 h-4.5" />
               </div>
               <div>
-                <h3 className="text-base font-bold text-gray-900 dark:text-slate-100">
-                  {confirmModal.type === 'delete' ? 'Delete Device Record?' : 'Revoke License Access?'}
+                <h3 className="text-sm font-bold text-gray-900 dark:text-slate-100">
+                  {confirmModal.type === 'delete' ? t('admin.confirmDelete') : t('admin.confirmRevoke')}
                 </h3>
-                <p className="text-xs text-gray-500 dark:text-slate-400">
+                <p className="text-[11px] text-gray-500 dark:text-slate-400">
                   {confirmModal.device.full_name} ({confirmModal.device.machine_name || 'PC'})
                 </p>
               </div>
             </div>
 
-            <p className="text-xs text-gray-600 dark:text-slate-300 mb-6 leading-relaxed">
+            <p className="text-xs text-gray-600 dark:text-slate-300 mb-5 leading-relaxed">
               {confirmModal.type === 'delete'
-                ? 'This will permanently remove this device row from Supabase. If the customer reopens the app, they will need to register again.'
-                : 'This will lock the customer app immediately upon their next background sync. You can re-approve them at any time.'}
+                ? t('admin.confirmDeleteMsg', { name: confirmModal.device.full_name })
+                : t('admin.confirmRevokeMsg', { name: confirmModal.device.full_name })}
             </p>
 
-            <div className="flex items-center justify-end gap-2.5">
+            <div className="flex items-center justify-end gap-2">
               <button
                 type="button"
                 onClick={() => setConfirmModal(null)}
-                className="px-4 py-2 text-xs font-semibold text-gray-700 dark:text-slate-300 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-lg transition-colors cursor-pointer"
+                className="px-3.5 py-1.5 text-xs font-medium text-gray-600 dark:text-slate-300 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-[5px] transition-colors cursor-pointer"
               >
-                Cancel
+                {t('common.cancel')}
               </button>
               <button
                 type="button"
@@ -620,13 +654,13 @@ export function AdminLicensesView() {
                   if (confirmModal.type === 'delete') handleDelete(confirmModal.device)
                   else handleRevoke(confirmModal.device)
                 }}
-                className={`px-4 py-2 text-xs font-semibold text-white rounded-lg shadow-sm transition-all cursor-pointer ${
+                className={`px-3.5 py-1.5 text-xs font-semibold text-white shadow-xs transition-all cursor-pointer rounded-[5px] ${
                   confirmModal.type === 'delete'
                     ? 'bg-rose-600 hover:bg-rose-700'
                     : 'bg-amber-600 hover:bg-amber-700'
                 }`}
               >
-                {confirmModal.type === 'delete' ? 'Confirm Delete' : 'Confirm Revoke'}
+                {confirmModal.type === 'delete' ? t('admin.actionDelete') : t('admin.actionRevoke')}
               </button>
             </div>
           </div>
