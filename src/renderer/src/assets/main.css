@@ -22,27 +22,20 @@
   --radius-lg: 0.5rem;
 }
 
-/* Subtle, modern scrollbars */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+/* ── Invisible scrollbars — scroll works, bars are hidden ── */
+* {
+  scrollbar-width: none; /* Firefox & future standard */
 }
-::-webkit-scrollbar-track {
+*::-webkit-scrollbar {
+  width: 0;
+  height: 0;
   background: transparent;
 }
-::-webkit-scrollbar-thumb {
-  background: #e2e8f0;
-  border-radius: 9999px;
+*::-webkit-scrollbar-thumb {
+  background: transparent;
 }
-::-webkit-scrollbar-thumb:hover {
-  background: #cbd5e1;
-}
-
-.dark ::-webkit-scrollbar-thumb {
-  background: #334155;
-}
-.dark ::-webkit-scrollbar-thumb:hover {
-  background: #475569;
+*::-webkit-scrollbar-corner {
+  background: transparent;
 }
 
 html, body, #root {

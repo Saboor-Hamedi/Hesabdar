@@ -238,7 +238,7 @@ export function SystemClockPicker({
           onDoubleClick={(e) => e.stopPropagation()}
           onMouseDown={(e) => e.stopPropagation()}
           onClick={(e) => e.stopPropagation()}
-          className="absolute top-full right-0 mt-2 z-[9999] w-[360px] bg-white dark:bg-slate-900 rounded-xl shadow-2xl border border-gray-200/90 dark:border-slate-800 text-gray-800 dark:text-slate-200 text-xs overflow-hidden select-none animate-in fade-in zoom-in-95 duration-100"
+          className="absolute top-full end-0 mt-2 z-[9999] w-[360px] bg-white dark:bg-slate-900 rounded-xl shadow-2xl border border-gray-200/90 dark:border-slate-800 text-gray-800 dark:text-slate-200 text-xs overflow-hidden select-none animate-in fade-in zoom-in-95 duration-100"
           style={{ WebkitAppRegion: 'no-drag' } as React.CSSProperties}
         >
           {/* Header: Clean, neutral style matching DualCalendarPicker */}
