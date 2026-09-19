@@ -12,6 +12,7 @@
     "customers": "Customers",
     "suppliers": "Suppliers",
     "reports": "Reports",
+    "notes": "Sticky Notes",
     "settings": "Settings",
     "admin": "Licenses"
   },
@@ -278,5 +279,32 @@
     "grossTotal": "Gross Total",
     "paidCash": "Paid Cash",
     "receivables": "Receivables"
+  },
+  "notes": {
+    "title": "Sticky Notes & Scratchpad",
+    "subtitle": "Store reminders, phone numbers, and daily cashier notes.",
+    "modalTitle": "Store Sticky Notes & Scratchpad",
+    "modalSubtitle": "Quick store reminders, customer inquiries, and daily cashier scratchpad.",
+    "badge": "Quick Notes",
+    "autoSaved": "Auto-saved",
+    "newNote": "New note",
+    "stickers": "Stickers",
+    "item": "item",
+    "items": "items",
+    "clearBoard": "Clear board",
+    "confirmClear": "Click again to clear",
+    "quickNotes": "Notes",
+    "shortcutHint": "F8",
+    "addFirstNote": "Click here to add your first note",
+    "doubleClickHint": "Or double-click anywhere on the board to write",
+    "canvas": "Canvas",
+    "canvasMode": "Free Drag & Drop Canvas",
+    "grid": "Grid",
+    "gridMode": "Auto Grid Layout",
+    "newest": "Newest",
+    "oldest": "Oldest",
+    "stickSide": "Stick to Side",
+    "sideDocked": "Side Stuck",
+    "dockBottom": "Dock to Bottom"
   }
 }

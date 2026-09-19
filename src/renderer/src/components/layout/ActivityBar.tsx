@@ -9,6 +9,7 @@ import {
   BarChart3,
   Settings,
   ShieldCheck,
+  StickyNote,
   Sun,
   Moon,
 } from 'lucide-react'
@@ -28,6 +29,7 @@ export const ACTIVITY_ITEMS: ActivityItem[] = [
   { id: 'customers', icon: Users },
   { id: 'suppliers', icon: Truck },
   { id: 'reports',   icon: BarChart3 },
+  { id: 'notes',     icon: StickyNote },
   { id: 'settings',  icon: Settings },
 ]
 

@@ -1,4 +1,4 @@
-import { memo, type CSSProperties, type RefObject } from 'react';
+import { memo, type RefObject } from 'react';
 import { cn } from './cn';
 import { STICKER_SIZE, type StickerItem } from './types';
 import { useDrag } from './use-drag';
@@ -11,10 +11,6 @@ interface StickerCardProps {
   onRaise: (id: string) => void;
   onRemove: (id: string) => void;
 }
-
-/** White die-cut border, then a soft drop shadow. */
-const DIE_CUT =
-  '[filter:drop-shadow(2px_0_0_#fff)_drop-shadow(-2px_0_0_#fff)_drop-shadow(0_2px_0_#fff)_drop-shadow(0_-2px_0_#fff)_drop-shadow(0_5px_4px_rgba(0,0,0,0.35))]';
 
 export const StickerCard = memo(function StickerCard({
   item,
@@ -33,39 +29,46 @@ export const StickerCard = memo(function StickerCard({
     onMove: (x, y) => onMove(item.id, x, y),
   });
 
+  const handlePointerDown = (e: React.PointerEvent<HTMLElement>) => {
+    onRaise(item.id);
+    dragProps.onPointerDown(e);
+  };
+
   return (
     <div
       className={cn(
-        'group absolute left-0 top-0 touch-none focus-within:outline-none',
-        dragging ? 'cursor-grabbing' : 'cursor-grab',
+        'group absolute left-0 top-0 touch-none focus-within:outline-none will-change-transform',
+        dragging ? 'cursor-grabbing z-50' : 'cursor-grab',
       )}
       style={{
         width: STICKER_SIZE,
         height: STICKER_SIZE,
-        zIndex: item.z,
+        zIndex: dragging ? 9999 : item.z,
         transform: `translate3d(${item.x}px, ${item.y}px, 0)`,
       }}
-      onPointerDownCapture={() => onRaise(item.id)}
-      {...dragProps}
+      onPointerDown={handlePointerDown}
+      onPointerMove={dragProps.onPointerMove}
+      onPointerUp={dragProps.onPointerUp}
+      onPointerCancel={dragProps.onPointerCancel}
     >
       <div
-        style={{ '--r': `${item.rotate}deg` } as CSSProperties}
-        className="h-full w-full rotate-[var(--r)] transition-transform duration-200 group-hover:-rotate-6"
+        style={{ transform: dragging ? 'rotate(0deg)' : `rotate(${item.rotate}deg)` }}
+        className={cn(
+          'h-full w-full',
+          dragging ? 'transition-none' : 'transition-transform duration-150 group-hover:-rotate-6'
+        )}
       >
         <div
           className={cn(
-            'h-full w-full transition-[transform,opacity] duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] motion-reduce:transition-none',
-            dragging ? 'scale-110 opacity-100' : stateClass,
+            'h-full w-full',
+            dragging ? 'scale-110 opacity-95 transition-none' : cn('transition-[transform,opacity] duration-200', stateClass)
           )}
         >
           <button
             type="button"
             aria-label={`Sticker ${item.emoji}. Move with the arrow keys.`}
             onKeyDown={onHandleKeyDown}
-            className={cn(
-              'flex h-full w-full [cursor:inherit] select-none items-center justify-center rounded-full text-[2.6rem] leading-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white',
-              DIE_CUT,
-            )}
+            className="flex h-full w-full [cursor:inherit] select-none items-center justify-center rounded-full text-[2.6rem] leading-none drop-shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-white"
           >
             {item.emoji}
           </button>

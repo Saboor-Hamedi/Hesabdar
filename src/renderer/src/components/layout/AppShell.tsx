@@ -12,6 +12,8 @@ import { SuppliersView } from '../../features/suppliers/components/SuppliersView
 import { ReportsView } from '../../features/reports/components/ReportsView'
 import { SettingsView } from '../../features/settings/components/SettingsView'
 import { AdminLicensesView } from '../../features/admin/AdminLicensesView'
+import { NotesView } from '../../features/notes'
+import { StatusBoard } from './StatusBoard'
 import { ToastContainer } from '../ui/ToastContainer'
 
 const TAB_STORAGE_KEY = 'hesabdar_active_tab'
@@ -106,6 +108,8 @@ export function AppShell() {
         return <SuppliersView />
       case 'reports':
         return <ReportsView />
+      case 'notes':
+        return <NotesView />
       case 'settings':
         return <SettingsView />
       case 'admin':
@@ -172,6 +176,9 @@ export function AppShell() {
           {renderContent()}
         </main>
       </div>
+
+      {/* Bottom StatusBoard with Notes trigger & system indicators */}
+      <StatusBoard />
 
       {/* Global Toast Notification System */}
       <ToastContainer />

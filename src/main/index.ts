@@ -32,6 +32,7 @@ import { getAllCustomers, createCustomer, updateCustomer, deleteCustomer, adjust
 import { getAllSuppliers, createSupplier, updateSupplier, deleteSupplier, adjustSupplierBalance } from './db/suppliers'
 import { getAllSales, recordSale, deleteSale } from './db/sales'
 import { getAllCatalogItems, searchCatalogItems, seedCatalogItems } from './db/catalog'
+import { getAllNotes, saveAllNotes, deleteNote, clearAllNotes } from './db/notes'
 
 const getLanguageFilePath = (): string => join(app.getPath('userData'), 'language.json')
 const getSettingsFilePath = (): string => join(app.getPath('userData'), 'settings.json')
@@ -597,6 +598,12 @@ app.whenReady().then(async () => {
   ipcMain.handle('catalog:getAll', () => getAllCatalogItems())
   ipcMain.handle('catalog:search', (_e, query: string) => searchCatalogItems(query))
   ipcMain.handle('catalog:seed', (_e, items) => seedCatalogItems(items))
+
+  // ── Sticky Notes & Stickers IPC ──────────────────────────────────────────
+  ipcMain.handle('notes:getAll', () => getAllNotes())
+  ipcMain.handle('notes:saveAll', (_e, items) => saveAllNotes(items))
+  ipcMain.handle('notes:delete', (_e, id: string) => deleteNote(id))
+  ipcMain.handle('notes:clear', () => clearAllNotes())
 
   // ── Database Bulk Operations & Migration IPC ─────────────────────────────
   ipcMain.handle('db:getAllData', () => {

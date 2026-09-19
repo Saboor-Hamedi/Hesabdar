@@ -1,4 +1,4 @@
-import { memo, useEffect, useRef, type CSSProperties, type RefObject } from 'react';
+import { memo, useEffect, useRef, type RefObject } from 'react';
 import { NOTE_COLORS, NOTE_COLOR_ORDER } from './colors';
 import { cn } from './cn';
 import { NOTE_SIZE, type NoteColor, type NoteItem } from './types';
@@ -9,6 +9,9 @@ interface NoteCardProps {
   item: NoteItem;
   boundsRef: RefObject<HTMLElement | null>;
   autoFocus: boolean;
+  size?: number;
+  isGrid?: boolean;
+  onTitle: (id: string, title: string) => void;
   onText: (id: string, text: string) => void;
   onColor: (id: string, color: NoteColor) => void;
   onMove: (id: string, x: number, y: number) => void;
@@ -16,153 +19,201 @@ interface NoteCardProps {
   onRemove: (id: string) => void;
 }
 
-const FOLD = 22;
-
 export const NoteCard = memo(function NoteCard({
   item,
   boundsRef,
   autoFocus,
+  size = NOTE_SIZE,
+  isGrid = false,
+  onTitle,
   onText,
   onColor,
   onMove,
   onRaise,
   onRemove,
 }: NoteCardProps) {
-  const palette = NOTE_COLORS[item.color];
+  const palette = NOTE_COLORS[item.color] || NOTE_COLORS.butter;
   const textRef = useRef<HTMLTextAreaElement>(null);
+  const titleRef = useRef<HTMLInputElement>(null);
 
-  const { shown, leaving, stateClass, leave } = usePresence(() => onRemove(item.id));
+  const { stateClass, leave } = usePresence(() => onRemove(item.id));
   const { dragging, dragProps, onHandleKeyDown } = useDrag({
     x: item.x,
     y: item.y,
-    width: NOTE_SIZE,
-    height: NOTE_SIZE,
+    width: size,
+    height: size,
     boundsRef,
     onMove: (x, y) => onMove(item.id, x, y),
   });
 
   useEffect(() => {
-    if (autoFocus) textRef.current?.focus({ preventScroll: true });
-  }, [autoFocus]);
+    if (!autoFocus) return;
+    const timer = window.setTimeout(() => {
+      if (!item.title) {
+        titleRef.current?.focus({ preventScroll: true });
+      } else {
+        textRef.current?.focus({ preventScroll: true });
+      }
+    }, 30);
+    return () => window.clearTimeout(timer);
+  }, [autoFocus, item.title]);
+
+  const handlePointerDown = (e: React.PointerEvent<HTMLElement>) => {
+    onRaise(item.id);
+    if (!isGrid) {
+      dragProps.onPointerDown(e);
+    }
+  };
+
+  const cardStyle: React.CSSProperties = isGrid
+    ? { width: '100%', height: size, zIndex: item.z }
+    : {
+        width: size,
+        height: size,
+        zIndex: dragging ? 9999 : item.z,
+        transform: `translate3d(${item.x}px, ${item.y}px, 0)`,
+      };
 
   return (
     <div
-      className="group absolute left-0 top-0 touch-none"
-      style={{
-        width: NOTE_SIZE,
-        height: NOTE_SIZE,
-        zIndex: item.z,
-        transform: `translate3d(${item.x}px, ${item.y}px, 0)`,
-      }}
-      onPointerDownCapture={() => onRaise(item.id)}
-      {...dragProps}
+      className={cn(
+        isGrid ? 'relative will-change-transform' : 'group absolute left-0 top-0 touch-none will-change-transform',
+        dragging ? 'z-50' : ''
+      )}
+      style={cardStyle}
+      onPointerDown={handlePointerDown}
+      onPointerMove={!isGrid ? dragProps.onPointerMove : undefined}
+      onPointerUp={!isGrid ? dragProps.onPointerUp : undefined}
+      onPointerCancel={!isGrid ? dragProps.onPointerCancel : undefined}
     >
-      {/* Tilt + soft shadow. Straightens when picked up. */}
+      {/* Note Paper container */}
       <div
-        style={{ '--r': `${item.rotate}deg` } as CSSProperties}
+        style={{
+          transform: isGrid ? 'none' : dragging ? 'rotate(0deg)' : `rotate(${item.rotate}deg)`,
+        }}
         className={cn(
-          'relative h-full w-full transition-[transform,filter] duration-200',
+          'relative h-full w-full rounded-xl flex flex-col bg-gradient-to-b text-stone-800 ring-1 ring-black/10',
+          palette.paper,
           dragging
-            ? 'rotate-0 [filter:drop-shadow(0_20px_16px_rgba(0,0,0,0.38))]'
-            : 'rotate-[var(--r)] [filter:drop-shadow(0_6px_5px_rgba(0,0,0,0.3))] group-hover:[filter:drop-shadow(0_12px_10px_rgba(0,0,0,0.34))]',
+            ? 'shadow-2xl scale-[1.02] opacity-95 transition-none cursor-grabbing'
+            : cn('shadow-md hover:shadow-lg transition-shadow duration-150', !isGrid ? 'cursor-grab' : ''),
+          stateClass
         )}
       >
-        {/* Pop-in / peel-off + lift */}
-        <div
-          className={cn(
-            'h-full w-full transition-[transform,opacity] duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] motion-reduce:transition-none',
-            dragging ? 'scale-[1.05] opacity-100' : stateClass,
-            !dragging && shown && !leaving && 'group-hover:-translate-y-1',
-          )}
-        >
-          {/* Paper, with the bottom-right corner folded */}
-          <div
-            className={cn(
-              'relative flex h-full w-full select-none flex-col bg-gradient-to-b text-stone-800',
-              palette.paper,
-              dragging ? 'cursor-grabbing' : 'cursor-grab',
-              '[clip-path:polygon(0_0,100%_0,100%_calc(100%_-_22px),calc(100%_-_22px)_100%,0_100%)]',
-            )}
+        {/* Top Handle bar for dragging & actions */}
+        <div className="flex h-9 shrink-0 items-center justify-between px-3 pt-2 bg-black/[0.02]">
+          {/* Grip dots handle */}
+          <button
+            type="button"
+            aria-label="Move note"
+            onKeyDown={onHandleKeyDown}
+            className="-m-1 flex items-center gap-1 rounded p-1 cursor-grab active:cursor-grabbing focus-visible:outline focus-visible:outline-2 focus-visible:outline-stone-800/70"
           >
-            <div className="flex h-10 shrink-0 items-center justify-between px-3.5 pt-3">
+            <span className="h-1.5 w-1.5 rounded-full bg-stone-900/30" />
+            <span className="h-1.5 w-1.5 rounded-full bg-stone-900/30" />
+            <span className="h-1.5 w-1.5 rounded-full bg-stone-900/30" />
+          </button>
+
+          {/* Color pickers + Delete button */}
+          <div
+            data-no-drag
+            className="flex items-center gap-1.5 opacity-90 transition-opacity duration-150 group-hover:opacity-100"
+          >
+            {NOTE_COLOR_ORDER.map((color) => (
               <button
+                key={color}
                 type="button"
-                aria-label="Move note. Use the arrow keys."
-                onKeyDown={onHandleKeyDown}
-                className="-m-1 grid [cursor:inherit] grid-cols-3 gap-[3px] rounded p-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-stone-800/70"
-              >
-                {Array.from({ length: 6 }, (_, i) => (
-                  <span key={i} className="h-[3px] w-[3px] rounded-full bg-stone-900/30" />
-                ))}
-              </button>
-
-              <div
-                data-no-drag
-                className="flex items-center gap-1.5 opacity-0 transition-opacity duration-150 group-hover:opacity-100 group-focus-within:opacity-100 [@media(hover:none)]:opacity-100"
-              >
-                {NOTE_COLOR_ORDER.map((color) => (
-                  <button
-                    key={color}
-                    type="button"
-                    aria-label={`Change color to ${NOTE_COLORS[color].label}`}
-                    aria-pressed={color === item.color}
-                    title={NOTE_COLORS[color].label}
-                    onClick={() => onColor(item.id, color)}
-                    className={cn(
-                      'h-3.5 w-3.5 rounded-full ring-1 ring-black/20 transition-transform hover:scale-125 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-stone-800',
-                      NOTE_COLORS[color].swatch,
-                      color === item.color && 'ring-2 ring-stone-800',
-                    )}
-                  />
-                ))}
-                <button
-                  type="button"
-                  aria-label="Delete note"
-                  title="Delete"
-                  onClick={leave}
-                  className="ml-0.5 grid h-5 w-5 place-items-center rounded-full text-stone-800/70 transition-colors hover:bg-black/10 hover:text-stone-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-stone-800"
-                >
-                  <svg viewBox="0 0 12 12" className="h-2.5 w-2.5" aria-hidden="true">
-                    <path
-                      d="M2 2l8 8M10 2l-8 8"
-                      stroke="currentColor"
-                      strokeWidth="1.8"
-                      strokeLinecap="round"
-                      fill="none"
-                    />
-                  </svg>
-                </button>
-              </div>
-            </div>
-
-            <div className="min-h-0 flex-1 px-3.5 pb-5">
-              <textarea
-                ref={textRef}
-                data-no-drag
-                value={item.text}
-                maxLength={600}
-                placeholder="Write something…"
-                aria-label="Note text"
-                onChange={(event) => onText(item.id, event.target.value)}
-                onFocus={() => onRaise(item.id)}
-                className="h-full w-full cursor-text select-text resize-none bg-transparent font-hand text-[1.35rem] leading-[1.2] text-stone-800 placeholder:text-stone-800/40 focus:outline-none [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+                aria-label={`Change color to ${NOTE_COLORS[color].label}`}
+                aria-pressed={color === item.color}
+                title={NOTE_COLORS[color].label}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onColor(item.id, color);
+                }}
+                className={cn(
+                  'h-3.5 w-3.5 rounded-full ring-1 ring-black/20 transition-transform hover:scale-125 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-stone-800',
+                  NOTE_COLORS[color].swatch,
+                  color === item.color && 'ring-2 ring-stone-800',
+                )}
               />
-            </div>
-
-            <span
-              aria-hidden="true"
-              style={{ width: FOLD, height: FOLD }}
-              className="pointer-events-none absolute bottom-0 right-0 bg-gradient-to-br from-black/25 to-black/5 [clip-path:polygon(0_0,100%_0,0_100%)]"
-            />
+            ))}
+            <button
+              type="button"
+              data-no-drag
+              aria-label="Delete note"
+              title="Delete"
+              onClick={(e) => {
+                e.stopPropagation();
+                leave();
+              }}
+              className="ms-1 grid h-5 w-5 place-items-center rounded-full text-stone-700 hover:bg-black/10 hover:text-stone-900 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-stone-800"
+            >
+              <svg viewBox="0 0 12 12" className="h-2.5 w-2.5" aria-hidden="true">
+                <path
+                  d="M2 2l8 8M10 2l-8 8"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                  strokeLinecap="round"
+                  fill="none"
+                />
+              </svg>
+            </button>
           </div>
         </div>
 
-        {/* Tape */}
+        {/* Note Body — data-no-drag enables instant typing everywhere in this area */}
+        <div
+          data-no-drag
+          className="min-h-0 flex-1 px-3 pb-3 cursor-text flex flex-col"
+          onClick={() => {
+            if (!item.title) {
+              titleRef.current?.focus();
+            } else {
+              textRef.current?.focus();
+            }
+          }}
+        >
+          {/* Note Title */}
+          <input
+            ref={titleRef}
+            data-no-drag
+            type="text"
+            value={item.title ?? ''}
+            maxLength={120}
+            placeholder="Title..."
+            dir="auto"
+            aria-label="Note title"
+            onChange={(event) => onTitle(item.id, event.target.value)}
+            className="w-full bg-transparent font-semibold text-xs sm:text-sm text-stone-900 placeholder:text-stone-700/40 border-b border-stone-900/10 pb-1 mb-1 focus:outline-none focus:border-stone-900/30"
+          />
+
+          <textarea
+            ref={textRef}
+            data-no-drag
+            value={item.text ?? ''}
+            maxLength={1000}
+            placeholder="Type your note here…"
+            dir="auto"
+            aria-label="Note text"
+            onChange={(event) => onText(item.id, event.target.value)}
+            onFocus={() => onRaise(item.id)}
+            className="h-full w-full cursor-text select-text resize-none bg-transparent font-sans text-xs sm:text-sm leading-relaxed text-stone-800 placeholder:text-stone-800/40 focus:outline-none [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          />
+        </div>
+
+        {/* Subtle folded corner */}
         <span
           aria-hidden="true"
-          className="pointer-events-none absolute -top-2.5 left-1/2 h-6 w-[4.5rem] -translate-x-1/2 -rotate-2 bg-white/50 [clip-path:polygon(0_0,4%_15%,0_30%,4%_45%,0_60%,4%_75%,0_100%,100%_100%,96%_75%,100%_60%,96%_45%,100%_30%,96%_15%,100%_0)]"
+          style={{ width: 20, height: 20 }}
+          className="pointer-events-none absolute bottom-0 right-0 bg-gradient-to-br from-black/20 to-black/5 [clip-path:polygon(0_0,100%_0,0_100%)] rounded-br-xl"
         />
       </div>
+
+      {/* Tape on top */}
+      <span
+        aria-hidden="true"
+        className="pointer-events-none absolute -top-2 left-1/2 h-5 w-16 -translate-x-1/2 -rotate-1 bg-white/60 shadow-2xs backdrop-blur-[1px] rounded-xs"
+      />
     </div>
   );
 });

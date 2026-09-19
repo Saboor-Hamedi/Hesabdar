@@ -129,6 +129,12 @@ const api = {
   db: {
     getAllData: () => ipcRenderer.invoke('db:getAllData'),
     migrate: (dump: any) => ipcRenderer.invoke('db:migrate', dump)
+  },
+  notes: {
+    getAll: () => ipcRenderer.invoke('notes:getAll'),
+    saveAll: (items: any[]) => ipcRenderer.invoke('notes:saveAll', items),
+    delete: (id: string) => ipcRenderer.invoke('notes:delete', id),
+    clear: () => ipcRenderer.invoke('notes:clear')
   }
 }
 

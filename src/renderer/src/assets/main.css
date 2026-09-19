@@ -17,6 +17,7 @@
 
   --font-sans: 'Vazirmatn Variable', 'Noto Naskh Arabic', system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
+  --font-hand: 'Patrick Hand', 'Comic Sans MS', cursive;
 
   --radius-lg: 0.5rem;
 }

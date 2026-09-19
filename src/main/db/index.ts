@@ -88,6 +88,9 @@ export function runMigrations(): void {
   const db = getDb()
   try {
     db.exec(INITIAL_SCHEMA)
+    try {
+      db.exec('ALTER TABLE notes ADD COLUMN title TEXT;')
+    } catch {}
     seedCatalogIfEmpty(db)
     seedInitialProductsIfEmpty(db)
   } catch (err) {

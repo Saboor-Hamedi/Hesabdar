@@ -153,4 +153,22 @@ CREATE TRIGGER IF NOT EXISTS products_au AFTER UPDATE ON products BEGIN
   INSERT INTO products_fts(rowid, name_fa, name_ps, name_en, barcode)
   VALUES (new.id, new.name_fa, new.name_ps, new.name_en, new.barcode);
 END;
+
+-- Sticky Notes & Scratchpad
+CREATE TABLE IF NOT EXISTS notes (
+  id         TEXT PRIMARY KEY,
+  kind       TEXT NOT NULL DEFAULT 'note',
+  title      TEXT,
+  x          REAL NOT NULL DEFAULT 0,
+  y          REAL NOT NULL DEFAULT 0,
+  z          INTEGER NOT NULL DEFAULT 0,
+  rotate     REAL NOT NULL DEFAULT 0,
+  color      TEXT,
+  text       TEXT,
+  emoji      TEXT,
+  created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+CREATE INDEX IF NOT EXISTS idx_notes_z ON notes(z);
 `
+

@@ -54,6 +54,12 @@ export interface AppAPI {
     onDevicesChanged: (cb: () => void) => () => void
   }
   products?: any
+  notes?: {
+    getAll: () => Promise<any[]>
+    saveAll: (items: any[]) => Promise<boolean>
+    delete: (id: string) => Promise<boolean>
+    clear: () => Promise<boolean>
+  }
 }
 
 declare global {
