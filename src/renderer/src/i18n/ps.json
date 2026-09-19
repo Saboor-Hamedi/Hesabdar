@@ -100,7 +100,19 @@
     "cashShortage": "د پیسو کمښت (کسري)",
     "exactSettlement": "پوره تصفیه (تکمیل)",
     "addedToDebt": "پور ته اضافه شو",
-    "recordedAsCredit": "د پور په توګه ثبت شو"
+    "recordedAsCredit": "د پور په توګه ثبت شو",
+    "holdCart": "بل وځنډوئ (پارکنګ)",
+    "heldInvoices": "ځنډول شوي بلونه",
+    "heldInvoicesSubtitle": "د پیرودونکو ځنډول شوي بلونه بیا فعال کړئ یا یې لرې کړئ.",
+    "held": "ځنډول شوی",
+    "resumeCart": "بل بیرته راوړل",
+    "noHeldCarts": "هیڅ ځنډول شوی بل شتون نلري",
+    "noHeldCartsDesc": "تاسو کولی شئ د پیرودونکي روان بل وځنډوئ ترڅو بل پیرودونکي ته خدمت وکړئ.",
+    "clearAllHeld": "ټول ځنډول شوي بلونه پاک کړئ",
+    "walkInCustomer": "عمومي پیرودونکی",
+    "units": "واحدونه",
+    "cartHeld": "بل وځنډول شو",
+    "cartResumed": "بل فعال شو"
   },
   "products": {
     "title": "توکي او د ګودام شتون",

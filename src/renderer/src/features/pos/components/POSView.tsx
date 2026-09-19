@@ -8,6 +8,7 @@ import { InvoiceTable } from '../table/InvoiceTable'
 import { CalculatorNumpad } from '../numpad/CalculatorNumpad'
 import { SettlementPanel } from '../settlement/SettlementPanel'
 import { ReceiptModal } from '../receipt/ReceiptModal'
+import { HeldCartsModal } from '../hold/HeldCartsModal'
 import { CustomerLedgerModal } from '../../customers/ledger/CustomerLedgerModal'
 import { CustomerModal } from '../../customers/modal/CustomerModal'
 import { DebtPaymentModal } from '../../customers/payment/DebtPaymentModal'
@@ -57,12 +58,19 @@ export function POSView() {
     setItemQty,
     removeItem,
     clearCart,
+    addToCart,
     processCheckout,
     addCustomer,
+    heldCarts,
+    handleHoldCart,
+    handleResumeCart,
+    handleDeleteHeldCart,
+    handleClearAllHeldCarts,
   } = usePOS()
 
   // State for receipt modal & post-checkout clearing
   const [isReceiptOpen, setIsReceiptOpen] = useState(false)
+  const [isHeldCartsOpen, setIsHeldCartsOpen] = useState(false)
   const [completedSale, setCompletedSale] = useState<Sale | null>(null)
   const [ledgerCustomer, setLedgerCustomer] = useState<Customer | null>(null)
   const [isCheckoutComplete, setIsCheckoutComplete] = useState(false)
@@ -263,6 +271,13 @@ export function POSView() {
           onChangePrice={setEntryPrice}
           onChangeUnit={setEntryUnit}
           onAddItem={handleAddItemWithAutoReset}
+          onFastScanAdd={(p) => {
+            if (isCheckoutComplete) {
+              clearCart()
+              setIsCheckoutComplete(false)
+            }
+            addToCart(p)
+          }}
           onFocusField={(f) => setActiveField(f)}
           activeField={activeField}
         />
@@ -277,6 +292,9 @@ export function POSView() {
             clearCart()
             setIsCheckoutComplete(false)
           }}
+          onHoldCart={handleHoldCart}
+          onOpenHeldCarts={() => setIsHeldCartsOpen(true)}
+          heldCount={heldCarts.length}
         />
 
         {/* Responsive Mobile "Proceed to Checkout" Action Bar (Visible only on screens < lg) */}
@@ -395,6 +413,21 @@ export function POSView() {
         sale={completedSale}
         customers={customers}
         onNewSale={handleNewSale}
+      />
+
+      {/* ========================================================
+          HELD CARTS MODAL: Multi-cart parking
+          ======================================================== */}
+      <HeldCartsModal
+        isOpen={isHeldCartsOpen}
+        onClose={() => setIsHeldCartsOpen(false)}
+        heldCarts={heldCarts}
+        onResume={(hc) => {
+          handleResumeCart(hc)
+          setIsHeldCartsOpen(false)
+        }}
+        onDelete={handleDeleteHeldCart}
+        onClearAll={handleClearAllHeldCarts}
       />
 
       {/* ========================================================

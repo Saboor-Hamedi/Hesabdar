@@ -1,136 +1,52 @@
-React has detected a change in the order of Hooks called by ReceiptModal. This will lead to bugs and errors if not fixed. For more information, read the Rules of Hooks: https://react.dev/link/rules-of-hooks
+Searched for files: *View*.tsx
+Viewed App.tsx:1-73
+Viewed main.tsx:1-18
+Viewed AppShell.tsx:1-80
 
-   Previous render            Next render
-   ------------------------------------------------------
-1. useContext                 useContext
-2. useMemo                    useMemo
-3. useMemo                    useMemo
-4. useRef                     useRef
-5. useCallback                useCallback
-6. useRef                     useRef
-7. useCallback                useCallback
-8. useState                   useState
-9. useSyncExternalStore       useSyncExternalStore
-10. useEffect                 useEffect
-11. useRef                    useRef
-12. useRef                    useRef
-13. useMemo                   useMemo
-14. undefined                 useState
-   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Here are the most valuable and practical enhancements we can build for **Hesabdar**, categorized by impact:
 
-updateHookTypesDev @ react-dom_client.js?v=38b210d3:5858
-useState @ react-dom_client.js?v=38b210d3:20741
-exports.useState @ chunk-2XCFYVCW.js?v=38b210d3:984
-ReceiptModal @ ReceiptModal.tsx:33
-react_stack_bottom_frame @ react-dom_client.js?v=38b210d3:20259
-renderWithHooks @ react-dom_client.js?v=38b210d3:5918
-updateFunctionComponent @ react-dom_client.js?v=38b210d3:7763
-beginWork @ react-dom_client.js?v=38b210d3:8843
-runWithFiberInDEV @ react-dom_client.js?v=38b210d3:1133
-performUnitOfWork @ react-dom_client.js?v=38b210d3:13598
-workLoopSync @ react-dom_client.js?v=38b210d3:13461
-renderRootSync @ react-dom_client.js?v=38b210d3:13445
-performWorkOnRoot @ react-dom_client.js?v=38b210d3:12800
-performSyncWorkOnRoot @ react-dom_client.js?v=38b210d3:14651
-flushSyncWorkAcrossRoots_impl @ react-dom_client.js?v=38b210d3:14548
-processRootScheduleInMicrotask @ react-dom_client.js?v=38b210d3:14571
-(anonymous) @ react-dom_client.js?v=38b210d3:14665
-<ReceiptModal>
-exports.jsxDEV @ react_jsx-dev-runtime.js?v=38b210d3:255
-POSView @ POSView.tsx:392
-react_stack_bottom_frame @ react-dom_client.js?v=38b210d3:20259
-renderWithHooksAgain @ react-dom_client.js?v=38b210d3:5995
-renderWithHooks @ react-dom_client.js?v=38b210d3:5929
-updateFunctionComponent @ react-dom_client.js?v=38b210d3:7763
-beginWork @ react-dom_client.js?v=38b210d3:8843
-runWithFiberInDEV @ react-dom_client.js?v=38b210d3:1133
-performUnitOfWork @ react-dom_client.js?v=38b210d3:13598
-workLoopSync @ react-dom_client.js?v=38b210d3:13461
-renderRootSync @ react-dom_client.js?v=38b210d3:13445
-performWorkOnRoot @ react-dom_client.js?v=38b210d3:12800
-performWorkOnRootViaSchedulerTask @ react-dom_client.js?v=38b210d3:14639
-performWorkUntilDeadline @ react-dom_client.js?v=38b210d3:36
-<POSView>
-exports.jsxDEV @ react_jsx-dev-runtime.js?v=38b210d3:255
-renderContent @ AppShell.tsx:96
-AppShell @ AppShell.tsx:172
-react_stack_bottom_frame @ react-dom_client.js?v=38b210d3:20259
-renderWithHooksAgain @ react-dom_client.js?v=38b210d3:5995
-renderWithHooks @ react-dom_client.js?v=38b210d3:5929
-updateFunctionComponent @ react-dom_client.js?v=38b210d3:7763
-beginWork @ react-dom_client.js?v=38b210d3:8843
-runWithFiberInDEV @ react-dom_client.js?v=38b210d3:1133
-performUnitOfWork @ react-dom_client.js?v=38b210d3:13598
-workLoopSync @ react-dom_client.js?v=38b210d3:13461
-renderRootSync @ react-dom_client.js?v=38b210d3:13445
-performWorkOnRoot @ react-dom_client.js?v=38b210d3:12800
-performWorkOnRootViaSchedulerTask @ react-dom_client.js?v=38b210d3:14639
-performWorkUntilDeadline @ react-dom_client.js?v=38b210d3:36
-<AppShell>
-exports.jsxDEV @ react_jsx-dev-runtime.js?v=38b210d3:255
-(anonymous) @ main.tsx:15
-react-dom_client.js?v=38b210d3:6058 Uncaught Error: Rendered more hooks than during the previous render.
-    at updateWorkInProgressHook (react-dom_client.js?v=38b210d3:6058:19)
-    at updateReducer (react-dom_client.js?v=38b210d3:6158:20)
-    at Object.useState (react-dom_client.js?v=38b210d3:20745:20)
-    at exports.useState (chunk-2XCFYVCW.js?v=38b210d3:984:36)
-    at ReceiptModal (ReceiptModal.tsx:33:35)
-    at Object.react_stack_bottom_frame (react-dom_client.js?v=38b210d3:20259:20)
-    at renderWithHooks (react-dom_client.js?v=38b210d3:5918:24)
-    at updateFunctionComponent (react-dom_client.js?v=38b210d3:7763:21)
-    at beginWork (react-dom_client.js?v=38b210d3:8843:20)
-    at runWithFiberInDEV (react-dom_client.js?v=38b210d3:1133:72)
-updateWorkInProgressHook @ react-dom_client.js?v=38b210d3:6058
-updateReducer @ react-dom_client.js?v=38b210d3:6158
-useState @ react-dom_client.js?v=38b210d3:20745
-exports.useState @ chunk-2XCFYVCW.js?v=38b210d3:984
-ReceiptModal @ ReceiptModal.tsx:33
-react_stack_bottom_frame @ react-dom_client.js?v=38b210d3:20259
-renderWithHooks @ react-dom_client.js?v=38b210d3:5918
-updateFunctionComponent @ react-dom_client.js?v=38b210d3:7763
-beginWork @ react-dom_client.js?v=38b210d3:8843
-runWithFiberInDEV @ react-dom_client.js?v=38b210d3:1133
-performUnitOfWork @ react-dom_client.js?v=38b210d3:13598
-workLoopSync @ react-dom_client.js?v=38b210d3:13461
-renderRootSync @ react-dom_client.js?v=38b210d3:13445
-performWorkOnRoot @ react-dom_client.js?v=38b210d3:12861
-performSyncWorkOnRoot @ react-dom_client.js?v=38b210d3:14651
-flushSyncWorkAcrossRoots_impl @ react-dom_client.js?v=38b210d3:14548
-processRootScheduleInMicrotask @ react-dom_client.js?v=38b210d3:14571
-(anonymous) @ react-dom_client.js?v=38b210d3:14665
-<ReceiptModal>
-exports.jsxDEV @ react_jsx-dev-runtime.js?v=38b210d3:255
-POSView @ POSView.tsx:392
-react_stack_bottom_frame @ react-dom_client.js?v=38b210d3:20259
-renderWithHooksAgain @ react-dom_client.js?v=38b210d3:5995
-renderWithHooks @ react-dom_client.js?v=38b210d3:5929
-updateFunctionComponent @ react-dom_client.js?v=38b210d3:7763
-beginWork @ react-dom_client.js?v=38b210d3:8843
-runWithFiberInDEV @ react-dom_client.js?v=38b210d3:1133
-performUnitOfWork @ react-dom_client.js?v=38b210d3:13598
-workLoopSync @ react-dom_client.js?v=38b210d3:13461
-renderRootSync @ react-dom_client.js?v=38b210d3:13445
-performWorkOnRoot @ react-dom_client.js?v=38b210d3:12800
-performWorkOnRootViaSchedulerTask @ react-dom_client.js?v=38b210d3:14639
-performWorkUntilDeadline @ react-dom_client.js?v=38b210d3:36
-<POSView>
-exports.jsxDEV @ react_jsx-dev-runtime.js?v=38b210d3:255
-renderContent @ AppShell.tsx:96
-AppShell @ AppShell.tsx:172
-react_stack_bottom_frame @ react-dom_client.js?v=38b210d3:20259
-renderWithHooksAgain @ react-dom_client.js?v=38b210d3:5995
-renderWithHooks @ react-dom_client.js?v=38b210d3:5929
-updateFunctionComponent @ react-dom_client.js?v=38b210d3:7763
-beginWork @ react-dom_client.js?v=38b210d3:8843
-runWithFiberInDEV @ react-dom_client.js?v=38b210d3:1133
-performUnitOfWork @ react-dom_client.js?v=38b210d3:13598
-workLoopSync @ react-dom_client.js?v=38b210d3:13461
-renderRootSync @ react-dom_client.js?v=38b210d3:13445
-performWorkOnRoot @ react-dom_client.js?v=38b210d3:12800
-performWorkOnRootViaSchedulerTask @ react-dom_client.js?v=38b210d3:14639
-performWorkUntilDeadline @ react-dom_client.js?v=38b210d3:36
-<AppShell>
-exports.jsxDEV @ react_jsx-dev-runtime.js?v=38b210d3:255
-(anonymous) @ main.tsx:15
-POSView.tsx:392 An error occurred in the <ReceiptModal> component.
-___
+---
+
+### 1. High-Speed POS & Retail Hardware (Recommended)
+* **Hold & Resume Carts (Multi-Cart / پارکینگ فاکتور)**:
+  If a customer forgets an item or their wallet, the cashier can put their cart on "Hold", ring up the next customer, and resume the first cart with 1 click.
+* **Auto-Print on Checkout (Zero-Click)**:
+  A setting to bypass the print preview entirely during checkout: pressing **F12** immediately prints the bill to your CARAVPOS printer and opens a clean new cart.
+* **Cash Drawer Automatic Kick (RJ11/RJ12)**:
+  Automatically sends the ESC/POS pulse (`\x1b\x70`) through the printer so the cash drawer pops open whenever a cash payment is completed.
+* **Barcode Label Printing (چاپ بارکد اجناس)**:
+  A tool to generate and print 40×30mm or 50×25mm sticker barcode labels for local products that don't have factory barcodes.
+
+---
+
+### 2. Business Continuity & Data Protection
+* **Automatic Database Backup**:
+  - Automatically create daily timestamped backups of `hesabdar.db` to an external USB drive, Documents folder, or cloud folder on app close.
+  - One-click "Restore from Backup" in case of Windows reinstall.
+* **Excel Product Importer**:
+  - Allow shop owners to upload an Excel file (`.xlsx`) to import hundreds of products and categories in seconds rather than adding them one by one.
+
+---
+
+### 3. Inventory & Purchasing (خرید و انبارداری)
+* **Stock Inflow / Purchase Orders (ورود جنس به انبار)**:
+  When a supplier delivers stock: record the purchase, automatically increase product stock, and update the supplier's balance (accounts payable).
+* **Low Stock Warning Badges**:
+  Show a red badge on the Inventory tab whenever items fall below their `reorder_level` (e.g. less than 5 units).
+
+---
+
+### 4. Customer Relationships & Debt Collection (حسابات مشتریان)
+* **Customer Account Statement (صورت حساب رسمی مشتری)**:
+  Generate an official printable A4 or 80mm ledger statement showing invoice dates, payments made, and current debt balance to give to credit customers.
+* **WhatsApp Invoice Sharing**:
+  A 1-click button to send a formatted digital invoice summary directly to the customer's WhatsApp.
+
+---
+
+### What would you like to focus on next?
+1. **Hold & Resume Carts (Multi-cart)**
+2. **Auto-Print on Checkout & Cash Drawer Kick**
+3. **Automatic Database Backup & Restore**
+4. **Stock Purchase / Inflow from Suppliers**
+5. **Barcode Label Printer for Products**

@@ -100,7 +100,19 @@
     "cashShortage": "Cash Shortage (کسری)",
     "exactSettlement": "Exact Settlement (تکمیل)",
     "addedToDebt": "Added to Debt",
-    "recordedAsCredit": "Recorded as Debt (Credit)"
+    "recordedAsCredit": "Recorded as Debt (Credit)",
+    "holdCart": "Hold Cart",
+    "heldInvoices": "Held Invoices",
+    "heldInvoicesSubtitle": "Resume parked customer transactions or remove them when no longer needed.",
+    "held": "held",
+    "resumeCart": "Resume Cart",
+    "noHeldCarts": "No Held Invoices",
+    "noHeldCartsDesc": "You can put an in-progress customer cart on hold at any time to serve the next customer in line.",
+    "clearAllHeld": "Clear All Held Carts",
+    "walkInCustomer": "Walk-in Customer",
+    "units": "units",
+    "cartHeld": "Cart Placed on Hold",
+    "cartResumed": "Cart Resumed"
   },
   "products": {
     "title": "Products & Inventory",

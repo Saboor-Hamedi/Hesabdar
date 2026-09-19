@@ -316,13 +316,13 @@ export function CalculatorNumpad({ onApplyToPaid, totalPayable = 0, resetKey }: 
         </div>
       </div>
 
-      {/* 3. Keypad Matrix (Stretched ~15px taller for optimal touch & click feel) */}
+      {/* 3. Keypad Matrix (Tamed visual hierarchy matching Sage Green theme) */}
       <div className="w-full grid grid-cols-4 gap-1.5 select-none">
-        {/* Row 1: Clear, Backspace, %, ÷ */}
+        {/* Row 1: Clear (Soft Red), Backspace, %, ÷ (Soft Slate) */}
         <button
           type="button"
           onClick={handleClear}
-          className="w-full h-[40px] xl:h-[42px] min-h-[38px] rounded-[8px] bg-rose-50 hover:bg-rose-100/80 active:scale-[0.98] text-rose-700 font-bold text-xs flex items-center justify-center transition-all cursor-pointer border-0 shadow-[0_1px_2px_rgba(0,0,0,0.02)]"
+          className="w-full h-[40px] xl:h-[42px] min-h-[38px] rounded-[8px] bg-rose-50 hover:bg-rose-100 active:scale-[0.98] text-rose-700 font-bold text-xs flex items-center justify-center transition-all cursor-pointer border border-rose-200/60 shadow-[0_1px_2px_rgba(0,0,0,0.02)]"
           title="Clear"
         >
           C
@@ -330,7 +330,7 @@ export function CalculatorNumpad({ onApplyToPaid, totalPayable = 0, resetKey }: 
         <button
           type="button"
           onClick={handleBackspace}
-          className="w-full h-[40px] xl:h-[42px] min-h-[38px] rounded-[8px] bg-[#E5E7EB]/60 hover:bg-[#D1D5DB] active:scale-[0.98] text-[#374151] font-medium text-xs flex items-center justify-center transition-all cursor-pointer border-0 shadow-[0_1px_2px_rgba(0,0,0,0.02)]"
+          className="w-full h-[40px] xl:h-[42px] min-h-[38px] rounded-[8px] bg-slate-100 hover:bg-slate-200/80 active:scale-[0.98] text-slate-700 font-semibold text-xs flex items-center justify-center transition-all cursor-pointer border border-slate-200/70 shadow-[0_1px_2px_rgba(0,0,0,0.02)]"
           title="Backspace"
         >
           <Delete className="w-3.5 h-3.5" />
@@ -338,150 +338,151 @@ export function CalculatorNumpad({ onApplyToPaid, totalPayable = 0, resetKey }: 
         <button
           type="button"
           onClick={handlePercent}
-          className="w-full h-[40px] xl:h-[42px] min-h-[38px] rounded-[8px] bg-[#E5E7EB]/60 hover:bg-[#D1D5DB] active:scale-[0.98] text-[#374151] font-medium text-xs flex items-center justify-center transition-all cursor-pointer border-0 shadow-[0_1px_2px_rgba(0,0,0,0.02)]"
+          className="w-full h-[40px] xl:h-[42px] min-h-[38px] rounded-[8px] bg-slate-100 hover:bg-slate-200/80 active:scale-[0.98] text-slate-700 font-semibold text-xs flex items-center justify-center transition-all cursor-pointer border border-slate-200/70 shadow-[0_1px_2px_rgba(0,0,0,0.02)]"
         >
           %
         </button>
         <button
           type="button"
           onClick={() => handleOperator('÷')}
-          className={`w-full h-[40px] xl:h-[42px] min-h-[38px] rounded-[8px] font-medium text-sm flex items-center justify-center transition-all cursor-pointer border-0 shadow-[0_1px_2px_rgba(0,0,0,0.02)] active:scale-[0.98] ${
+          className={`w-full h-[40px] xl:h-[42px] min-h-[38px] rounded-[8px] font-semibold text-base flex items-center justify-center transition-all cursor-pointer shadow-[0_1px_2px_rgba(0,0,0,0.02)] active:scale-[0.98] ${
             operator === '÷'
-              ? 'bg-[#5A8F7B]/20 text-[#3D665B] font-bold'
-              : 'bg-[#E5E7EB]/70 hover:bg-[#D1D5DB] text-[#374151]'
+              ? 'bg-[#5A8F7B]/20 text-[#2E4F46] font-bold border-2 border-[#5A8F7B]'
+              : 'bg-slate-100 hover:bg-slate-200/80 text-slate-700 border border-slate-200/70'
           }`}
         >
           ÷
         </button>
 
-        {/* Row 2: 7, 8, 9, × */}
+        {/* Row 2: 7, 8, 9, × (Soft Slate) */}
         <button
           type="button"
           onClick={() => handleDigit('7')}
-          className="w-full h-[40px] xl:h-[42px] min-h-[38px] rounded-[8px] bg-[#F3F4F6] hover:bg-[#E5E7EB] active:scale-[0.98] text-[#1F2937] font-mono font-medium text-sm shadow-[0_1px_2px_rgba(0,0,0,0.02)] transition-all flex items-center justify-center cursor-pointer border-0"
+          className="w-full h-[40px] xl:h-[42px] min-h-[38px] rounded-[8px] bg-white hover:bg-gray-50 active:scale-[0.98] text-slate-800 font-mono font-semibold text-sm shadow-[0_1px_2px_rgba(0,0,0,0.02)] border border-gray-200/80 transition-all flex items-center justify-center cursor-pointer"
         >
           7
         </button>
         <button
           type="button"
           onClick={() => handleDigit('8')}
-          className="w-full h-[40px] xl:h-[42px] min-h-[38px] rounded-[8px] bg-[#F3F4F6] hover:bg-[#E5E7EB] active:scale-[0.98] text-[#1F2937] font-mono font-medium text-sm shadow-[0_1px_2px_rgba(0,0,0,0.02)] transition-all flex items-center justify-center cursor-pointer border-0"
+          className="w-full h-[40px] xl:h-[42px] min-h-[38px] rounded-[8px] bg-white hover:bg-gray-50 active:scale-[0.98] text-slate-800 font-mono font-semibold text-sm shadow-[0_1px_2px_rgba(0,0,0,0.02)] border border-gray-200/80 transition-all flex items-center justify-center cursor-pointer"
         >
           8
         </button>
         <button
           type="button"
           onClick={() => handleDigit('9')}
-          className="w-full h-[40px] xl:h-[42px] min-h-[38px] rounded-[8px] bg-[#F3F4F6] hover:bg-[#E5E7EB] active:scale-[0.98] text-[#1F2937] font-mono font-medium text-sm shadow-[0_1px_2px_rgba(0,0,0,0.02)] transition-all flex items-center justify-center cursor-pointer border-0"
+          className="w-full h-[40px] xl:h-[42px] min-h-[38px] rounded-[8px] bg-white hover:bg-gray-50 active:scale-[0.98] text-slate-800 font-mono font-semibold text-sm shadow-[0_1px_2px_rgba(0,0,0,0.02)] border border-gray-200/80 transition-all flex items-center justify-center cursor-pointer"
         >
           9
         </button>
         <button
           type="button"
           onClick={() => handleOperator('×')}
-          className={`w-full h-[40px] xl:h-[42px] min-h-[38px] rounded-[8px] font-medium text-sm flex items-center justify-center transition-all cursor-pointer border-0 shadow-[0_1px_2px_rgba(0,0,0,0.02)] active:scale-[0.98] ${
+          className={`w-full h-[40px] xl:h-[42px] min-h-[38px] rounded-[8px] font-semibold text-base flex items-center justify-center transition-all cursor-pointer shadow-[0_1px_2px_rgba(0,0,0,0.02)] active:scale-[0.98] ${
             operator === '×'
-              ? 'bg-[#5A8F7B]/20 text-[#3D665B] font-bold'
-              : 'bg-[#E5E7EB]/70 hover:bg-[#D1D5DB] text-[#374151]'
+              ? 'bg-[#5A8F7B]/20 text-[#2E4F46] font-bold border-2 border-[#5A8F7B]'
+              : 'bg-slate-100 hover:bg-slate-200/80 text-slate-700 border border-slate-200/70'
           }`}
         >
           ×
         </button>
 
-        {/* Row 3: 4, 5, 6, - */}
+        {/* Row 3: 4, 5, 6, - (Soft Slate) */}
         <button
           type="button"
           onClick={() => handleDigit('4')}
-          className="w-full h-[40px] xl:h-[42px] min-h-[38px] rounded-[8px] bg-[#F3F4F6] hover:bg-[#E5E7EB] active:scale-[0.98] text-[#1F2937] font-mono font-medium text-sm shadow-[0_1px_2px_rgba(0,0,0,0.02)] transition-all flex items-center justify-center cursor-pointer border-0"
+          className="w-full h-[40px] xl:h-[42px] min-h-[38px] rounded-[8px] bg-white hover:bg-gray-50 active:scale-[0.98] text-slate-800 font-mono font-semibold text-sm shadow-[0_1px_2px_rgba(0,0,0,0.02)] border border-gray-200/80 transition-all flex items-center justify-center cursor-pointer"
         >
           4
         </button>
         <button
           type="button"
           onClick={() => handleDigit('5')}
-          className="w-full h-[40px] xl:h-[42px] min-h-[38px] rounded-[8px] bg-[#F3F4F6] hover:bg-[#E5E7EB] active:scale-[0.98] text-[#1F2937] font-mono font-medium text-sm shadow-[0_1px_2px_rgba(0,0,0,0.02)] transition-all flex items-center justify-center cursor-pointer border-0"
+          className="w-full h-[40px] xl:h-[42px] min-h-[38px] rounded-[8px] bg-white hover:bg-gray-50 active:scale-[0.98] text-slate-800 font-mono font-semibold text-sm shadow-[0_1px_2px_rgba(0,0,0,0.02)] border border-gray-200/80 transition-all flex items-center justify-center cursor-pointer"
         >
           5
         </button>
         <button
           type="button"
           onClick={() => handleDigit('6')}
-          className="w-full h-[40px] xl:h-[42px] min-h-[38px] rounded-[8px] bg-[#F3F4F6] hover:bg-[#E5E7EB] active:scale-[0.98] text-[#1F2937] font-mono font-medium text-sm shadow-[0_1px_2px_rgba(0,0,0,0.02)] transition-all flex items-center justify-center cursor-pointer border-0"
+          className="w-full h-[40px] xl:h-[42px] min-h-[38px] rounded-[8px] bg-white hover:bg-gray-50 active:scale-[0.98] text-slate-800 font-mono font-semibold text-sm shadow-[0_1px_2px_rgba(0,0,0,0.02)] border border-gray-200/80 transition-all flex items-center justify-center cursor-pointer"
         >
           6
         </button>
         <button
           type="button"
           onClick={() => handleOperator('-')}
-          className={`w-full h-[40px] xl:h-[42px] min-h-[38px] rounded-[8px] font-medium text-base flex items-center justify-center transition-all cursor-pointer border-0 shadow-[0_1px_2px_rgba(0,0,0,0.02)] active:scale-[0.98] ${
+          className={`w-full h-[40px] xl:h-[42px] min-h-[38px] rounded-[8px] font-semibold text-base flex items-center justify-center transition-all cursor-pointer shadow-[0_1px_2px_rgba(0,0,0,0.02)] active:scale-[0.98] ${
             operator === '-'
-              ? 'bg-[#5A8F7B]/20 text-[#3D665B] font-bold'
-              : 'bg-[#E5E7EB]/70 hover:bg-[#D1D5DB] text-[#374151]'
+              ? 'bg-[#5A8F7B]/20 text-[#2E4F46] font-bold border-2 border-[#5A8F7B]'
+              : 'bg-slate-100 hover:bg-slate-200/80 text-slate-700 border border-slate-200/70'
           }`}
         >
           -
         </button>
 
-        {/* Row 4: 1, 2, 3, + */}
+        {/* Row 4: 1, 2, 3, + (Soft Slate) */}
         <button
           type="button"
           onClick={() => handleDigit('1')}
-          className="w-full h-[40px] xl:h-[42px] min-h-[38px] rounded-[8px] bg-[#F3F4F6] hover:bg-[#E5E7EB] active:scale-[0.98] text-[#1F2937] font-mono font-medium text-sm shadow-[0_1px_2px_rgba(0,0,0,0.02)] transition-all flex items-center justify-center cursor-pointer border-0"
+          className="w-full h-[40px] xl:h-[42px] min-h-[38px] rounded-[8px] bg-white hover:bg-gray-50 active:scale-[0.98] text-slate-800 font-mono font-semibold text-sm shadow-[0_1px_2px_rgba(0,0,0,0.02)] border border-gray-200/80 transition-all flex items-center justify-center cursor-pointer"
         >
           1
         </button>
         <button
           type="button"
           onClick={() => handleDigit('2')}
-          className="w-full h-[40px] xl:h-[42px] min-h-[38px] rounded-[8px] bg-[#F3F4F6] hover:bg-[#E5E7EB] active:scale-[0.98] text-[#1F2937] font-mono font-medium text-sm shadow-[0_1px_2px_rgba(0,0,0,0.02)] transition-all flex items-center justify-center cursor-pointer border-0"
+          className="w-full h-[40px] xl:h-[42px] min-h-[38px] rounded-[8px] bg-white hover:bg-gray-50 active:scale-[0.98] text-slate-800 font-mono font-semibold text-sm shadow-[0_1px_2px_rgba(0,0,0,0.02)] border border-gray-200/80 transition-all flex items-center justify-center cursor-pointer"
         >
           2
         </button>
         <button
           type="button"
           onClick={() => handleDigit('3')}
-          className="w-full h-[40px] xl:h-[42px] min-h-[38px] rounded-[8px] bg-[#F3F4F6] hover:bg-[#E5E7EB] active:scale-[0.98] text-[#1F2937] font-mono font-medium text-sm shadow-[0_1px_2px_rgba(0,0,0,0.02)] transition-all flex items-center justify-center cursor-pointer border-0"
+          className="w-full h-[40px] xl:h-[42px] min-h-[38px] rounded-[8px] bg-white hover:bg-gray-50 active:scale-[0.98] text-slate-800 font-mono font-semibold text-sm shadow-[0_1px_2px_rgba(0,0,0,0.02)] border border-gray-200/80 transition-all flex items-center justify-center cursor-pointer"
         >
           3
         </button>
         <button
           type="button"
           onClick={() => handleOperator('+')}
-          className={`w-full h-[40px] xl:h-[42px] min-h-[38px] rounded-[8px] font-medium text-sm flex items-center justify-center transition-all cursor-pointer border-0 shadow-[0_1px_2px_rgba(0,0,0,0.02)] active:scale-[0.98] ${
+          className={`w-full h-[40px] xl:h-[42px] min-h-[38px] rounded-[8px] font-semibold text-base flex items-center justify-center transition-all cursor-pointer shadow-[0_1px_2px_rgba(0,0,0,0.02)] active:scale-[0.98] ${
             operator === '+'
-              ? 'bg-[#5A8F7B]/20 text-[#3D665B] font-bold'
-              : 'bg-[#E5E7EB]/70 hover:bg-[#D1D5DB] text-[#374151]'
+              ? 'bg-[#5A8F7B]/20 text-[#2E4F46] font-bold border-2 border-[#5A8F7B]'
+              : 'bg-slate-100 hover:bg-slate-200/80 text-slate-700 border border-slate-200/70'
           }`}
         >
           +
         </button>
 
-        {/* Row 5: 0, 00, ., = */}
+        {/* Row 5: 0, 00, ., = (Action Button: Primary Brand Green) */}
         <button
           type="button"
           onClick={() => handleDigit('0')}
-          className="w-full h-[40px] xl:h-[42px] min-h-[38px] rounded-[8px] bg-[#F3F4F6] hover:bg-[#E5E7EB] text-[#1F2937] font-mono font-medium text-sm shadow-[0_1px_2px_rgba(0,0,0,0.02)] transition-all flex items-center justify-center cursor-pointer border-0"
+          className="w-full h-[40px] xl:h-[42px] min-h-[38px] rounded-[8px] bg-white hover:bg-gray-50 active:scale-[0.98] text-slate-800 font-mono font-semibold text-sm shadow-[0_1px_2px_rgba(0,0,0,0.02)] border border-gray-200/80 transition-all flex items-center justify-center cursor-pointer"
         >
           0
         </button>
         <button
           type="button"
           onClick={() => handleDigit('00')}
-          className="w-full h-[40px] xl:h-[42px] min-h-[38px] rounded-[8px] bg-[#F3F4F6] hover:bg-[#E5E7EB] text-[#1F2937] font-mono font-medium text-sm shadow-[0_1px_2px_rgba(0,0,0,0.02)] transition-all flex items-center justify-center cursor-pointer border-0"
+          className="w-full h-[40px] xl:h-[42px] min-h-[38px] rounded-[8px] bg-white hover:bg-gray-50 active:scale-[0.98] text-slate-800 font-mono font-semibold text-sm shadow-[0_1px_2px_rgba(0,0,0,0.02)] border border-gray-200/80 transition-all flex items-center justify-center cursor-pointer"
         >
           00
         </button>
         <button
           type="button"
           onClick={handleDot}
-          className="w-full h-[40px] xl:h-[42px] min-h-[38px] rounded-[8px] bg-[#F3F4F6] hover:bg-[#E5E7EB] text-[#1F2937] font-mono font-medium text-sm shadow-[0_1px_2px_rgba(0,0,0,0.02)] transition-all flex items-center justify-center cursor-pointer border-0"
+          className="w-full h-[40px] xl:h-[42px] min-h-[38px] rounded-[8px] bg-white hover:bg-gray-50 active:scale-[0.98] text-slate-800 font-mono font-semibold text-sm shadow-[0_1px_2px_rgba(0,0,0,0.02)] border border-gray-200/80 transition-all flex items-center justify-center cursor-pointer"
         >
           .
         </button>
         <button
           type="button"
           onClick={handleEquals}
-          className="w-full h-[40px] xl:h-[42px] min-h-[38px] rounded-[8px] bg-[#5A8F7B] hover:bg-[#4A7C6F] active:scale-[0.98] text-white font-medium text-base shadow-xs flex items-center justify-center transition-all cursor-pointer border-0"
+          className="w-full h-[40px] xl:h-[42px] min-h-[38px] rounded-[8px] bg-[#5A8F7B] hover:bg-[#4A7C6F] active:bg-[#3D665B] active:scale-[0.98] text-white font-bold text-lg shadow-sm flex items-center justify-center transition-all cursor-pointer border-0"
+          title="Calculate"
         >
           =
         </button>
@@ -498,7 +499,7 @@ export function CalculatorNumpad({ onApplyToPaid, totalPayable = 0, resetKey }: 
                 onApplyToPaid(val)
               }
             }}
-            className="w-full py-1.5 px-3 h-7 rounded-[7px] bg-white hover:bg-gray-50 active:scale-[0.99] border border-gray-200/80 text-[#3D665B] text-xs font-medium flex items-center justify-center gap-1.5 transition-all shadow-[0_1px_2px_rgba(0,0,0,0.02)] cursor-pointer"
+            className="w-full py-1.5 px-3 h-7 rounded-[7px] bg-white hover:bg-[#5A8F7B]/10 active:scale-[0.99] border border-gray-200/80 text-[#3D665B] text-xs font-semibold flex items-center justify-center gap-1.5 transition-all shadow-2xs cursor-pointer"
           >
             <ArrowDownToLine className="w-3.5 h-3.5 text-[#5A8F7B]" />
             <span>Apply to Cash Paid</span>

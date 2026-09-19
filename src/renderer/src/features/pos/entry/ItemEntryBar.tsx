@@ -18,8 +18,43 @@ interface ItemEntryBarProps {
   onChangePrice?: (val: number) => void
   onChangeUnit: (val: UnitType) => void
   onAddItem: () => void
+  onFastScanAdd?: (product: Product) => void
   onFocusField?: (field: 'amount') => void
   activeField?: string
+}
+
+/**
+ * Normalizes search text across all languages (Persian/Dari, Pashto, English)
+ * and keyboard input methods:
+ * - Converts Arabic and Persian numerals (۰-۹ / ٠-٩) to ASCII 0-9
+ * - Normalizes Yeh variants (ي, ې, ۍ, ئ, ى) to standard Persian 'ی'
+ * - Normalizes Kaf variants (ك, ګ, ک) to standard 'ک'
+ * - Normalizes Alef variants (آ, أ, إ, ٱ) to standard 'ا'
+ * - Normalizes Teh Marbuta (ة) & Heh variants (ۀ, ہ) to standard 'ه'
+ * - Removes Zero-Width Non-Joiners (\u200C / نیم‌فاصله) & zero-width spaces
+ * - Strips Arabic diacritics / Tashkeel
+ */
+export function normalizeSearchTerm(str: string): string {
+  if (!str) return ''
+  return str
+    .toLowerCase()
+    .replace(/[۰٠]/g, '0')
+    .replace(/[۱١]/g, '1')
+    .replace(/[۲٢]/g, '2')
+    .replace(/[۳٣]/g, '3')
+    .replace(/[۴٤]/g, '4')
+    .replace(/[۵٥]/g, '5')
+    .replace(/[۶٦]/g, '6')
+    .replace(/[۷٧]/g, '7')
+    .replace(/[۸٨]/g, '8')
+    .replace(/[۹٩]/g, '9')
+    .replace(/[\u064A\u0649\u06D0\u06CD\u06D1\u0626]/g, 'ی')
+    .replace(/[\u0643\u06A8\u06AB]/g, 'ک')
+    .replace(/[\u0622\u0623\u0625\u0671]/g, 'ا')
+    .replace(/[\u0629\u06C0\u06C1]/g, 'ه')
+    .replace(/[\u200B-\u200D\uFEFF]/g, '')
+    .replace(/[\u064B-\u065F\u0670]/g, '')
+    .trim()
 }
 
 /**
@@ -39,6 +74,7 @@ export function ItemEntryBar({
   onChangePrice,
   onChangeUnit,
   onAddItem,
+  onFastScanAdd,
 }: ItemEntryBarProps) {
   const { t } = useTranslation()
   const [internalQuery, setInternalQuery] = useState('')
@@ -60,25 +96,96 @@ export function ItemEntryBar({
     searchInputRef.current?.focus()
   }, [])
 
-  // Pre-indexed product search for zero-allocation, instant response
+  // Pre-indexed product search for zero-allocation, instant <1ms response
   const productIndex = useMemo(() => {
-    return products.map((p) => ({
-      product: p,
-      haystack: [p.barcode, p.name_fa, p.name_en, p.name_ps, p.category_name]
+    return products.map((p) => {
+      const cleanBarcode = normalizeSearchTerm(p.barcode || '')
+      const cleanNameFa = normalizeSearchTerm(p.name_fa || '')
+      const cleanNameEn = normalizeSearchTerm(p.name_en || '')
+      const cleanNamePs = normalizeSearchTerm(p.name_ps || '')
+      const cleanCategory = normalizeSearchTerm(p.category_name || '')
+
+      const rawHaystack = [p.barcode, p.name_fa, p.name_en, p.name_ps, p.category_name]
         .filter(Boolean)
-        .join('|')
+        .join(' ')
         .toLowerCase()
-    }))
+
+      const normalizedHaystack = [cleanBarcode, cleanNameFa, cleanNameEn, cleanNamePs, cleanCategory]
+        .filter(Boolean)
+        .join(' ')
+
+      const tokens = normalizedHaystack.split(/\s+/).filter(Boolean)
+
+      return {
+        product: p,
+        cleanBarcode,
+        cleanNameFa,
+        cleanNameEn,
+        cleanNamePs,
+        rawHaystack,
+        normalizedHaystack,
+        tokens,
+      }
+    })
   }, [products])
 
   // Filter products based on search query (only when user types)
   const filteredProducts = useMemo(() => {
-    if (!searchQuery.trim()) return []
-    const q = searchQuery.toLowerCase().trim()
-    return productIndex
-      .filter((entry) => entry.haystack.includes(q))
-      .map((entry) => entry.product)
-      .slice(0, 15)
+    const rawQ = searchQuery.trim()
+    if (!rawQ) return []
+
+    const normQ = normalizeSearchTerm(rawQ)
+    const queryTokens = normQ.split(/\s+/).filter(Boolean)
+
+    // Tiered matches
+    const exactBarcodes: Product[] = []
+    const prefixBarcodes: Product[] = []
+    const namePrefixes: Product[] = []
+    const allTokensMatch: Product[] = []
+    const substringMatches: Product[] = []
+
+    for (const entry of productIndex) {
+      // 1. Exact barcode / SKU match (highest priority for barcode scanners)
+      if (entry.cleanBarcode && (entry.cleanBarcode === normQ || entry.product.barcode === rawQ)) {
+        exactBarcodes.push(entry.product)
+        continue
+      }
+
+      // 2. Barcode prefix match
+      if (entry.cleanBarcode && entry.cleanBarcode.startsWith(normQ)) {
+        prefixBarcodes.push(entry.product)
+        continue
+      }
+
+      // 3. Name starts with query
+      if (
+        entry.cleanNameFa.startsWith(normQ) ||
+        entry.cleanNameEn.startsWith(normQ) ||
+        entry.cleanNamePs.startsWith(normQ)
+      ) {
+        namePrefixes.push(entry.product)
+        continue
+      }
+
+      // 4. All query tokens matched in any order
+      if (queryTokens.length > 1 && queryTokens.every((t) => entry.normalizedHaystack.includes(t))) {
+        allTokensMatch.push(entry.product)
+        continue
+      }
+
+      // 5. General substring match in normalized or raw fields
+      if (entry.normalizedHaystack.includes(normQ) || entry.rawHaystack.includes(rawQ.toLowerCase())) {
+        substringMatches.push(entry.product)
+      }
+    }
+
+    return [
+      ...exactBarcodes,
+      ...prefixBarcodes,
+      ...namePrefixes,
+      ...allTokensMatch,
+      ...substringMatches,
+    ].slice(0, 20)
   }, [productIndex, searchQuery])
 
   // Handle outside click to close dropdown
@@ -95,7 +202,7 @@ export function ItemEntryBar({
   // Handle choosing a product
   const handlePickProduct = (product: Product) => {
     onSelectProduct(product)
-    setSearchQuery(product.name_fa || product.name_en || '')
+    setSearchQuery('') // Auto-clear per prompt.md requirement
     if (onChangePrice) onChangePrice(product.sell_price)
     onChangeUnit(product.unit || 'pcs')
     setIsDropdownOpen(false)
@@ -118,13 +225,14 @@ export function ItemEntryBar({
   // Add Item and return focus to search input
   const handleAdd = () => {
     onAddItem()
+    setSearchQuery('')
     setIsDropdownOpen(false)
     setTimeout(() => {
       searchInputRef.current?.focus()
     }, 50)
   }
 
-  // Key navigation in product search
+  // Key navigation in product search & instant barcode scan handler
   const handleSearchKeyDown = (e: KeyboardEvent) => {
     if (!isDropdownOpen && searchQuery.trim().length > 0) {
       if (e.key === 'ArrowDown') {
@@ -141,12 +249,35 @@ export function ItemEntryBar({
       setHighlightedIndex((prev) => (prev > 0 ? prev - 1 : 0))
     } else if (e.key === 'Enter') {
       e.preventDefault()
+      const rawQ = searchQuery.trim()
+      const normQ = normalizeSearchTerm(rawQ)
+
+      // 1. Direct Barcode Scan Detection: Exact barcode or SKU match
+      const exactBarcode = products.find(
+        (p) => normalizeSearchTerm(p.barcode || '') === normQ || p.barcode === rawQ
+      )
+
+      if (exactBarcode) {
+        // Fast-track: automatically add 1 unit to cart and stay ready for next scan
+        if (onFastScanAdd) {
+          onFastScanAdd(exactBarcode)
+        } else {
+          onSelectProduct(exactBarcode)
+          if (onChangePrice) onChangePrice(exactBarcode.sell_price)
+          onChangeUnit(exactBarcode.unit || 'pcs')
+          onChangeAmount(1)
+          onAddItem()
+        }
+        setSearchQuery('')
+        setIsDropdownOpen(false)
+        searchInputRef.current?.focus()
+        return
+      }
+
+      // 2. Select the currently highlighted product
       if (filteredProducts.length > 0) {
-        // Prioritize exact barcode match if available
-        const exactBarcode = filteredProducts.find(
-          (p) => p.barcode?.toLowerCase() === searchQuery.trim().toLowerCase()
-        )
-        handlePickProduct(exactBarcode || filteredProducts[highlightedIndex] || filteredProducts[0])
+        const picked = filteredProducts[highlightedIndex] || filteredProducts[0]
+        handlePickProduct(picked)
       }
     } else if (e.key === 'Escape') {
       setIsDropdownOpen(false)
@@ -257,6 +388,28 @@ export function ItemEntryBar({
           )}
         </div>
       </div>
+
+      {/* Staged Product Indicator (Visible when item is chosen) */}
+      {selectedProduct && (
+        <div className="flex items-center justify-between px-3 py-1.5 bg-[#4A7C6F]/10 border border-[#4A7C6F]/20 rounded-[7px] text-xs animate-in fade-in duration-150">
+          <div className="flex items-center gap-2 truncate">
+            <span className="font-semibold text-[#2E4F46] truncate">
+              {selectedProduct.name_fa || selectedProduct.name_en}
+            </span>
+            <span className="text-[10px] px-1.5 py-0.2 rounded bg-white text-gray-600 font-mono border border-gray-200">
+              {selectedProduct.barcode || `#${selectedProduct.id}`}
+            </span>
+          </div>
+          <button
+            type="button"
+            onClick={handleClearSelection}
+            className="text-[11px] text-gray-400 hover:text-rose-600 p-0.5 rounded cursor-pointer transition-colors"
+            title="Clear selection"
+          >
+            <X className="w-3.5 h-3.5" />
+          </button>
+        </div>
+      )}
 
       {/* Row 2: Merged Cohesive Toolbar (Qty + Unit Price + Line Total) + Add Button */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">

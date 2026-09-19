@@ -9,6 +9,13 @@ import {
   onStoreChange,
 } from '../../../core/store'
 import { notify } from '../../../core/notifications'
+import type { HeldCart } from '../hold/types'
+import {
+  getHeldCarts,
+  saveHeldCart,
+  removeHeldCart,
+  clearAllHeldCarts,
+} from '../hold/holdCartService'
 
 export type ActiveField = 'amount' | 'price' | 'discount' | 'paid'
 
@@ -22,6 +29,7 @@ export function usePOS() {
   const [cashPaid, setCashPaid] = useState<number>(0)
   const [selectedCustomerId, setSelectedCustomerId] = useState<number | null>(null)
   const [paymentMode, setPaymentMode] = useState<PaymentMode>('cash')
+  const [heldCarts, setHeldCarts] = useState<HeldCart[]>(() => getHeldCarts())
 
   // Fast Cashier Input draft item state
   const [entryProduct, setEntryProduct] = useState<Product | null>(null)
@@ -385,6 +393,106 @@ export function usePOS() {
     []
   )
 
+  // Hold current cart
+  const handleHoldCart = useCallback(
+    (note?: string | unknown) => {
+      if (cart.length === 0) {
+        notify({
+          type: 'warning',
+          title: 'Empty Cart',
+          message: 'Cannot hold an empty cart.',
+        })
+        return false
+      }
+
+      const currentCustomer = customers.find((c) => c.id === selectedCustomerId)
+      const customerName = currentCustomer?.name
+      const cleanNote = typeof note === 'string' ? note : undefined
+
+      saveHeldCart({
+        items: [...cart],
+        customerId: selectedCustomerId,
+        customerName,
+        discount,
+        paymentMode,
+        subtotal,
+        total,
+        note: cleanNote,
+      })
+
+      setHeldCarts(getHeldCarts())
+      clearCart()
+
+      notify({
+        type: 'info',
+        title: 'Cart Held',
+        message: customerName
+          ? `Order for ${customerName} put on hold.`
+          : 'Current order has been put on hold.',
+      })
+      return true
+    },
+    [cart, customers, selectedCustomerId, discount, paymentMode, subtotal, total, clearCart]
+  )
+
+  // Resume held cart - cleans it out of localStorage immediately
+  const handleResumeCart = useCallback((heldCart: HeldCart) => {
+    // If active cart already has items, park it first so the cashier never loses active customer items
+    if (cart.length > 0) {
+      const activeCustomer = customers.find((c) => c.id === selectedCustomerId)
+      saveHeldCart({
+        items: [...cart],
+        customerId: selectedCustomerId,
+        customerName: activeCustomer?.name,
+        discount,
+        paymentMode,
+        subtotal,
+        total,
+      })
+    }
+
+    // Set resumed cart items and settings
+    setCart(heldCart.items)
+    setSelectedCustomerId(heldCart.customerId)
+    setDiscount(heldCart.discount || 0)
+    setPaymentMode(heldCart.paymentMode || 'cash')
+    setCashPaid(0)
+
+    // Clear out of localStorage
+    removeHeldCart(heldCart.id)
+    setHeldCarts(getHeldCarts())
+
+    notify({
+      type: 'success',
+      title: 'Cart Resumed',
+      message: heldCart.customerName
+        ? `Resumed order for ${heldCart.customerName}.`
+        : 'Held cart loaded into active invoice.',
+    })
+  }, [cart, customers, selectedCustomerId, discount, paymentMode, subtotal, total])
+
+  // Delete specific held cart
+  const handleDeleteHeldCart = useCallback((id: string) => {
+    removeHeldCart(id)
+    setHeldCarts(getHeldCarts())
+    notify({
+      type: 'info',
+      title: 'Held Cart Deleted',
+      message: 'The held cart was removed.',
+    })
+  }, [])
+
+  // Clear all held carts
+  const handleClearAllHeldCarts = useCallback(() => {
+    clearAllHeldCarts()
+    setHeldCarts([])
+    notify({
+      type: 'info',
+      title: 'Held Carts Cleared',
+      message: 'All held carts have been cleared.',
+    })
+  }, [])
+
   // Active current value for calculator display
   const currentActiveValue = useMemo(() => {
     switch (activeField) {
@@ -413,6 +521,12 @@ export function usePOS() {
     setSelectedCustomerId,
     paymentMode,
     setPaymentMode,
+    // Held carts (multi-cart parking)
+    heldCarts,
+    handleHoldCart,
+    handleResumeCart,
+    handleDeleteHeldCart,
+    handleClearAllHeldCarts,
     // Draft entry state
     entryProduct,
     entrySearchQuery,

@@ -154,11 +154,15 @@ export function SettlementPanel({
               {!isCard && displayTotal > 0 && !isCheckoutComplete && (
                 <button
                   type="button"
-                  onClick={() => onChangeCashPaid(displayTotal)}
-                  className="h-5 px-1.5 bg-[#5A8F7B]/10 hover:bg-[#5A8F7B]/20 active:scale-95 text-[#4A7C6F] rounded-[4px] text-[10px] font-semibold transition-colors border border-[#5A8F7B]/30 cursor-pointer"
-                  title="Fill exact total amount"
+                  onClick={() => onChangeCashPaid(isExact ? 0 : displayTotal)}
+                  className={`h-5 px-2 rounded-[5px] text-[10px] font-semibold transition-all border cursor-pointer active:scale-95 shadow-2xs ${
+                    isExact
+                      ? 'bg-emerald-600 text-white border-emerald-700 font-bold shadow-xs'
+                      : 'bg-[#5A8F7B]/10 hover:bg-[#5A8F7B]/20 text-[#3D665B] border-[#5A8F7B]/30'
+                  }`}
+                  title={isExact ? 'Click to clear' : 'Click to fill exact total'}
                 >
-                  {t('pos.exact')}
+                  {isExact ? `✓ ${t('pos.exact', 'Exact')}` : t('pos.exact', 'Exact')}
                 </button>
               )}
             </div>
@@ -174,7 +178,11 @@ export function SettlementPanel({
                 }}
                 disabled={isCard || isCheckoutComplete}
                 placeholder={String(displayTotal || 0)}
-                className="w-full h-full bg-[#F3F4F6] hover:bg-[#E5E7EB]/70 focus:bg-white text-end text-xs font-mono font-bold text-gray-900 rounded-lg p-0 pr-11 border border-transparent focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 disabled:text-gray-500 transition-all [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                className={`w-full h-full text-end text-xs font-mono font-bold rounded-lg p-0 pr-11 border transition-all [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none disabled:text-gray-500 ${
+                  isExact
+                    ? 'border-emerald-500 ring-2 ring-emerald-500/20 bg-emerald-50/20 text-emerald-950'
+                    : 'bg-[#F3F4F6] hover:bg-[#E5E7EB]/70 focus:bg-white text-gray-900 border-transparent focus:border-[#4A7C6F] focus:outline-none focus:ring-2 focus:ring-[#4A7C6F]/20'
+                }`}
               />
               <span className="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs font-mono font-medium text-gray-400 select-none pointer-events-none">
                 AFN
