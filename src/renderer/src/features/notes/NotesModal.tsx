@@ -83,11 +83,8 @@ export function NotesModal({ isOpen, onClose }: NotesModalProps) {
               <StickyNote className="w-4 h-4 text-amber-600 dark:text-amber-400" />
             </div>
             <div>
-              <h2 className="text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-100 flex items-center gap-2">
-                {t('notes.title', 'Sticky Notes & Scratchpad')}
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-amber-50 dark:bg-amber-950/50 text-amber-800 dark:text-amber-300 border border-amber-200/80 dark:border-amber-800/60 font-semibold">
-                  {t('notes.badge', 'Quick Notes')}
-                </span>
+              <h2 className="text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-100">
+                {t('notes.title', 'Notes')}
               </h2>
             </div>
           </div>

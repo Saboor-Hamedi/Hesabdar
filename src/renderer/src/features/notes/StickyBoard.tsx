@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next';
 import { StickyNote } from 'lucide-react';
 import { createNote, useBoard } from './board-state';
 import { cn } from './cn';
-import { clampPoint } from './geometry';
 import { NoteCard } from './NoteCard';
 import { Toolbar } from './Toolbar';
 import {
@@ -25,18 +24,15 @@ export interface StickyBoardProps {
   onToggleSideDock?: () => void;
 }
 
-/** A spot near the middle of the board, nudged so new items don't stack exactly. */
-function spawnPoint(board: HTMLElement | null, size: number) {
-  const width = board?.clientWidth ?? 800;
-  const height = board?.clientHeight ?? 500;
-  const jitter = () => (Math.random() - 0.5) * 160;
-  return clampPoint(
-    { width, height },
-    (width - size) / 2 + jitter(),
-    (height - size) / 2 + jitter(),
-    size,
-    size,
-  );
+/** Staggered spawn position — notes are placed in a neat cascade, never stacked. */
+function spawnPoint(size: number, existingCount: number) {
+  const gap = 24;
+  const step = size + gap;
+  const col = existingCount % 4;
+  const row = Math.floor(existingCount / 4);
+  const x = 32 + col * step;
+  const y = 32 + row * step;
+  return { x, y };
 }
 
 export function StickyBoard({
@@ -70,12 +66,12 @@ export function StickyBoard({
 
   const addNote = useCallback(
     (color: NoteColor, pos?: { x: number; y: number }) => {
-      const position = pos ?? spawnPoint(boardRef.current, cardPixelSize);
+      const position = pos ?? spawnPoint(cardPixelSize, board.items.length);
       const note = createNote({ color, ...position });
       add(note);
       setLastAddedId(note.id);
     },
-    [add, cardPixelSize],
+    [add, cardPixelSize, board.items.length],
   );
 
   const handleDoubleClick = useCallback(
@@ -117,7 +113,7 @@ export function StickyBoard({
   }, [board.items, layoutMode, sortOrder]);
 
   return (
-    <section className={cn('flex flex-col gap-2.5 h-full min-h-0', className)}>
+    <section className={cn('flex flex-col gap-2.5 h-full min-h-0 overflow-hidden', className)}>
       <Toolbar
         count={board.items.length}
         layoutMode={layoutMode}
@@ -138,8 +134,17 @@ export function StickyBoard({
         aria-label="Sticky note board"
         onDoubleClick={handleDoubleClick}
         className={cn(
-          'relative min-h-[22rem] h-full flex-1 rounded-2xl bg-[#1E293B] dark:bg-[#0B132B] bg-[radial-gradient(rgba(255,255,255,0.12)_1.2px,transparent_1.2px)] bg-[length:24px_24px] shadow-[inset_0_2px_14px_rgba(0,0,0,0.4)] ring-1 ring-black/30 border border-slate-700/60 dark:border-slate-800',
-          layoutMode === 'grid' ? 'overflow-y-auto p-4' : 'overflow-hidden'
+          // Theme-aware background: light board in light mode, dark board in dark mode
+          'relative min-h-0 h-full flex-1 rounded-2xl',
+          'bg-slate-100 dark:bg-[#1E293B]',
+          'bg-[radial-gradient(rgba(0,0,0,0.08)_1px,transparent_1px)] dark:bg-[radial-gradient(rgba(255,255,255,0.10)_1px,transparent_1px)]',
+          'bg-[length:24px_24px]',
+          'shadow-[inset_0_2px_10px_rgba(0,0,0,0.06)] dark:shadow-[inset_0_2px_14px_rgba(0,0,0,0.4)]',
+          'ring-1 ring-black/8 dark:ring-black/30',
+          'border border-slate-200/80 dark:border-slate-700/60',
+          // Invisible scrollbars — functional but hidden (no knob/corner either)
+          '[scrollbar-width:none] [&::-webkit-scrollbar]:hidden [&::-webkit-scrollbar-corner]:hidden',
+          layoutMode === 'grid' ? 'overflow-y-auto p-4' : 'overflow-auto'
         )}
       >
         {board.items.length === 0 && (
@@ -147,12 +152,12 @@ export function StickyBoard({
             <button
               type="button"
               onClick={() => addNote('butter')}
-              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 border border-amber-500/40 transition-all shadow-sm hover:scale-105 active:scale-95 cursor-pointer font-medium text-sm"
+              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-700 dark:text-amber-200 border border-amber-500/40 transition-all shadow-sm hover:scale-105 active:scale-95 cursor-pointer font-medium text-sm"
             >
-              <StickyNote className="w-4 h-4 text-amber-400" />
+              <StickyNote className="w-4 h-4 text-amber-500 dark:text-amber-400" />
               <span>{t('notes.addFirstNote', 'Click here to add your first note')}</span>
             </button>
-            <p className="mt-2.5 text-xs text-slate-400">
+            <p className="mt-2.5 text-xs text-slate-500 dark:text-slate-400">
               {t('notes.doubleClickHint', 'Or double-click anywhere on the board to write')}
             </p>
           </div>
@@ -185,24 +190,45 @@ export function StickyBoard({
             )}
           </div>
         ) : (
-          board.items.map((item) =>
-            item.kind === 'note' ? (
-              <NoteCard
-                key={item.id}
-                item={item}
-                boundsRef={boardRef}
-                autoFocus={item.id === lastAddedId}
-                size={cardPixelSize}
-                isGrid={false}
-                onTitle={board.setTitle}
-                onText={board.setText}
-                onColor={board.setColor}
-                onMove={board.move}
-                onRaise={board.raise}
-                onRemove={board.remove}
-              />
-            ) : null
-          )
+          <>
+            {/* Dynamic spacer — sized to the furthest note so we only scroll as far as needed */}
+            <div
+              className="pointer-events-none absolute top-0 left-0"
+              aria-hidden="true"
+              style={{
+                width: Math.max(
+                  800,
+                  ...board.items
+                    .filter((i) => i.kind === 'note')
+                    .map((i) => i.x + cardPixelSize + 48)
+                ),
+                height: Math.max(
+                  500,
+                  ...board.items
+                    .filter((i) => i.kind === 'note')
+                    .map((i) => i.y + cardPixelSize + 48)
+                ),
+              }}
+            />
+            {board.items.map((item) =>
+              item.kind === 'note' ? (
+                <NoteCard
+                  key={item.id}
+                  item={item}
+                  boundsRef={boardRef}
+                  autoFocus={item.id === lastAddedId}
+                  size={cardPixelSize}
+                  isGrid={false}
+                  onTitle={board.setTitle}
+                  onText={board.setText}
+                  onColor={board.setColor}
+                  onMove={board.move}
+                  onRaise={board.raise}
+                  onRemove={board.remove}
+                />
+              ) : null
+            )}
+          </>
         )}
       </div>
     </section>

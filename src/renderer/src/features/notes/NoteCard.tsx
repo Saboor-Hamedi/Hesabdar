@@ -49,14 +49,11 @@ export const NoteCard = memo(function NoteCard({
   useEffect(() => {
     if (!autoFocus) return;
     const timer = window.setTimeout(() => {
-      if (!item.title) {
-        titleRef.current?.focus({ preventScroll: true });
-      } else {
-        textRef.current?.focus({ preventScroll: true });
-      }
+      titleRef.current?.focus({ preventScroll: true });
     }, 30);
     return () => window.clearTimeout(timer);
-  }, [autoFocus, item.title]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autoFocus]); // ← DO NOT add item.title here — that re-runs on every keystroke and steals focus
 
   const handlePointerDown = (e: React.PointerEvent<HTMLElement>) => {
     onRaise(item.id);
@@ -165,13 +162,6 @@ export const NoteCard = memo(function NoteCard({
         <div
           data-no-drag
           className="min-h-0 flex-1 px-3 pb-3 cursor-text flex flex-col"
-          onClick={() => {
-            if (!item.title) {
-              titleRef.current?.focus();
-            } else {
-              textRef.current?.focus();
-            }
-          }}
         >
           {/* Note Title */}
           <input

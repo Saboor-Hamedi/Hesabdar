@@ -202,7 +202,7 @@ export function SystemClockPicker({
         onClick={handleToggle}
         onDoubleClick={(e) => e.stopPropagation()}
         className={`
-          flex items-center gap-1.5 h-6 px-2.5 rounded-full text-[11px] font-medium transition-all
+          flex items-center gap-1.5 h-6 px-2.5 rounded-[5px] text-[11px] font-medium transition-all
           border cursor-pointer select-none
           ${
             isOpen

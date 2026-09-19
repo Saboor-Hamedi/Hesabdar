@@ -40,7 +40,7 @@ export function TitleBar() {
           window.titlebarAPI?.maximize?.()
         }
       }}
-      className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between select-none border-b border-gray-200/60 dark:border-slate-800 bg-white/95 dark:bg-slate-900/95 backdrop-blur-sm"
+      className="fixed top-0 left-0 right-0 z-[60] flex items-center justify-between select-none border-b border-gray-200/60 dark:border-slate-800 bg-white/95 dark:bg-slate-900/95 backdrop-blur-sm"
       style={{ height: TITLEBAR_HEIGHT, WebkitAppRegion: 'drag' } as React.CSSProperties}
     >
       {/* Start Cluster: Logo, Title, Theme Toggle */}
@@ -65,23 +65,27 @@ export function TitleBar() {
 
       {/* End Cluster: Dual Calendar + System Clock + Window Controls */}
       <div
-        className="flex items-center gap-1.5 px-2"
+        className="flex items-center"
         style={{ WebkitAppRegion: 'no-drag' } as React.CSSProperties}
       >
-        <DualCalendarPicker
-          isOpen={activeHeaderModal === 'calendar'}
-          onToggle={() =>
-            setActiveHeaderModal((prev) => (prev === 'calendar' ? null : 'calendar'))
-          }
-          onClose={() => setActiveHeaderModal(null)}
-        />
-        <SystemClockPicker
-          isOpen={activeHeaderModal === 'clock'}
-          onToggle={() =>
-            setActiveHeaderModal((prev) => (prev === 'clock' ? null : 'clock'))
-          }
-          onClose={() => setActiveHeaderModal(null)}
-        />
+        {/* Calendar & clock buttons */}
+        <div className="flex items-center gap-1.5 px-2">
+          <DualCalendarPicker
+            isOpen={activeHeaderModal === 'calendar'}
+            onToggle={() =>
+              setActiveHeaderModal((prev) => (prev === 'calendar' ? null : 'calendar'))
+            }
+            onClose={() => setActiveHeaderModal(null)}
+          />
+          <SystemClockPicker
+            isOpen={activeHeaderModal === 'clock'}
+            onToggle={() =>
+              setActiveHeaderModal((prev) => (prev === 'clock' ? null : 'clock'))
+            }
+            onClose={() => setActiveHeaderModal(null)}
+          />
+        </div>
+        {/* Window controls — always flush to the very right edge, no padding */}
         <WindowControls isMaximized={isMaximized} />
       </div>
     </div>
