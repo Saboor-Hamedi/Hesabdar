@@ -26,16 +26,16 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         'bg-[#5A8F7B] text-white hover:bg-[#4A7C6F] active:bg-[#3D665B] shadow-[0_1px_2px_rgba(0,0,0,0.05)] border border-transparent',
       // Secondary soft gray
       secondary:
-        'bg-[#F3F4F6] text-[#1F2937] hover:bg-[#E5E7EB] border border-transparent active:bg-[#D1D5DB]',
+        'bg-[#F3F4F6] dark:bg-slate-800 text-[#1F2937] dark:text-slate-100 hover:bg-[#E5E7EB] dark:hover:bg-slate-700 border border-transparent active:bg-[#D1D5DB] dark:active:bg-slate-600',
       // Outline clean border
       outline:
-        'bg-[#FAFAFA] text-[#1F2937] hover:bg-[#F3F4F6] border border-gray-200/80 active:bg-gray-100 shadow-[0_1px_2px_rgba(0,0,0,0.03)]',
+        'bg-[#FAFAFA] dark:bg-slate-800 text-[#1F2937] dark:text-slate-100 hover:bg-[#F3F4F6] dark:hover:bg-slate-700 border border-gray-200/80 dark:border-slate-700 active:bg-gray-100 dark:active:bg-slate-700 shadow-[0_1px_2px_rgba(0,0,0,0.03)]',
       // Danger muted red
       danger:
         'bg-rose-600 text-white hover:bg-rose-700 border border-transparent active:bg-rose-800 shadow-[0_1px_2px_rgba(0,0,0,0.05)]',
       // Ghost transparent
       ghost:
-        'bg-transparent text-[#6B7280] hover:text-[#1F2937] hover:bg-gray-100/80 border border-transparent',
+        'bg-transparent text-[#6B7280] dark:text-slate-400 hover:text-[#1F2937] dark:hover:text-slate-100 hover:bg-gray-100/80 dark:hover:bg-slate-800 border border-transparent',
     }
 
     return (

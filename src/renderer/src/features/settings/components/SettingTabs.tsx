@@ -61,7 +61,7 @@ export function SettingTabs({ activeTab, onChangeTab }: SettingTabsProps) {
   ]
 
   return (
-    <nav className="bg-white border border-gray-200/80 rounded-xl p-2.5 shadow-xs flex flex-col justify-between h-full select-none">
+    <nav className="bg-white dark:bg-slate-900 border border-gray-200/80 dark:border-slate-800 rounded-xl p-2.5 shadow-xs flex flex-col justify-between h-full select-none">
       <div className="flex flex-col gap-1">
         {tabs.map((tab) => {
           const Icon = tab.icon
@@ -76,8 +76,8 @@ export function SettingTabs({ activeTab, onChangeTab }: SettingTabsProps) {
                 w-full flex items-center justify-between p-2.5 rounded-lg text-left transition-all duration-150 cursor-pointer
                 ${
                   isActive
-                    ? 'bg-[#5A8F7B]/10 text-[#3D665B] shadow-2xs font-semibold'
-                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50 font-medium'
+                    ? 'bg-[#5A8F7B]/10 dark:bg-[#5A8F7B]/20 text-[#3D665B] dark:text-[#7EBCA8] shadow-2xs font-semibold'
+                    : 'text-gray-600 dark:text-slate-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-slate-800 font-medium'
                 }
               `}
             >
@@ -88,17 +88,17 @@ export function SettingTabs({ activeTab, onChangeTab }: SettingTabsProps) {
                     ${
                       isActive
                         ? 'bg-[#5A8F7B] text-white shadow-xs'
-                        : 'bg-gray-100 text-gray-500 group-hover:bg-gray-200'
+                        : 'bg-gray-100 dark:bg-slate-800 text-gray-500 dark:text-slate-400 group-hover:bg-gray-200 dark:group-hover:bg-slate-700'
                     }
                   `}
                 >
                   <Icon className="w-4 h-4" />
                 </div>
                 <div className="flex flex-col min-w-0">
-                  <span className="text-xs truncate font-semibold leading-tight">
+                  <span className="text-xs truncate font-semibold leading-tight text-gray-900 dark:text-slate-100">
                     {tab.title}
                   </span>
-                  <span className="text-[10px] text-gray-400 truncate leading-normal mt-0.5">
+                  <span className="text-[10px] text-gray-400 dark:text-slate-400 truncate leading-normal mt-0.5">
                     {tab.subtitle}
                   </span>
                 </div>
@@ -106,7 +106,7 @@ export function SettingTabs({ activeTab, onChangeTab }: SettingTabsProps) {
 
               <ChevronRight
                 className={`w-3.5 h-3.5 shrink-0 rtl:rotate-180 transition-transform ${
-                  isActive ? 'text-[#3D665B] opacity-100 translate-x-0.5 rtl:-translate-x-0.5' : 'text-gray-300 opacity-60'
+                  isActive ? 'text-[#3D665B] dark:text-[#7EBCA8] opacity-100 translate-x-0.5 rtl:-translate-x-0.5' : 'text-gray-300 dark:text-slate-600 opacity-60'
                 }`}
               />
             </button>
@@ -114,12 +114,12 @@ export function SettingTabs({ activeTab, onChangeTab }: SettingTabsProps) {
         })}
       </div>
 
-      <div className="mt-auto pt-3 border-t border-gray-100 flex flex-col gap-1 px-2.5 pb-1">
+      <div className="mt-auto pt-3 border-t border-gray-100 dark:border-slate-800 flex flex-col gap-1 px-2.5 pb-1">
         <div className="flex items-center justify-between">
-          <span className="text-[11px] font-semibold text-gray-700">Hesabdar POS</span>
-          <Version showBadge className="bg-emerald-50 text-emerald-800 border-emerald-200/60 font-mono font-bold text-[10px]" />
+          <span className="text-[11px] font-semibold text-gray-700 dark:text-slate-300">Hesabdar POS</span>
+          <Version showBadge className="bg-emerald-50 dark:bg-emerald-950/50 text-emerald-800 dark:text-emerald-300 border-emerald-200/60 dark:border-emerald-800/50 font-mono font-bold text-[10px]" />
         </div>
-        <span className="text-[10px] text-gray-400">Store &amp; Inventory Management</span>
+        <span className="text-[10px] text-gray-400 dark:text-slate-500">Store &amp; Inventory Management</span>
       </div>
     </nav>
   )

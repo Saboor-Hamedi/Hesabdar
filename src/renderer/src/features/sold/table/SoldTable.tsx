@@ -33,9 +33,9 @@ export function SoldTable({
         const cust = row.customer_id ? customers.find((c) => c.id === row.customer_id) : null
         return (
           <div className="flex flex-col">
-            <span className="font-mono font-semibold text-gray-800 text-xs">{row.invoice_no}</span>
+            <span className="font-mono font-semibold text-gray-800 dark:text-slate-200 text-xs">{row.invoice_no}</span>
             {cust && (
-              <span className="text-[10px] text-emerald-700 font-medium truncate max-w-[140px]">
+              <span className="text-[10px] text-emerald-700 dark:text-emerald-400 font-medium truncate max-w-[140px]">
                 {cust.name}
               </span>
             )}
@@ -48,8 +48,8 @@ export function SoldTable({
       header: t('table.dateTime'),
       sortable: true,
       render: (row) => (
-        <span className="text-gray-500 text-[11px] flex items-center gap-1">
-          <Calendar className="w-3 h-3 text-gray-400 shrink-0" />
+        <span className="text-gray-500 dark:text-slate-400 text-[11px] flex items-center gap-1">
+          <Calendar className="w-3 h-3 text-gray-400 dark:text-slate-500 shrink-0" />
           {formatDateTime(row.created_at)}
         </span>
       ),
@@ -64,10 +64,10 @@ export function SoldTable({
           <span
             className={`inline-flex items-center px-2 py-0.5 rounded-[5px] text-[10px] font-bold tracking-wide uppercase ${
               isCash
-                ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                ? 'bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/60'
                 : isCard
-                  ? 'bg-blue-50 text-blue-700 border border-blue-200'
-                  : 'bg-amber-50 text-amber-800 border border-amber-200'
+                  ? 'bg-blue-50 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800/60'
+                  : 'bg-amber-50 dark:bg-amber-950/50 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-800/60'
             }`}
           >
             {isCash ? 'Cash' : isCard ? 'Card' : 'Credit'}
@@ -80,11 +80,11 @@ export function SoldTable({
       header: t('nav.products'),
       render: (row) => (
         <div className="flex flex-col text-xs">
-          <span className="text-gray-700 font-medium flex items-center gap-1">
-            <Package className="w-3 h-3 text-gray-400" />
+          <span className="text-gray-700 dark:text-slate-200 font-medium flex items-center gap-1">
+            <Package className="w-3 h-3 text-gray-400 dark:text-slate-500" />
             {row.items?.length || 0} items
           </span>
-          <span className="text-[10px] text-gray-400 truncate max-w-[200px]">
+          <span className="text-[10px] text-gray-400 dark:text-slate-500 truncate max-w-[200px]">
             {row.items?.map((it) => `${it.product_name || 'Product'} (${it.qty} ${it.unit || 'pcs'})`).join(', ')}
           </span>
         </div>
@@ -95,14 +95,14 @@ export function SoldTable({
       header: t('pos.subtotal'),
       align: 'end',
       sortable: true,
-      render: (row) => <span className="font-mono text-gray-600 text-xs">{formatCurrency(row.subtotal)}</span>,
+      render: (row) => <span className="font-mono text-gray-600 dark:text-slate-300 text-xs">{formatCurrency(row.subtotal)}</span>,
     },
     {
       key: 'discount',
       header: t('pos.discount'),
       align: 'end',
       render: (row) => (
-        <span className={`font-mono text-xs ${row.discount > 0 ? 'text-rose-600 font-medium' : 'text-gray-400'}`}>
+        <span className={`font-mono text-xs ${row.discount > 0 ? 'text-rose-600 dark:text-rose-400 font-medium' : 'text-gray-400 dark:text-slate-500'}`}>
           {row.discount > 0 ? `-${formatCurrency(row.discount)}` : '0'}
         </span>
       ),
@@ -113,7 +113,7 @@ export function SoldTable({
       align: 'end',
       sortable: true,
       render: (row) => (
-        <span className="font-mono font-bold text-emerald-700 text-xs">
+        <span className="font-mono font-bold text-emerald-700 dark:text-emerald-400 text-xs">
           {formatCurrency(row.total)}
         </span>
       ),
@@ -128,7 +128,7 @@ export function SoldTable({
             type="button"
             onClick={() => onViewReceipt(row)}
             title={t('sold.invoiceDetails')}
-            className="p-1.5 rounded-[5px] text-gray-500 hover:text-emerald-700 hover:bg-emerald-50 transition-colors cursor-pointer"
+            className="p-1.5 rounded-[5px] text-gray-500 dark:text-slate-400 hover:text-emerald-700 dark:hover:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 transition-colors cursor-pointer"
           >
             <Eye className="w-3.5 h-3.5" />
           </button>
@@ -137,7 +137,7 @@ export function SoldTable({
               type="button"
               onClick={() => onDirectPrint(row)}
               title="Print (1-Click)"
-              className="p-1.5 rounded-[5px] text-gray-500 hover:text-[#2F6153] hover:bg-emerald-50 transition-colors cursor-pointer"
+              className="p-1.5 rounded-[5px] text-gray-500 dark:text-slate-400 hover:text-[#2F6153] dark:hover:text-[#7EBCA8] hover:bg-emerald-50 dark:hover:bg-emerald-950/40 transition-colors cursor-pointer"
             >
               <Printer className="w-3.5 h-3.5" />
             </button>
@@ -146,7 +146,7 @@ export function SoldTable({
             type="button"
             onClick={() => onVoidSale(row.id)}
             title={t('sold.voidSale')}
-            className="p-1.5 rounded-[5px] text-gray-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
+            className="p-1.5 rounded-[5px] text-gray-400 dark:text-slate-500 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors cursor-pointer"
           >
             <Trash2 className="w-3.5 h-3.5" />
           </button>

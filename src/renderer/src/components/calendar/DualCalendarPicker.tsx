@@ -71,13 +71,13 @@ function CompactDropdown<T extends string | number>({
 
   const buttonStyles =
     theme === 'emerald'
-      ? 'bg-white hover:bg-emerald-50 text-emerald-950 border-emerald-300 hover:border-emerald-400'
-      : 'bg-white hover:bg-gray-50 text-gray-900 border-gray-300 hover:border-gray-400'
+      ? 'bg-white dark:bg-slate-800 hover:bg-emerald-50 dark:hover:bg-slate-700 text-emerald-950 dark:text-emerald-300 border-emerald-300 dark:border-slate-700 hover:border-emerald-400'
+      : 'bg-white dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-slate-700 text-gray-900 dark:text-slate-200 border-gray-300 dark:border-slate-700 hover:border-gray-400'
 
   const activeOptionStyles =
     theme === 'emerald'
-      ? 'bg-emerald-600 text-white font-bold'
-      : 'bg-gray-900 text-white font-bold'
+      ? 'bg-emerald-600 dark:bg-emerald-700 text-white font-bold'
+      : 'bg-gray-900 dark:bg-slate-700 text-white font-bold'
 
   return (
     <div
@@ -106,7 +106,7 @@ function CompactDropdown<T extends string | number>({
       {isOpen && (
         <div
           ref={listRef}
-          className={`absolute left-0 top-full mt-1 z-50 ${menuWidth} max-h-48 overflow-y-auto bg-white rounded-lg shadow-2xl border border-gray-200/90 py-1 text-xs select-none`}
+          className={`absolute left-0 top-full mt-1 z-50 ${menuWidth} max-h-48 overflow-y-auto bg-white dark:bg-slate-900 rounded-lg shadow-2xl border border-gray-200/90 dark:border-slate-800 py-1 text-xs select-none`}
         >
           {options.map((opt) => {
             const isSel = opt.value === value
@@ -120,14 +120,14 @@ function CompactDropdown<T extends string | number>({
                   onClose()
                 }}
                 className={`w-full px-3 py-1.5 text-left flex items-center justify-between transition-colors cursor-pointer text-xs ${
-                  isSel ? activeOptionStyles : 'hover:bg-gray-100 text-gray-700'
+                  isSel ? activeOptionStyles : 'hover:bg-gray-100 dark:hover:bg-slate-800 text-gray-700 dark:text-slate-300'
                 }`}
               >
                 <span className="font-medium">{opt.label}</span>
                 {opt.subLabel && (
                   <span
                     className={`text-[10px] ml-1.5 font-mono ${
-                      isSel ? 'text-white/80' : 'text-gray-400'
+                      isSel ? 'text-white/80' : 'text-gray-400 dark:text-slate-500'
                     }`}
                   >
                     {opt.subLabel}
@@ -485,20 +485,20 @@ export function DualCalendarPicker({
           border cursor-pointer select-none
           ${
             isOpen
-              ? 'bg-[#EAF3EF] text-[#2F6153] border-[#7CAE9F] shadow-xs ring-1 ring-[#7CAE9F]/40'
-              : 'bg-white/80 hover:bg-white text-gray-700 hover:text-gray-900 border-gray-200/90 shadow-2xs'
+              ? 'bg-[#EAF3EF] dark:bg-[#5A8F7B]/25 text-[#2F6153] dark:text-[#7EBCA8] border-[#7CAE9F] dark:border-[#5A8F7B]/50 shadow-xs ring-1 ring-[#7CAE9F]/40'
+              : 'bg-white/80 dark:bg-slate-800/90 hover:bg-white dark:hover:bg-slate-800 text-gray-700 dark:text-slate-200 hover:text-gray-900 dark:hover:text-white border-gray-200/90 dark:border-slate-700 shadow-2xs'
           }
         `}
         style={{ WebkitAppRegion: 'no-drag' } as React.CSSProperties}
         title="Dual Calendar (Gregorian & Shamsi)"
       >
-        <CalendarIcon className="w-3.5 h-3.5 text-[#4A7C6F] shrink-0" />
-        <span className="truncate tracking-tight font-medium text-gray-800">
+        <CalendarIcon className="w-3.5 h-3.5 text-[#4A7C6F] dark:text-[#68A590] shrink-0" />
+        <span className="truncate tracking-tight font-medium text-gray-800 dark:text-slate-200">
           {dualDateLabel}
         </span>
         <ChevronDown
-          className={`w-3 h-3 text-gray-400 transition-transform duration-150 ${
-            isOpen ? 'rotate-180 text-[#2F6153]' : ''
+          className={`w-3 h-3 text-gray-400 dark:text-slate-400 transition-transform duration-150 ${
+            isOpen ? 'rotate-180 text-[#2F6153] dark:text-[#7EBCA8]' : ''
           }`}
         />
       </button>
@@ -509,7 +509,7 @@ export function DualCalendarPicker({
           onDoubleClick={(e) => e.stopPropagation()}
           onMouseDown={(e) => e.stopPropagation()}
           onClick={(e) => e.stopPropagation()}
-          className="absolute top-full right-0 mt-2 z-[9999] bg-white rounded-xl shadow-2xl border border-gray-200/90 text-gray-800 text-xs overflow-hidden select-none animate-in fade-in zoom-in-95 duration-100"
+          className="absolute top-full right-0 mt-2 z-[9999] bg-white dark:bg-slate-900 rounded-xl shadow-2xl border border-gray-200/90 dark:border-slate-800 text-gray-800 dark:text-slate-200 text-xs overflow-hidden select-none animate-in fade-in zoom-in-95 duration-100"
           style={
             {
               width: preferredView === 'dual' ? '640px' : '360px',
@@ -519,7 +519,7 @@ export function DualCalendarPicker({
           }
         >
           {/* Top Bar: Quick Selectors & View Switcher */}
-          <div className="px-3.5 py-2 bg-gray-50/90 border-b border-gray-100 flex flex-wrap items-center justify-between gap-2">
+          <div className="px-3.5 py-2 bg-gray-50/90 dark:bg-slate-800/80 border-b border-gray-100 dark:border-slate-800 flex flex-wrap items-center justify-between gap-2">
             {/* Quick Action Preset Pills */}
             <div className="flex items-center gap-1.5 flex-wrap">
               {(
@@ -539,8 +539,8 @@ export function DualCalendarPicker({
                     px-2.5 py-1 rounded-full text-[11px] font-medium transition-colors cursor-pointer
                     ${
                       activePreset === preset.id
-                        ? 'bg-[#4A7C6F] text-white shadow-2xs'
-                        : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-200/70'
+                        ? 'bg-[#4A7C6F] dark:bg-[#5A8F7B] text-white shadow-2xs'
+                        : 'bg-white dark:bg-slate-800 text-gray-600 dark:text-slate-300 hover:bg-gray-100 dark:hover:bg-slate-700 border border-gray-200/70 dark:border-slate-700'
                     }
                   `}
                 >
@@ -550,14 +550,14 @@ export function DualCalendarPicker({
             </div>
 
             {/* View Mode Switcher Tabs */}
-            <div className="flex items-center bg-gray-200/70 p-0.5 rounded-lg text-[11px]">
+            <div className="flex items-center bg-gray-200/70 dark:bg-slate-800 p-0.5 rounded-lg text-[11px]">
               <button
                 type="button"
                 onClick={() => setPreferredView('shamsi')}
                 className={`px-2 py-0.5 rounded-md font-medium transition-all cursor-pointer ${
                   preferredView === 'shamsi'
-                    ? 'bg-white text-emerald-800 shadow-2xs'
-                    : 'text-gray-500 hover:text-gray-800'
+                    ? 'bg-white dark:bg-slate-700 text-emerald-800 dark:text-emerald-300 shadow-2xs'
+                    : 'text-gray-500 dark:text-slate-400 hover:text-gray-800 dark:hover:text-slate-200'
                 }`}
               >
                 شمسـی
@@ -567,8 +567,8 @@ export function DualCalendarPicker({
                 onClick={() => setPreferredView('dual')}
                 className={`px-2 py-0.5 rounded-md font-medium transition-all cursor-pointer ${
                   preferredView === 'dual'
-                    ? 'bg-white text-[#2F6153] shadow-2xs font-semibold'
-                    : 'text-gray-500 hover:text-gray-800'
+                    ? 'bg-white dark:bg-slate-700 text-[#2F6153] dark:text-[#7EBCA8] shadow-2xs font-semibold'
+                    : 'text-gray-500 dark:text-slate-400 hover:text-gray-800 dark:hover:text-slate-200'
                 }`}
               >
                 Dual
@@ -578,8 +578,8 @@ export function DualCalendarPicker({
                 onClick={() => setPreferredView('gregorian')}
                 className={`px-2 py-0.5 rounded-md font-medium transition-all cursor-pointer ${
                   preferredView === 'gregorian'
-                    ? 'bg-white text-gray-900 shadow-2xs'
-                    : 'text-gray-500 hover:text-gray-800'
+                    ? 'bg-white dark:bg-slate-700 text-gray-900 dark:text-slate-100 shadow-2xs'
+                    : 'text-gray-500 dark:text-slate-400 hover:text-gray-800 dark:hover:text-slate-200'
                 }`}
               >
                 Gregorian
@@ -595,7 +595,7 @@ export function DualCalendarPicker({
           >
             {/* View B: Shamsi / Afghan Solar Hijri Calendar */}
             {(preferredView === 'dual' || preferredView === 'shamsi') && (
-              <div className="flex flex-col bg-emerald-50/30 rounded-xl p-3 border border-emerald-200/60">
+              <div className="flex flex-col bg-emerald-50/30 dark:bg-slate-800/40 rounded-xl p-3 border border-emerald-200/60 dark:border-slate-700/60">
                 {/* Header: Month & Year Navigator with Sleek Custom Dropdowns */}
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center gap-1.5">
@@ -637,7 +637,7 @@ export function DualCalendarPicker({
                       type="button"
                       onClick={prevShamsiMonth}
                       onDoubleClick={(e) => e.stopPropagation()}
-                      className="p-1 rounded-md hover:bg-emerald-100 text-emerald-800 transition-colors cursor-pointer"
+                      className="p-1 rounded-md hover:bg-emerald-100 dark:hover:bg-slate-700 text-emerald-800 dark:text-emerald-300 transition-colors cursor-pointer"
                       title="Previous Month"
                     >
                       <ChevronLeft className="w-4 h-4" />
@@ -646,7 +646,7 @@ export function DualCalendarPicker({
                       type="button"
                       onClick={nextShamsiMonth}
                       onDoubleClick={(e) => e.stopPropagation()}
-                      className="p-1 rounded-md hover:bg-emerald-100 text-emerald-800 transition-colors cursor-pointer"
+                      className="p-1 rounded-md hover:bg-emerald-100 dark:hover:bg-slate-700 text-emerald-800 dark:text-emerald-300 transition-colors cursor-pointer"
                       title="Next Month"
                     >
                       <ChevronRight className="w-4 h-4" />
@@ -655,14 +655,14 @@ export function DualCalendarPicker({
                 </div>
 
                 {/* Weekdays Header (Sat to Fri) */}
-                <div className="grid grid-cols-7 gap-1 text-center text-[10px] font-semibold text-emerald-800/70 mb-1">
+                <div className="grid grid-cols-7 gap-1 text-center text-[10px] font-semibold text-emerald-800/70 dark:text-emerald-400/80 mb-1">
                   <span>ش</span>
                   <span>ی</span>
                   <span>د</span>
                   <span>س</span>
                   <span>چ</span>
                   <span>پ</span>
-                  <span className="text-rose-600 font-bold">ج</span>
+                  <span className="text-rose-600 dark:text-rose-400 font-bold">ج</span>
                 </div>
 
                 {/* Day Cells (Standard Comfortable 28px) */}
@@ -691,14 +691,14 @@ export function DualCalendarPicker({
                           h-7 w-7 rounded-md text-xs flex items-center justify-center font-medium transition-colors relative cursor-pointer
                           ${
                             endpoint
-                              ? 'bg-emerald-700 text-white font-bold shadow-xs z-10'
+                              ? 'bg-emerald-700 dark:bg-emerald-600 text-white font-bold shadow-xs z-10'
                               : selected
-                              ? 'bg-emerald-200/80 text-emerald-900'
+                              ? 'bg-emerald-200/80 dark:bg-emerald-900/60 text-emerald-900 dark:text-emerald-200'
                               : today
-                              ? 'border-2 border-emerald-600 text-emerald-950 font-bold bg-white'
-                              : 'hover:bg-emerald-100/70 text-gray-800'
+                              ? 'border-2 border-emerald-600 dark:border-emerald-500 text-emerald-950 dark:text-emerald-300 font-bold bg-white dark:bg-slate-800'
+                              : 'hover:bg-emerald-100/70 dark:hover:bg-slate-700/60 text-gray-800 dark:text-slate-200'
                           }
-                          ${isFriday && !selected ? 'text-rose-600' : ''}
+                          ${isFriday && !selected ? 'text-rose-600 dark:text-rose-400' : ''}
                         `}
                       >
                         {dayNum}
@@ -711,7 +711,7 @@ export function DualCalendarPicker({
 
             {/* View A: Gregorian Calendar */}
             {(preferredView === 'dual' || preferredView === 'gregorian') && (
-              <div className="flex flex-col bg-gray-50/60 rounded-xl p-3 border border-gray-200/80">
+              <div className="flex flex-col bg-gray-50/60 dark:bg-slate-800/40 rounded-xl p-3 border border-gray-200/80 dark:border-slate-700/60">
                 {/* Header: Month & Year Navigator with Sleek Custom Dropdowns */}
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center gap-1.5">
@@ -753,7 +753,7 @@ export function DualCalendarPicker({
                       type="button"
                       onClick={prevGregMonth}
                       onDoubleClick={(e) => e.stopPropagation()}
-                      className="p-1 rounded-md hover:bg-gray-200/70 text-gray-600 transition-colors cursor-pointer"
+                      className="p-1 rounded-md hover:bg-gray-200/70 dark:hover:bg-slate-700 text-gray-600 dark:text-slate-300 transition-colors cursor-pointer"
                       title="Previous Month"
                     >
                       <ChevronLeft className="w-4 h-4" />
@@ -762,7 +762,7 @@ export function DualCalendarPicker({
                       type="button"
                       onClick={nextGregMonth}
                       onDoubleClick={(e) => e.stopPropagation()}
-                      className="p-1 rounded-md hover:bg-gray-200/70 text-gray-600 transition-colors cursor-pointer"
+                      className="p-1 rounded-md hover:bg-gray-200/70 dark:hover:bg-slate-700 text-gray-600 dark:text-slate-300 transition-colors cursor-pointer"
                       title="Next Month"
                     >
                       <ChevronRight className="w-4 h-4" />
@@ -771,7 +771,7 @@ export function DualCalendarPicker({
                 </div>
 
                 {/* Weekdays Header (Sun to Sat) */}
-                <div className="grid grid-cols-7 gap-1 text-center text-[10px] font-semibold text-gray-400 mb-1">
+                <div className="grid grid-cols-7 gap-1 text-center text-[10px] font-semibold text-gray-400 dark:text-slate-400 mb-1">
                   <span>Su</span>
                   <span>Mo</span>
                   <span>Tu</span>
@@ -806,12 +806,12 @@ export function DualCalendarPicker({
                           h-7 w-7 rounded-md text-xs flex items-center justify-center font-medium transition-colors cursor-pointer
                           ${
                             endpoint
-                              ? 'bg-gray-900 text-white font-bold shadow-xs z-10'
+                              ? 'bg-gray-900 dark:bg-slate-100 text-white dark:text-slate-900 font-bold shadow-xs z-10'
                               : selected
-                              ? 'bg-gray-200 text-gray-900 font-semibold'
+                              ? 'bg-gray-200 dark:bg-slate-700 text-gray-900 dark:text-slate-100 font-semibold'
                               : today
-                              ? 'border-2 border-[#4A7C6F] text-[#4A7C6F] font-bold bg-white'
-                              : 'hover:bg-gray-100 text-gray-800'
+                              ? 'border-2 border-[#4A7C6F] dark:border-[#5A8F7B] text-[#4A7C6F] dark:text-[#7EBCA8] font-bold bg-white dark:bg-slate-800'
+                              : 'hover:bg-gray-100 dark:hover:bg-slate-700 text-gray-800 dark:text-slate-200'
                           }
                         `}
                       >
@@ -825,42 +825,42 @@ export function DualCalendarPicker({
           </div>
 
           {/* Bottom Bar: Manual Typing Inputs & Action Controls (Spacious & Clean Layout) */}
-          <div className="px-3.5 py-2.5 bg-gray-50 border-t border-gray-100 flex flex-col gap-2 text-xs">
+          <div className="px-3.5 py-2.5 bg-gray-50 dark:bg-slate-800/70 border-t border-gray-100 dark:border-slate-800 flex flex-col gap-2 text-xs">
             {/* Range Summary & Picking Status Card */}
             {pickingStart ? (
-              <div className="flex items-center justify-between gap-2 bg-emerald-50/90 px-3 py-2 rounded-lg border border-emerald-300/80 shadow-2xs">
+              <div className="flex items-center justify-between gap-2 bg-emerald-50/90 dark:bg-slate-800 px-3 py-2 rounded-lg border border-emerald-300/80 dark:border-emerald-700/60 shadow-2xs">
                 <div className="flex items-center gap-2">
                   <span className="relative flex h-2 w-2">
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75" />
                     <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-600" />
                   </span>
-                  <span className="text-[11px] font-medium text-emerald-950">
+                  <span className="text-[11px] font-medium text-emerald-950 dark:text-emerald-300">
                     Click an end date to finish the range...
                   </span>
                 </div>
                 <button
                   type="button"
                   onClick={() => setPickingStart(null)}
-                  className="text-[10px] text-emerald-800 hover:text-emerald-950 underline font-semibold cursor-pointer"
+                  className="text-[10px] text-emerald-800 dark:text-emerald-400 hover:text-emerald-950 dark:hover:text-emerald-200 underline font-semibold cursor-pointer"
                 >
                   Cancel
                 </button>
               </div>
             ) : (
-              <div className="flex items-center justify-between gap-2 bg-white px-3 py-2 rounded-lg border border-gray-200/90 shadow-2xs">
+              <div className="flex items-center justify-between gap-2 bg-white dark:bg-slate-800 px-3 py-2 rounded-lg border border-gray-200/90 dark:border-slate-700 shadow-2xs">
                 <div className="flex flex-col min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider select-none">
+                    <span className="text-[10px] font-bold text-gray-400 dark:text-slate-400 uppercase tracking-wider select-none">
                       Range:
                     </span>
-                    <span className="font-mono text-xs font-bold text-gray-900 tracking-tight">
+                    <span className="font-mono text-xs font-bold text-gray-900 dark:text-slate-100 tracking-tight">
                       {rangeSummary.shamsiText}
                     </span>
-                    <span className="text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200/70 select-none">
+                    <span className="text-[10px] font-semibold text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/40 px-1.5 py-0.5 rounded border border-emerald-200/70 dark:border-emerald-800/60 select-none">
                       {rangeSummary.durationLabel}
                     </span>
                   </div>
-                  <span className="text-[10px] text-gray-500 font-medium truncate mt-0.5">
+                  <span className="text-[10px] text-gray-500 dark:text-slate-400 font-medium truncate mt-0.5">
                     {rangeSummary.gregText}
                   </span>
                 </div>
@@ -875,19 +875,19 @@ export function DualCalendarPicker({
                   setPreset('today')
                   setPickingStart(null)
                 }}
-                className="h-6 flex items-center gap-1.5 text-[11px] font-medium text-gray-600 hover:text-gray-900 px-2 py-0.5 rounded-md hover:bg-gray-200/60 transition-colors cursor-pointer"
+                className="h-6 flex items-center gap-1.5 text-[11px] font-medium text-gray-600 dark:text-slate-300 hover:text-gray-900 dark:hover:text-white px-2 py-0.5 rounded-md hover:bg-gray-200/60 dark:hover:bg-slate-700 transition-colors cursor-pointer"
                 title="Reset to Today"
               >
-                <RotateCcw className="w-3 h-3 text-gray-500" />
+                <RotateCcw className="w-3 h-3 text-gray-500 dark:text-slate-400" />
                 Reset Today
               </button>
 
               <div className="flex items-center gap-2">
-                <span className="text-[10px] text-gray-400 select-none">Press Esc to close</span>
+                <span className="text-[10px] text-gray-400 dark:text-slate-500 select-none">Press Esc to close</span>
                 <button
                   type="button"
                   onClick={handleClose}
-                  className="h-6 px-3 bg-gray-900 hover:bg-black active:scale-95 text-white font-medium rounded-md text-[11px] transition-all cursor-pointer shadow-2xs"
+                  className="h-6 px-3 bg-gray-900 dark:bg-[#4A7C6F] hover:bg-black dark:hover:bg-[#3d665b] active:scale-95 text-white font-medium rounded-md text-[11px] transition-all cursor-pointer shadow-2xs"
                 >
                   Done
                 </button>

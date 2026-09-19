@@ -180,7 +180,7 @@ export function CustomerLedgerModal({
       title={t('customers.statementLedger', 'Customer Statement Ledger')}
       subtitle={`Complete financial history and chronological statement for ${customer.name}`}
       badge={
-        <span className="text-xs font-mono font-semibold px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200/60 shadow-2xs">
+        <span className="text-xs font-mono font-semibold px-3 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/50 text-emerald-800 dark:text-emerald-300 border border-emerald-200/60 dark:border-emerald-800/60 shadow-2xs">
           CUST-{String(1000 + customer.id)}
         </span>
       }
@@ -190,30 +190,30 @@ export function CustomerLedgerModal({
     >
       <div className="flex flex-col justify-between h-full gap-3.5">
         {/* Top Header & Customer Quick Switcher */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-3 bg-gray-50 border border-gray-200/80 rounded-[8px] shrink-0">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-3 bg-gray-50 dark:bg-slate-800/60 border border-gray-200/80 dark:border-slate-800 rounded-[8px] shrink-0">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-[#4A7C6F]/15 text-[#2D7A66] flex items-center justify-center font-bold text-sm border border-[#4A7C6F]/20">
+            <div className="w-10 h-10 rounded-full bg-[#4A7C6F]/15 dark:bg-[#4A7C6F]/30 text-[#2D7A66] dark:text-emerald-300 flex items-center justify-center font-bold text-sm border border-[#4A7C6F]/20 dark:border-emerald-800/40">
               {customer.name.slice(0, 2).toUpperCase()}
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-xs font-bold text-gray-900">{customer.name}</span>
+                <span className="text-xs font-bold text-gray-900 dark:text-slate-100">{customer.name}</span>
                 {customer.phone ? (
                   <a
                     href={`tel:${customer.phone}`}
-                    className="text-[10px] font-mono text-gray-600 bg-white border border-gray-200 px-1.5 py-0.5 rounded-[4px] hover:text-[#2D7A66] hover:border-[#4A7C6F]/40 transition-colors"
+                    className="text-[10px] font-mono text-gray-600 dark:text-slate-300 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 px-1.5 py-0.5 rounded-[4px] hover:text-[#2D7A66] dark:hover:text-emerald-400 hover:border-[#4A7C6F]/40 transition-colors"
                     title="Click to call / SMS customer"
                   >
                     📞 {customer.phone}
                   </a>
                 ) : (
-                  <span className="text-[10px] font-mono text-gray-400 bg-white border border-gray-200 px-1.5 py-0.5 rounded-[4px]">
+                  <span className="text-[10px] font-mono text-gray-400 dark:text-slate-500 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 px-1.5 py-0.5 rounded-[4px]">
                     No phone
                   </span>
                 )}
               </div>
               {customer.address && (
-                <span className="text-[11px] text-gray-500 block mt-0.5">{customer.address}</span>
+                <span className="text-[11px] text-gray-500 dark:text-slate-400 block mt-0.5">{customer.address}</span>
               )}
             </div>
           </div>
@@ -225,12 +225,12 @@ export function CustomerLedgerModal({
               placeholder="Switch customer (search name, phone, INV)..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full h-8 px-2 ps-7 text-[11px] border border-gray-200 rounded-[6px] bg-white text-gray-800 focus:outline-none focus:border-[#4A7C6F]"
+              className="w-full h-8 px-2 ps-7 text-[11px] border border-gray-200 dark:border-slate-700 rounded-[6px] bg-white dark:bg-slate-800 text-gray-800 dark:text-slate-100 placeholder:text-gray-400 dark:placeholder:text-slate-500 focus:outline-none focus:border-[#4A7C6F]"
             />
-            <Search className="w-3.5 h-3.5 text-gray-400 absolute start-2 top-2.5 pointer-events-none" />
+            <Search className="w-3.5 h-3.5 text-gray-400 dark:text-slate-500 absolute start-2 top-2.5 pointer-events-none" />
 
             {filteredCustomers.length > 0 && (
-              <div className="absolute z-50 start-0 end-0 mt-1 bg-white border border-gray-200 rounded-[8px] shadow-lg max-h-48 overflow-y-auto divide-y divide-gray-100">
+              <div className="absolute z-50 start-0 end-0 mt-1 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-[8px] shadow-lg max-h-48 overflow-y-auto divide-y divide-gray-100 dark:divide-slate-700">
                 {filteredCustomers.map((c) => (
                   <div
                     key={c.id}
@@ -238,10 +238,10 @@ export function CustomerLedgerModal({
                       onSelectCustomer(c)
                       setSearchQuery('')
                     }}
-                    className="p-2 hover:bg-[#4A7C6F]/10 text-xs cursor-pointer flex justify-between items-center transition-colors"
+                    className="p-2 hover:bg-[#4A7C6F]/10 dark:hover:bg-slate-700/60 text-xs cursor-pointer flex justify-between items-center transition-colors"
                   >
-                    <span className="font-semibold text-gray-800">{c.name}</span>
-                    <span className="text-[10px] font-mono text-gray-500">
+                    <span className="font-semibold text-gray-800 dark:text-slate-100">{c.name}</span>
+                    <span className="text-[10px] font-mono text-gray-500 dark:text-slate-400">
                       Balance: {formatCurrency(c.balance || 0)}
                     </span>
                   </div>
@@ -254,31 +254,31 @@ export function CustomerLedgerModal({
         {/* 3 Primary Financial KPI Cards with Debt Logic Fix per suggestion.md */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 shrink-0">
           {/* Card 1: Total Invoiced */}
-          <div className="p-3 rounded-[8px] bg-white border border-gray-200/80 shadow-xs flex items-center justify-between">
+          <div className="p-3 rounded-[8px] bg-white dark:bg-slate-800/60 border border-gray-200/80 dark:border-slate-800 shadow-xs flex items-center justify-between">
             <div>
-              <span className="text-[10px] text-gray-500 block font-semibold uppercase tracking-wider">
+              <span className="text-[10px] text-gray-500 dark:text-slate-400 block font-semibold uppercase tracking-wider">
                 {t('customers.totalInvoiced')}
               </span>
-              <span className="text-base font-bold font-mono text-gray-900 mt-1 block">
+              <span className="text-base font-bold font-mono text-gray-900 dark:text-slate-100 mt-1 block">
                 {formatCurrency(totalInvoiced)}
               </span>
             </div>
-            <div className="w-9 h-9 rounded-[6px] bg-blue-50 text-blue-600 flex items-center justify-center border border-blue-100">
+            <div className="w-9 h-9 rounded-[6px] bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 flex items-center justify-center border border-blue-100 dark:border-blue-800/50">
               <ShoppingBag className="w-4.5 h-4.5" />
             </div>
           </div>
 
           {/* Card 2: Total Debt Paid */}
-          <div className="p-3 rounded-[8px] bg-white border border-gray-200/80 shadow-xs flex items-center justify-between">
+          <div className="p-3 rounded-[8px] bg-white dark:bg-slate-800/60 border border-gray-200/80 dark:border-slate-800 shadow-xs flex items-center justify-between">
             <div>
-              <span className="text-[10px] text-gray-500 block font-semibold uppercase tracking-wider">
+              <span className="text-[10px] text-gray-500 dark:text-slate-400 block font-semibold uppercase tracking-wider">
                 {t('customers.totalPaid')}
               </span>
-              <span className="text-base font-bold font-mono text-emerald-700 mt-1 block">
+              <span className="text-base font-bold font-mono text-emerald-700 dark:text-emerald-400 mt-1 block">
                 {formatCurrency(totalPaid)}
               </span>
             </div>
-            <div className="w-9 h-9 rounded-[6px] bg-emerald-50 text-emerald-700 flex items-center justify-center border border-emerald-100">
+            <div className="w-9 h-9 rounded-[6px] bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 flex items-center justify-center border border-emerald-100 dark:border-emerald-800/50">
               <Coins className="w-4.5 h-4.5" />
             </div>
           </div>
@@ -287,20 +287,20 @@ export function CustomerLedgerModal({
           <div
             className={`p-3 rounded-[8px] shadow-xs flex items-center justify-between border ${
               isOverpaid
-                ? 'bg-emerald-50/80 border-emerald-300 text-emerald-950'
+                ? 'bg-emerald-50/80 dark:bg-emerald-950/40 border-emerald-300 dark:border-emerald-800/60 text-emerald-950 dark:text-emerald-300'
                 : isSettled
-                  ? 'bg-gray-50 border-gray-200 text-gray-800'
-                  : 'bg-rose-50/80 border-rose-300 text-rose-950'
+                  ? 'bg-gray-50 dark:bg-slate-800/60 border-gray-200 dark:border-slate-700 text-gray-800 dark:text-slate-200'
+                  : 'bg-rose-50/80 dark:bg-rose-950/40 border-rose-300 dark:border-rose-800/60 text-rose-950 dark:text-rose-300'
             }`}
           >
             <div>
               <span
                 className={`text-[10px] block font-bold uppercase tracking-wider ${
                   isOverpaid
-                    ? 'text-emerald-800'
+                    ? 'text-emerald-800 dark:text-emerald-300'
                     : isSettled
-                      ? 'text-gray-500'
-                      : 'text-rose-800'
+                      ? 'text-gray-500 dark:text-slate-400'
+                      : 'text-rose-800 dark:text-rose-300'
                 }`}
               >
                 {isOverpaid ? 'Credit Balance (طلب مشتری)' : isSettled ? 'Account Settled (تصفیه)' : t('customers.remainingDue')}
@@ -308,10 +308,10 @@ export function CustomerLedgerModal({
               <span
                 className={`text-xl font-black font-mono mt-1 block ${
                   isOverpaid
-                    ? 'text-emerald-800'
+                    ? 'text-emerald-800 dark:text-emerald-300'
                     : isSettled
-                      ? 'text-gray-900'
-                      : 'text-rose-700'
+                      ? 'text-gray-900 dark:text-slate-100'
+                      : 'text-rose-700 dark:text-rose-400'
                 }`}
               >
                 {isOverpaid
@@ -320,7 +320,7 @@ export function CustomerLedgerModal({
               </span>
               <span
                 className={`text-[10px] font-medium ${
-                  isOverpaid ? 'text-emerald-700' : isSettled ? 'text-gray-400' : 'text-rose-600'
+                  isOverpaid ? 'text-emerald-700 dark:text-emerald-400' : isSettled ? 'text-gray-400 dark:text-slate-400' : 'text-rose-600 dark:text-rose-400'
                 }`}
               >
                 {isOverpaid ? 'Customer has store credit' : isSettled ? 'Zero outstanding debt' : 'Pending payment debt'}
@@ -329,10 +329,10 @@ export function CustomerLedgerModal({
             <div
               className={`w-9 h-9 rounded-[6px] flex items-center justify-center border ${
                 isOverpaid
-                  ? 'bg-emerald-100 text-emerald-800 border-emerald-200'
+                  ? 'bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800/60'
                   : isSettled
-                    ? 'bg-gray-100 text-gray-600 border-gray-200'
-                    : 'bg-rose-100 text-rose-800 border-rose-200'
+                    ? 'bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-slate-300 border-gray-200 dark:border-slate-600'
+                    : 'bg-rose-100 dark:bg-rose-950/60 text-rose-800 dark:text-rose-300 border-rose-200 dark:border-rose-800/60'
               }`}
             >
               <Wallet className="w-4.5 h-4.5" />
@@ -341,7 +341,7 @@ export function CustomerLedgerModal({
         </div>
 
         {/* Tab Switcher: Interactive Ledger Table vs Printable Statement */}
-        <div className="flex items-center justify-between border-b border-gray-200 pb-2 shrink-0">
+        <div className="flex items-center justify-between border-b border-gray-200 dark:border-slate-800 pb-2 shrink-0">
           <div className="flex items-center gap-2">
             <button
               type="button"
@@ -349,7 +349,7 @@ export function CustomerLedgerModal({
               className={`px-3 py-1.5 text-xs font-semibold rounded-[6px] transition-all cursor-pointer ${
                 activeTab === 'ledger'
                   ? 'bg-[#4A7C6F] text-white shadow-2xs font-bold'
-                  : 'text-gray-600 hover:bg-gray-100'
+                  : 'text-gray-600 dark:text-slate-400 hover:bg-gray-100 dark:hover:bg-slate-800'
               }`}
             >
               {t('customers.statementLedger')} ({entries.length})
@@ -359,8 +359,8 @@ export function CustomerLedgerModal({
               onClick={() => setActiveTab('print')}
               className={`px-3 py-1.5 text-xs font-semibold rounded-[6px] border transition-all cursor-pointer flex items-center gap-1.5 ${
                 activeTab === 'print'
-                  ? 'bg-gray-900 text-white border-gray-900 shadow-2xs font-bold'
-                  : 'bg-white text-gray-800 border-gray-300 hover:bg-gray-50 shadow-2xs'
+                  ? 'bg-gray-900 dark:bg-slate-700 text-white border-gray-900 dark:border-slate-600 shadow-2xs font-bold'
+                  : 'bg-white dark:bg-slate-800 text-gray-800 dark:text-slate-200 border-gray-300 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-700 shadow-2xs'
               }`}
             >
               <Printer className="w-3.5 h-3.5" />
@@ -368,7 +368,7 @@ export function CustomerLedgerModal({
             </button>
           </div>
 
-          <span className="text-[11px] text-gray-400 font-medium hidden sm:inline">
+          <span className="text-[11px] text-gray-400 dark:text-slate-500 font-medium hidden sm:inline">
             Khair Khana Commercial Credit Ledger
           </span>
         </div>
@@ -376,10 +376,10 @@ export function CustomerLedgerModal({
         {/* Main Content Area */}
         <div className="flex-1 overflow-y-auto">
           {activeTab === 'ledger' ? (
-            <div className="border border-gray-200/80 rounded-[8px] overflow-hidden bg-white shadow-xs">
+            <div className="border border-gray-200/80 dark:border-slate-800 rounded-[8px] overflow-hidden bg-white dark:bg-slate-900 shadow-xs">
               <table className="w-full text-start border-collapse text-xs">
                 <thead>
-                  <tr className="bg-gray-50/80 border-b border-gray-200 text-gray-700 font-semibold text-[11px]">
+                  <tr className="bg-gray-50/80 dark:bg-slate-800/95 border-b border-gray-200 dark:border-slate-800 text-gray-700 dark:text-slate-300 font-semibold text-[11px]">
                     <th className="p-2.5 text-start w-32">{t('table.dateTime')}</th>
                     <th className="p-2.5 text-start w-32">{t('table.invoice')} / Type</th>
                     <th className="p-2.5 text-start">{t('products.name')} &amp; Details</th>
@@ -388,10 +388,10 @@ export function CustomerLedgerModal({
                     <th className="p-2.5 text-end w-32">{t('customers.balance')}</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-100 font-mono text-[11px]">
+                <tbody className="divide-y divide-gray-100 dark:divide-slate-800 font-mono text-[11px]">
                   {entries.length === 0 ? (
                     <tr>
-                      <td colSpan={6} className="p-8 text-center text-gray-400 font-sans">
+                      <td colSpan={6} className="p-8 text-center text-gray-400 dark:text-slate-500 font-sans">
                         No purchases or payments on record for this customer.
                       </td>
                     </tr>
@@ -399,50 +399,50 @@ export function CustomerLedgerModal({
                     paginatedEntries.map((entry, idx) => (
                       <tr
                         key={entry.id || idx}
-                        className={`hover:bg-gray-50/80 transition-colors ${
-                          idx % 2 === 1 ? 'bg-gray-50/50' : 'bg-white'
+                        className={`hover:bg-gray-50/80 dark:hover:bg-slate-800/60 transition-colors ${
+                          idx % 2 === 1 ? 'bg-gray-50/50 dark:bg-slate-800/30' : 'bg-white dark:bg-slate-900'
                         }`}
                       >
-                        <td className="p-2.5 text-gray-500 font-mono text-[10px] whitespace-nowrap">
+                        <td className="p-2.5 text-gray-500 dark:text-slate-400 font-mono text-[10px] whitespace-nowrap">
                           {formatShortDate(entry.date)}
                         </td>
                         <td className="py-3 px-2.5 font-sans">
                           <span
                             className={`text-[10px] font-medium font-mono px-2 py-0.5 rounded ${
                               entry.type === 'payment'
-                                ? 'bg-emerald-50 text-emerald-800'
+                                ? 'bg-emerald-50 dark:bg-emerald-950/50 text-emerald-800 dark:text-emerald-300'
                                 : entry.type === 'sale_credit'
-                                  ? 'bg-amber-50 text-amber-800'
-                                  : 'bg-blue-50 text-blue-800'
+                                  ? 'bg-amber-50 dark:bg-amber-950/50 text-amber-800 dark:text-amber-300'
+                                  : 'bg-blue-50 dark:bg-blue-950/50 text-blue-800 dark:text-blue-300'
                             }`}
                           >
                             {entry.refNo}
                           </span>
                         </td>
-                        <td className="py-3 px-2.5 font-sans text-gray-800">
+                        <td className="py-3 px-2.5 font-sans text-gray-800 dark:text-slate-200">
                           <div
                             className="max-w-[260px] truncate"
                             title={entry.description}
                           >
                             {entry.type === 'payment' && (
-                              <Wallet className="w-3.5 h-3.5 text-emerald-600 inline me-1.5 shrink-0" />
+                              <Wallet className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 inline me-1.5 shrink-0" />
                             )}
                             {entry.description}
                           </div>
                         </td>
-                        <td className="py-3 px-2.5 text-end text-gray-900 font-semibold font-mono">
+                        <td className="py-3 px-2.5 text-end text-gray-900 dark:text-slate-100 font-semibold font-mono">
                           {entry.invoiced > 0 ? formatCurrency(entry.invoiced) : '—'}
                         </td>
-                        <td className="py-3 px-2.5 text-end text-emerald-700 font-semibold font-mono">
+                        <td className="py-3 px-2.5 text-end text-emerald-700 dark:text-emerald-400 font-semibold font-mono">
                           {entry.paid > 0 ? formatCurrency(entry.paid) : '—'}
                         </td>
                         <td className="py-3 px-2.5 text-end font-bold font-mono">
                           {entry.balance > 0 ? (
-                            <span className="text-rose-700">+{formatCurrency(entry.balance)}</span>
+                            <span className="text-rose-700 dark:text-rose-400">+{formatCurrency(entry.balance)}</span>
                           ) : entry.balance < 0 ? (
-                            <span className="text-emerald-700">-{formatCurrency(Math.abs(entry.balance))}</span>
+                            <span className="text-emerald-700 dark:text-emerald-400">-{formatCurrency(Math.abs(entry.balance))}</span>
                           ) : (
-                            <span className="text-gray-400 font-medium">0 AFN</span>
+                            <span className="text-gray-400 dark:text-slate-500 font-medium">0 AFN</span>
                           )}
                         </td>
                       </tr>
@@ -452,7 +452,7 @@ export function CustomerLedgerModal({
               </table>
 
               {entries.length > 0 && (
-                <div className="border-t border-gray-100 bg-gray-50/40">
+                <div className="border-t border-gray-100 dark:border-slate-800 bg-gray-50/40 dark:bg-slate-800/40">
                   <Pagination
                     currentPage={page}
                     totalItems={entries.length}
@@ -475,17 +475,17 @@ export function CustomerLedgerModal({
         </div>
 
         {/* Modal Actions Footer: Audit Trail per suggestion.md */}
-        <div className="flex items-center justify-between pt-3 border-t border-gray-200 shrink-0">
-          <div className="flex items-center gap-2 text-xs text-gray-500 font-medium">
+        <div className="flex items-center justify-between pt-3 border-t border-gray-200 dark:border-slate-800 shrink-0">
+          <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-slate-400 font-medium">
             <span>
               Statement Generated:{' '}
-              <strong className="font-mono text-gray-800">
+              <strong className="font-mono text-gray-800 dark:text-slate-200">
                 {new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })},{' '}
                 {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
               </strong>
             </span>
             <span>•</span>
-            <span className="text-gray-400">{entries.length} Ledger Audits</span>
+            <span className="text-gray-400 dark:text-slate-500">{entries.length} Ledger Audits</span>
           </div>
 
           <div className="flex items-center gap-2">

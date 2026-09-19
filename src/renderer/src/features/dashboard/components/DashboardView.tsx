@@ -74,7 +74,7 @@ export function DashboardView() {
       </StatsGrid>
 
       {/* Main Chart Container with Compact Period Switcher & Height */}
-      <div className="bg-white border border-gray-200/80 rounded-xl p-2 shadow-xs">
+      <div className="bg-white dark:bg-slate-900 border border-gray-200/80 dark:border-slate-800 rounded-xl p-2 shadow-xs">
         <GraphHeader period={period} onChangePeriod={setPeriod} title={t('dashboard.performanceTrends')} />
 
         {/* Separated Graphs rendered according to active period with compact 115px height */}
@@ -89,27 +89,27 @@ export function DashboardView() {
       {/* Analytics Breakdown & Sales Distribution (Pushed Up & Fully Visible) */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 pb-1">
         {/* 1. Payment Distribution */}
-        <div className="bg-white border border-gray-200/80 rounded-xl p-2.5 shadow-xs flex flex-col justify-between">
-          <div className="flex items-center justify-between border-b border-gray-100 pb-1.5 mb-1.5">
+        <div className="bg-white dark:bg-slate-900 border border-gray-200/80 dark:border-slate-800 rounded-xl p-2.5 shadow-xs flex flex-col justify-between">
+          <div className="flex items-center justify-between border-b border-gray-100 dark:border-slate-800 pb-1.5 mb-1.5">
             <div>
-              <h3 className="text-xs font-semibold text-gray-800">Payment Distribution</h3>
-              <p className="text-[10px] text-gray-400">Cash vs Credit debt</p>
+              <h3 className="text-xs font-semibold text-gray-800 dark:text-slate-100">Payment Distribution</h3>
+              <p className="text-[10px] text-gray-400 dark:text-slate-400">Cash vs Credit debt</p>
             </div>
           </div>
           <div className="flex flex-col gap-1.5">
             <div className="flex items-center justify-between text-xs">
-              <span className="text-gray-600 flex items-center gap-1.5 font-medium">
+              <span className="text-gray-600 dark:text-slate-300 flex items-center gap-1.5 font-medium">
                 <span className="w-2 h-2 rounded-full bg-[#2D7A66]" />
                 Cash ({cashSales.length} {cashSales.length === 1 ? 'order' : 'orders'})
               </span>
-              <span className="font-mono font-bold text-gray-900">{formatCurrency(cashTotal)} AFN</span>
+              <span className="font-mono font-bold text-gray-900 dark:text-slate-100">{formatCurrency(cashTotal)} AFN</span>
             </div>
             <div className="flex items-center justify-between text-xs">
-              <span className="text-gray-600 flex items-center gap-1.5 font-medium">
+              <span className="text-gray-600 dark:text-slate-300 flex items-center gap-1.5 font-medium">
                 <span className="w-2 h-2 rounded-full bg-[#D97706]" />
                 Credit ({creditSales.length} {creditSales.length === 1 ? 'order' : 'orders'})
               </span>
-              <span className="font-mono font-bold text-gray-900">{formatCurrency(creditTotal)} AFN</span>
+              <span className="font-mono font-bold text-gray-900 dark:text-slate-100">{formatCurrency(creditTotal)} AFN</span>
             </div>
 
             {/* Proportion Bar */}
@@ -119,7 +119,7 @@ export function DashboardView() {
               const creditPct = 100 - cashPct
               return (
                 <div className="mt-0.5">
-                  <div className="w-full h-1.5 rounded-full bg-gray-100 flex overflow-hidden">
+                  <div className="w-full h-1.5 rounded-full bg-gray-100 dark:bg-slate-800 flex overflow-hidden">
                     <div
                       style={{ width: `${cashPct}%` }}
                       className="bg-[#2D7A66] h-full transition-all duration-300"
@@ -131,9 +131,9 @@ export function DashboardView() {
                       title={`Credit: ${creditPct}%`}
                     />
                   </div>
-                  <div className="flex items-center justify-between mt-1 text-[9.5px] text-gray-400 font-medium">
+                  <div className="flex items-center justify-between mt-1 text-[9.5px] text-gray-400 dark:text-slate-400 font-medium">
                     <span className="text-[#2D7A66] font-semibold">{cashPct}% Cash Dominance</span>
-                    <span className="text-gray-400">{creditPct}% Credit Tab</span>
+                    <span className="text-gray-400 dark:text-slate-400">{creditPct}% Credit Tab</span>
                   </div>
                 </div>
               )
@@ -142,34 +142,34 @@ export function DashboardView() {
         </div>
 
         {/* 2. Average Order Value (AOV) */}
-        <div className="bg-white border border-gray-200/80 rounded-xl p-2.5 shadow-xs flex flex-col justify-between">
-          <div className="flex items-center justify-between border-b border-gray-100 pb-1.5 mb-1.5">
+        <div className="bg-white dark:bg-slate-900 border border-gray-200/80 dark:border-slate-800 rounded-xl p-2.5 shadow-xs flex flex-col justify-between">
+          <div className="flex items-center justify-between border-b border-gray-100 dark:border-slate-800 pb-1.5 mb-1.5">
             <div>
-              <h3 className="text-xs font-semibold text-gray-800">Average Order Value</h3>
-              <p className="text-[10px] text-gray-400">Basket size per customer</p>
+              <h3 className="text-xs font-semibold text-gray-800 dark:text-slate-100">Average Order Value</h3>
+              <p className="text-[10px] text-gray-400 dark:text-slate-400">Basket size per customer</p>
             </div>
-            <span className="text-[10px] text-emerald-800 bg-emerald-50 border border-emerald-200/70 px-2 py-0.5 rounded-full font-semibold flex items-center gap-1 shadow-2xs">
-              <ArrowUpRight className="w-3 h-3 text-emerald-600" /> Normal
+            <span className="text-[10px] text-emerald-800 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-200/70 dark:border-emerald-800/50 px-2 py-0.5 rounded-full font-semibold flex items-center gap-1 shadow-2xs">
+              <ArrowUpRight className="w-3 h-3 text-emerald-600 dark:text-emerald-400" /> Normal
             </span>
           </div>
           <div className="flex flex-col gap-0.5">
-            <span className="text-lg font-mono font-bold text-gray-900">
-              {formatCurrency(summary.averageOrderValue)} <span className="text-xs font-semibold text-gray-400">AFN</span>
+            <span className="text-lg font-mono font-bold text-gray-900 dark:text-slate-100">
+              {formatCurrency(summary.averageOrderValue)} <span className="text-xs font-semibold text-gray-400 dark:text-slate-400">AFN</span>
             </span>
-            <p className="text-[10px] text-gray-400 font-medium">
+            <p className="text-[10px] text-gray-400 dark:text-slate-400 font-medium">
               Validated across {sales.length} orders (typical basket spend)
             </p>
           </div>
         </div>
 
         {/* 3. Trading Activity */}
-        <div className="bg-white border border-gray-200/80 rounded-xl p-2.5 shadow-xs flex flex-col justify-between">
-          <div className="flex items-center justify-between border-b border-gray-100 pb-1.5 mb-1.5">
+        <div className="bg-white dark:bg-slate-900 border border-gray-200/80 dark:border-slate-800 rounded-xl p-2.5 shadow-xs flex flex-col justify-between">
+          <div className="flex items-center justify-between border-b border-gray-100 dark:border-slate-800 pb-1.5 mb-1.5">
             <div>
-              <h3 className="text-xs font-semibold text-gray-800">Trading Activity</h3>
-              <p className="text-[10px] text-gray-400">Sales volume in system</p>
+              <h3 className="text-xs font-semibold text-gray-800 dark:text-slate-100">Trading Activity</h3>
+              <p className="text-[10px] text-gray-400 dark:text-slate-400">Sales volume in system</p>
             </div>
-            <span className="text-[10px] text-emerald-800 bg-emerald-50 border border-emerald-200/70 px-2 py-0.5 rounded-full font-semibold flex items-center gap-1.5 shadow-2xs">
+            <span className="text-[10px] text-emerald-800 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-200/70 dark:border-emerald-800/50 px-2 py-0.5 rounded-full font-semibold flex items-center gap-1.5 shadow-2xs">
               <span className="relative flex h-1.5 w-1.5">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
@@ -178,10 +178,10 @@ export function DashboardView() {
             </span>
           </div>
           <div className="flex flex-col gap-0.5">
-            <span className="text-lg font-mono font-bold text-gray-900">
-              {sales.length} <span className="text-xs font-semibold text-gray-400">Invoices</span>
+            <span className="text-lg font-mono font-bold text-gray-900 dark:text-slate-100">
+              {sales.length} <span className="text-xs font-semibold text-gray-400 dark:text-slate-400">Invoices</span>
             </span>
-            <p className="text-[10px] text-gray-400 font-medium">
+            <p className="text-[10px] text-gray-400 dark:text-slate-400 font-medium">
               Real-time ledger transactions recorded
             </p>
           </div>

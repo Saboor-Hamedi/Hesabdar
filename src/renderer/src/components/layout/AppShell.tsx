@@ -117,7 +117,7 @@ export function AppShell() {
 
   if (checking) {
     return (
-      <div className="flex h-screen w-screen flex-col overflow-hidden bg-[#fafafa]">
+      <div className="flex h-screen w-screen flex-col overflow-hidden bg-[#fafafa] dark:bg-slate-950">
         <TitleBar />
         <div className="flex flex-1 items-center justify-center" style={{ paddingTop: TITLEBAR_HEIGHT }}>
           <div className="w-8 h-8 border-2 border-[#5A8F7B] border-t-transparent rounded-full animate-spin" />
@@ -128,7 +128,7 @@ export function AppShell() {
 
   if (isRevoked) {
     return (
-      <div className="flex h-screen w-screen flex-col overflow-hidden bg-[#fafafa]">
+      <div className="flex h-screen w-screen flex-col overflow-hidden bg-[#fafafa] dark:bg-slate-950">
         <TitleBar />
         <Revoke
           onApproved={() => {
@@ -142,7 +142,7 @@ export function AppShell() {
 
   if (!licensed) {
     return (
-      <div className="flex h-screen w-screen flex-col overflow-hidden bg-[#fafafa]">
+      <div className="flex h-screen w-screen flex-col overflow-hidden bg-[#fafafa] dark:bg-slate-950">
         <TitleBar />
         <ActivationView
           onActivated={() => {
@@ -155,7 +155,7 @@ export function AppShell() {
   }
 
   return (
-    <div className="flex h-screen w-screen flex-col overflow-hidden bg-[#fafafa] rounded-none">
+    <div className="flex h-screen w-screen flex-col overflow-hidden bg-[#fafafa] dark:bg-slate-950 text-slate-900 dark:text-slate-100 rounded-none transition-colors duration-200">
       {/* Custom frameless desktop Title Bar */}
       <TitleBar />
 
@@ -168,7 +168,7 @@ export function AppShell() {
         <ActivityBar active={active} onChange={handleTabChange} isAdmin={isAdmin} />
 
         {/* Content View Pane */}
-        <main className="flex-1 overflow-hidden p-4 bg-[#fafafa] flex flex-col min-h-0">
+        <main className="flex-1 overflow-hidden p-4 bg-[#fafafa] dark:bg-slate-950 flex flex-col min-h-0">
           {renderContent()}
         </main>
       </div>

@@ -222,40 +222,40 @@ export function BackupCard() {
     >
       <div className="flex flex-col gap-3 py-1">
         {/* Live Shop Records Strip */}
-        <div className="p-3 bg-emerald-50/40 border border-emerald-200/60 rounded-[5px] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+        <div className="p-3 bg-emerald-50/40 dark:bg-emerald-950/20 border border-emerald-200/60 dark:border-emerald-800/40 rounded-[5px] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-[5px] bg-emerald-100/70 text-emerald-800 flex items-center justify-center shrink-0 shadow-xs">
+            <div className="w-9 h-9 rounded-[5px] bg-emerald-100/70 dark:bg-emerald-900/50 text-emerald-800 dark:text-emerald-300 flex items-center justify-center shrink-0 shadow-xs">
               <FileSpreadsheet className="w-5 h-5" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-xs font-bold text-gray-800 flex items-center gap-1">
-                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+                <span className="text-xs font-bold text-gray-800 dark:text-slate-100 flex items-center gap-1">
+                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
                   Excel Data Engine (.xlsx)
                 </span>
-                <span className="text-[10px] px-1.5 py-0.5 rounded-[3px] bg-emerald-100 text-emerald-800 font-medium flex items-center gap-0.5">
+                <span className="text-[10px] px-1.5 py-0.5 rounded-[3px] bg-emerald-100 dark:bg-emerald-900/60 text-emerald-800 dark:text-emerald-300 font-medium flex items-center gap-0.5">
                   <CheckCircle2 className="w-2.5 h-2.5" /> Ready
                 </span>
               </div>
-              <p className="text-[11px] text-gray-500 mt-0.5">
+              <p className="text-[11px] text-gray-500 dark:text-slate-400 mt-0.5">
                 Formatted sheets: Overview, Products, Customers, Suppliers, Sales, and Line Items.
               </p>
             </div>
           </div>
 
           {/* Quick dataset indicators */}
-          <div className="flex items-center gap-2 flex-wrap text-[10px] font-mono text-gray-600">
-            <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-white border border-gray-200 rounded-[4px]">
-              <Package className="w-3 h-3 text-emerald-600" /> {productsCount} items
+          <div className="flex items-center gap-2 flex-wrap text-[10px] font-mono text-gray-600 dark:text-slate-300">
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-[4px]">
+              <Package className="w-3 h-3 text-emerald-600 dark:text-emerald-400" /> {productsCount} items
             </span>
-            <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-white border border-gray-200 rounded-[4px]">
-              <Receipt className="w-3 h-3 text-blue-600" /> {salesCount} sales
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-[4px]">
+              <Receipt className="w-3 h-3 text-blue-600 dark:text-blue-400" /> {salesCount} sales
             </span>
-            <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-white border border-gray-200 rounded-[4px]">
-              <Users className="w-3 h-3 text-purple-600" /> {customersCount} customers
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-[4px]">
+              <Users className="w-3 h-3 text-purple-600 dark:text-purple-400" /> {customersCount} customers
             </span>
-            <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-white border border-gray-200 rounded-[4px]">
-              <Truck className="w-3 h-3 text-amber-600" /> {suppliersCount} suppliers
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-[4px]">
+              <Truck className="w-3 h-3 text-amber-600 dark:text-amber-400" /> {suppliersCount} suppliers
             </span>
           </div>
         </div>
@@ -263,17 +263,17 @@ export function BackupCard() {
         {/* 2-Column Action Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-1">
           {/* Action 1: Export to Excel */}
-          <div className="p-4 rounded-[5px] border border-gray-200/90 bg-white hover:border-emerald-500 transition-colors flex flex-col justify-between gap-3 shadow-xs">
+          <div className="p-4 rounded-[5px] border border-gray-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-emerald-500 dark:hover:border-emerald-500 transition-colors flex flex-col justify-between gap-3 shadow-xs">
             <div>
               <div className="flex items-center gap-2 mb-1.5">
-                <div className="w-7 h-7 rounded-[5px] bg-emerald-50 text-emerald-700 flex items-center justify-center">
+                <div className="w-7 h-7 rounded-[5px] bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 flex items-center justify-center">
                   <Download className="w-4 h-4" />
                 </div>
-                <h4 className="text-xs font-bold text-gray-800">
+                <h4 className="text-xs font-bold text-gray-800 dark:text-slate-100">
                   Export Excel Backup (.xlsx)
                 </h4>
               </div>
-              <p className="text-[11px] text-gray-500 leading-relaxed">
+              <p className="text-[11px] text-gray-500 dark:text-slate-400 leading-relaxed">
                 Generates a clean, styled Excel workbook with styled headers and dedicated sheets for all records.
               </p>
             </div>
@@ -290,17 +290,17 @@ export function BackupCard() {
           </div>
 
           {/* Action 2: Restore from Excel */}
-          <div className="p-4 rounded-[5px] border border-gray-200/90 bg-white hover:border-blue-500 transition-colors flex flex-col justify-between gap-3 shadow-xs">
+          <div className="p-4 rounded-[5px] border border-gray-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-blue-500 dark:hover:border-blue-500 transition-colors flex flex-col justify-between gap-3 shadow-xs">
             <div>
               <div className="flex items-center gap-2 mb-1.5">
-                <div className="w-7 h-7 rounded-[5px] bg-blue-50 text-blue-700 flex items-center justify-center">
+                <div className="w-7 h-7 rounded-[5px] bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-400 flex items-center justify-center">
                   <Upload className="w-4 h-4" />
                 </div>
-                <h4 className="text-xs font-bold text-gray-800">
+                <h4 className="text-xs font-bold text-gray-800 dark:text-slate-100">
                   Restore from Excel File
                 </h4>
               </div>
-              <p className="text-[11px] text-gray-500 leading-relaxed">
+              <p className="text-[11px] text-gray-500 dark:text-slate-400 leading-relaxed">
                 Load a previously exported Excel (.xlsx) file to restore inventory, prices, customers, and invoices.
               </p>
             </div>
@@ -317,7 +317,7 @@ export function BackupCard() {
               variant="outline"
               onClick={handleTriggerRestore}
               isLoading={restoring}
-              icon={<Upload className="w-3.5 h-3.5 text-gray-600" />}
+              icon={<Upload className="w-3.5 h-3.5 text-gray-600 dark:text-slate-400" />}
               className="w-full h-8.5 text-xs font-semibold"
             >
               Upload &amp; Restore (.xlsx)

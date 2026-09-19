@@ -320,53 +320,56 @@ export function POSView() {
           (Zero Scroll: grouped compactly without artificial gaps)
           ======================================================== */}
       <div
-        className={`w-full lg:w-76 xl:w-80 flex-col h-full shrink-0 overflow-y-auto select-none gap-2 ${
+        className={`w-full lg:w-76 xl:w-80 flex-col h-full shrink-0 select-none ${
           mobileView === 'checkout' ? 'flex' : 'hidden lg:flex'
         }`}
       >
-        {/* Responsive Mobile "Back to Items" Navigation Bar (Visible only on screens < lg) */}
-        <div className="lg:hidden flex items-center justify-between pb-1.5 shrink-0 border-b border-gray-200">
-          <button
-            type="button"
-            onClick={() => setMobileView('table')}
-            className="flex items-center gap-1.5 text-xs font-bold text-[#4A7C6F] hover:underline cursor-pointer py-1"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            <span>{t('pos.backToItems', '← Back to Items Table')}</span>
-          </button>
-          <span className="text-xs font-semibold text-gray-600">
-            {cart.length} items • <strong className="font-mono text-gray-900">{total.toLocaleString()} AFN</strong>
-          </span>
+        {/* Internal scrollable content wrapper (scrolls only if screen height is constrained) */}
+        <div className="flex-1 min-h-0 flex flex-col gap-2 overflow-y-auto pr-0.5">
+          {/* Responsive Mobile "Back to Items" Navigation Bar (Visible only on screens < lg) */}
+          <div className="lg:hidden flex items-center justify-between pb-1.5 shrink-0 border-b border-gray-200">
+            <button
+              type="button"
+              onClick={() => setMobileView('table')}
+              className="flex items-center gap-1.5 text-xs font-bold text-[#4A7C6F] hover:underline cursor-pointer py-1"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span>{t('pos.backToItems', '← Back to Items Table')}</span>
+            </button>
+            <span className="text-xs font-semibold text-gray-600">
+              {cart.length} items • <strong className="font-mono text-gray-900">{total.toLocaleString()} AFN</strong>
+            </span>
+          </div>
+
+          {/* On-screen Cashier Calculator (clears on checkout via resetKey) */}
+          <CalculatorNumpad
+            onApplyToPaid={setCashPaid}
+            totalPayable={isCheckoutComplete ? 0 : total}
+            resetKey={calculatorResetKey}
+          />
+
+          {/* Settlement, Discount, Cash Paid & Remaining Change Console (clears on checkout) */}
+          <SettlementPanel
+            subtotal={subtotal}
+            discount={discount}
+            onChangeDiscount={setDiscount}
+            total={total}
+            cashPaid={cashPaid}
+            onChangeCashPaid={setCashPaid}
+            paymentMode={paymentMode}
+            onChangePaymentMode={setPaymentMode}
+            customers={customers}
+            selectedCustomerId={selectedCustomerId}
+            onSelectCustomer={setSelectedCustomerId}
+            onOpenAddCustomer={handleOpenAddCustomer}
+            onOpenCustomerLedger={(c) => setLedgerCustomer(c)}
+            isCheckoutComplete={isCheckoutComplete}
+            completedInvoiceNo={completedSale?.invoice_no}
+          />
         </div>
 
-        {/* On-screen Cashier Calculator (clears on checkout via resetKey) */}
-        <CalculatorNumpad
-          onApplyToPaid={setCashPaid}
-          totalPayable={isCheckoutComplete ? 0 : total}
-          resetKey={calculatorResetKey}
-        />
-
-        {/* Settlement, Discount, Cash Paid & Remaining Change Console (clears on checkout) */}
-        <SettlementPanel
-          subtotal={subtotal}
-          discount={discount}
-          onChangeDiscount={setDiscount}
-          total={total}
-          cashPaid={cashPaid}
-          onChangeCashPaid={setCashPaid}
-          paymentMode={paymentMode}
-          onChangePaymentMode={setPaymentMode}
-          customers={customers}
-          selectedCustomerId={selectedCustomerId}
-          onSelectCustomer={setSelectedCustomerId}
-          onOpenAddCustomer={handleOpenAddCustomer}
-          onOpenCustomerLedger={(c) => setLedgerCustomer(c)}
-          isCheckoutComplete={isCheckoutComplete}
-          completedInvoiceNo={completedSale?.invoice_no}
-        />
-
-        {/* Fixed Bottom Checkout Action Button */}
-        <div className="shrink-0">
+        {/* Fixed Bottom Sticky Checkout Action Button (mt-auto ensures it is always visible and clickable) */}
+        <div className="mt-auto shrink-0 pt-1.5">
           <Button
             variant="primary"
             onClick={handleCompleteSale}

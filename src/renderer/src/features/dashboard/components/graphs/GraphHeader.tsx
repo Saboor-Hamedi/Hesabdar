@@ -27,8 +27,8 @@ export function GraphHeader({ period, onChangePeriod, title }: GraphHeaderProps)
     <div className="flex items-center justify-between gap-3 mb-2">
       {/* Title & Legend */}
       <div className="flex items-center gap-3">
-        <h4 className="text-xs font-bold text-gray-900">{displayTitle}</h4>
-        <div className="flex items-center gap-3 text-[11px] text-gray-500 select-none">
+        <h4 className="text-xs font-bold text-gray-900 dark:text-slate-100">{displayTitle}</h4>
+        <div className="flex items-center gap-3 text-[11px] text-gray-500 dark:text-slate-400 select-none">
           <span className="flex items-center gap-1.5 font-medium">
             <span className="w-2.5 h-2.5 rounded-[3px] bg-[#2D7A66]" />
             {t('graphs.revenue')}
@@ -41,7 +41,7 @@ export function GraphHeader({ period, onChangePeriod, title }: GraphHeaderProps)
       </div>
 
       {/* Period Toggle Group: buttons with 6px radius */}
-      <div className="flex items-center p-0.5 bg-gray-100 rounded-[8px] border border-gray-200/70">
+      <div className="flex items-center p-0.5 bg-gray-100 dark:bg-slate-800 rounded-[8px] border border-gray-200/70 dark:border-slate-700">
         {periods.map(({ id, label }) => {
           const isActive = period === id
           return (
@@ -53,8 +53,8 @@ export function GraphHeader({ period, onChangePeriod, title }: GraphHeaderProps)
                 focus:outline-none focus:ring-0 cursor-pointer
                 ${
                   isActive
-                    ? 'bg-white text-gray-900 shadow-2xs'
-                    : 'text-gray-500 hover:text-gray-800 hover:bg-gray-200/50'
+                    ? 'bg-white dark:bg-slate-700 text-gray-900 dark:text-slate-100 shadow-2xs'
+                    : 'text-gray-500 dark:text-slate-400 hover:text-gray-800 dark:hover:text-slate-200 hover:bg-gray-200/50 dark:hover:bg-slate-700/50'
                 }
               `}
             >

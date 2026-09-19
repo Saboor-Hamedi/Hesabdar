@@ -33,46 +33,46 @@ const COLOR_MAP: Record<
   }
 > = {
   emerald: {
-    icon: 'text-emerald-600',
-    iconBg: 'bg-emerald-50 border-emerald-100',
-    tagBg: 'bg-emerald-50',
-    tagText: 'text-emerald-700',
-    tagBorder: 'border-emerald-200/60',
+    icon: 'text-emerald-600 dark:text-emerald-400',
+    iconBg: 'bg-emerald-50 dark:bg-emerald-950/50 border-emerald-100 dark:border-emerald-800/50',
+    tagBg: 'bg-emerald-50 dark:bg-emerald-950/40',
+    tagText: 'text-emerald-700 dark:text-emerald-300',
+    tagBorder: 'border-emerald-200/60 dark:border-emerald-800/50',
   },
   blue: {
-    icon: 'text-blue-600',
-    iconBg: 'bg-blue-50 border-blue-100',
-    tagBg: 'bg-blue-50',
-    tagText: 'text-blue-700',
-    tagBorder: 'border-blue-200/60',
+    icon: 'text-blue-600 dark:text-blue-400',
+    iconBg: 'bg-blue-50 dark:bg-blue-950/50 border-blue-100 dark:border-blue-800/50',
+    tagBg: 'bg-blue-50 dark:bg-blue-950/40',
+    tagText: 'text-blue-700 dark:text-blue-300',
+    tagBorder: 'border-blue-200/60 dark:border-blue-800/50',
   },
   amber: {
-    icon: 'text-amber-600',
-    iconBg: 'bg-amber-50 border-amber-100',
-    tagBg: 'bg-amber-50',
-    tagText: 'text-amber-800',
-    tagBorder: 'border-amber-200/60',
+    icon: 'text-amber-600 dark:text-amber-400',
+    iconBg: 'bg-amber-50 dark:bg-amber-950/50 border-amber-100 dark:border-amber-800/50',
+    tagBg: 'bg-amber-50 dark:bg-amber-950/40',
+    tagText: 'text-amber-800 dark:text-amber-300',
+    tagBorder: 'border-amber-200/60 dark:border-amber-800/50',
   },
   purple: {
-    icon: 'text-purple-600',
-    iconBg: 'bg-purple-50 border-purple-100',
-    tagBg: 'bg-purple-50',
-    tagText: 'text-purple-700',
-    tagBorder: 'border-purple-200/60',
+    icon: 'text-purple-600 dark:text-purple-400',
+    iconBg: 'bg-purple-50 dark:bg-purple-950/50 border-purple-100 dark:border-purple-800/50',
+    tagBg: 'bg-purple-50 dark:bg-purple-950/40',
+    tagText: 'text-purple-700 dark:text-purple-300',
+    tagBorder: 'border-purple-200/60 dark:border-purple-800/50',
   },
   rose: {
-    icon: 'text-rose-600',
-    iconBg: 'bg-rose-50 border-rose-100',
-    tagBg: 'bg-rose-50',
-    tagText: 'text-rose-700',
-    tagBorder: 'border-rose-200/60',
+    icon: 'text-rose-600 dark:text-rose-400',
+    iconBg: 'bg-rose-50 dark:bg-rose-950/50 border-rose-100 dark:border-rose-800/50',
+    tagBg: 'bg-rose-50 dark:bg-rose-950/40',
+    tagText: 'text-rose-700 dark:text-rose-300',
+    tagBorder: 'border-rose-200/60 dark:border-rose-800/50',
   },
   gray: {
-    icon: 'text-gray-600',
-    iconBg: 'bg-gray-100 border-gray-200',
-    tagBg: 'bg-gray-50',
-    tagText: 'text-gray-600',
-    tagBorder: 'border-gray-200/60',
+    icon: 'text-gray-600 dark:text-slate-400',
+    iconBg: 'bg-gray-100 dark:bg-slate-800 border-gray-200 dark:border-slate-700',
+    tagBg: 'bg-gray-50 dark:bg-slate-800',
+    tagText: 'text-gray-600 dark:text-slate-300',
+    tagBorder: 'border-gray-200/60 dark:border-slate-700',
   },
 }
 
@@ -96,11 +96,11 @@ export function StatCard({
 
   return (
     <div
-      className={`w-full h-full min-h-[102px] bg-white border border-gray-200/80 rounded-xl p-4 shadow-xs hover:shadow-sm transition-all duration-150 flex flex-col justify-between select-none ${className}`}
+      className={`w-full h-full min-h-[102px] bg-white dark:bg-slate-900 border border-gray-200/80 dark:border-slate-800 rounded-xl p-4 shadow-xs hover:shadow-sm flex flex-col justify-between select-none ${className}`}
     >
       {/* Top Row: Label and Icon */}
       <div className="flex items-center justify-between gap-2">
-        <span className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider truncate">
+        <span className="text-[11px] font-semibold text-gray-400 dark:text-slate-400 uppercase tracking-wider truncate">
           {title}
         </span>
         <div
@@ -112,7 +112,7 @@ export function StatCard({
 
       {/* Middle Row: Large Monospace Value */}
       <div className="my-1 flex items-baseline justify-between gap-2">
-        <span className="text-xl sm:text-2xl font-bold font-mono text-gray-900 tracking-tight truncate">
+        <span className="text-xl sm:text-2xl font-bold font-mono text-gray-900 dark:text-slate-100 tracking-tight truncate">
           {value}
         </span>
         {action && <div className="shrink-0">{action}</div>}
@@ -127,7 +127,7 @@ export function StatCard({
             {tag.text}
           </span>
         ) : subtitle ? (
-          <span className="text-gray-400 truncate">{subtitle}</span>
+          <span className="text-gray-400 dark:text-slate-400 truncate">{subtitle}</span>
         ) : (
           <span />
         )}
@@ -135,7 +135,7 @@ export function StatCard({
         {trend && (
           <span
             className={`font-semibold shrink-0 ${
-              trend.isPositive ?? trend.value >= 0 ? 'text-emerald-600' : 'text-rose-600'
+              trend.isPositive ?? trend.value >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'
             }`}
           >
             {trend.value >= 0 ? '+' : ''}

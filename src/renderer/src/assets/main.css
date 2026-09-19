@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
   /* Hesabdar brand — Calm Sage Teal (Linear / Notion / Modern POS style) */
   --color-primary-50:  #f2f7f5;
@@ -35,6 +37,13 @@
   background: #cbd5e1;
 }
 
+.dark ::-webkit-scrollbar-thumb {
+  background: #334155;
+}
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}
+
 html, body, #root {
   height: 100%;
   width: 100%;
@@ -42,6 +51,12 @@ html, body, #root {
   padding: 0;
   overflow: hidden;
   border-radius: 0 !important;
+}
+
+html.dark, body.dark {
+  background-color: #020617;
+  color: #f8fafc;
+  color-scheme: dark;
 }
 
 code {
@@ -70,6 +85,30 @@ code {
 /* Remove focus outline/ring globally as per user request */
 *:focus, *:focus-visible {
   outline: none !important;
+}
+
+/* Circular reveal: let the new view be clipped by the JS animation,
+   instead of the default cross-fade. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+::view-transition-old(root) {
+  z-index: 1;
+}
+::view-transition-new(root) {
+  z-index: 2;
+}
+
+/* Fallback for browsers without View Transitions: short colour fade */
+.theme-changing,
+.theme-changing *:not(.theme-toggle):not(.theme-toggle *) {
+  transition:
+    background-color 0.4s ease,
+    color 0.4s ease,
+    border-color 0.4s ease,
+    box-shadow 0.4s ease !important;
 }
 
 /* -------------------------------------------------------------

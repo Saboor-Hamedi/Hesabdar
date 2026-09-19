@@ -89,45 +89,45 @@ export function InventoryValuationCard({ products }: InventoryValuationCardProps
     >
       <div className="flex flex-col gap-3 py-1">
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <div className="p-3 rounded-[8px] bg-gray-50 border border-gray-200/70">
-            <span className="text-[11px] text-gray-500 block font-medium">{t('reports.inStockUnits')}</span>
-            <span className="font-mono text-base font-bold text-gray-900 mt-1 block">
+          <div className="p-3 rounded-[8px] bg-gray-50 dark:bg-slate-800/60 border border-gray-200/70 dark:border-slate-700/60">
+            <span className="text-[11px] text-gray-500 dark:text-slate-400 block font-medium">{t('reports.inStockUnits')}</span>
+            <span className="font-mono text-base font-bold text-gray-900 dark:text-slate-100 mt-1 block">
               {formatNumber(totalUnits)}
             </span>
-            <span className="text-[10px] text-gray-400 mt-0.5 block">{products.length} {t('products.title')}</span>
+            <span className="text-[10px] text-gray-400 dark:text-slate-500 mt-0.5 block">{products.length} {t('products.title')}</span>
           </div>
 
-          <div className="p-3 rounded-[8px] bg-slate-50 border border-slate-200/70">
-            <span className="text-[11px] text-slate-600 block font-medium">{t('reports.totalCostValue')}</span>
-            <span className="font-mono text-base font-bold text-slate-900 mt-1 block">
+          <div className="p-3 rounded-[8px] bg-slate-50 dark:bg-slate-800/60 border border-slate-200/70 dark:border-slate-700/60">
+            <span className="text-[11px] text-slate-600 dark:text-slate-400 block font-medium">{t('reports.totalCostValue')}</span>
+            <span className="font-mono text-base font-bold text-slate-900 dark:text-slate-100 mt-1 block">
               {formatCurrency(totalCost)}
             </span>
-            <span className="text-[10px] text-slate-500 font-medium mt-0.5 block">AFN (Cost Basis)</span>
+            <span className="text-[10px] text-slate-500 dark:text-slate-400 font-medium mt-0.5 block">AFN (Cost Basis)</span>
           </div>
 
-          <div className="p-3 rounded-[8px] bg-blue-50/50 border border-blue-200/60">
-            <span className="text-[11px] text-blue-700 block font-medium">{t('reports.projectedRetailValue')}</span>
-            <span className="font-mono text-base font-bold text-blue-950 mt-1 block">
+          <div className="p-3 rounded-[8px] bg-blue-50/50 dark:bg-blue-950/30 border border-blue-200/60 dark:border-blue-800/50">
+            <span className="text-[11px] text-blue-700 dark:text-blue-300 block font-medium">{t('reports.projectedRetailValue')}</span>
+            <span className="font-mono text-base font-bold text-blue-950 dark:text-blue-200 mt-1 block">
               {formatCurrency(totalRetail)}
             </span>
-            <span className="text-[10px] text-blue-600 font-medium mt-0.5 block">AFN (Retail Value)</span>
+            <span className="text-[10px] text-blue-600 dark:text-blue-400 font-medium mt-0.5 block">AFN (Retail Value)</span>
           </div>
 
-          <div className="p-3 rounded-[8px] bg-emerald-50/60 border border-emerald-200/70">
-            <span className="text-[11px] text-emerald-800 block font-medium">{t('reports.projectedGrossGain')}</span>
-            <span className="font-mono text-base font-bold text-emerald-950 mt-1 block flex items-center gap-1">
-              <TrendingUp className="w-4 h-4 text-emerald-600" />
+          <div className="p-3 rounded-[8px] bg-emerald-50/60 dark:bg-emerald-950/30 border border-emerald-200/70 dark:border-emerald-800/50">
+            <span className="text-[11px] text-emerald-800 dark:text-emerald-300 block font-medium">{t('reports.projectedGrossGain')}</span>
+            <span className="font-mono text-base font-bold text-emerald-950 dark:text-emerald-200 mt-1 block flex items-center gap-1">
+              <TrendingUp className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
               {formatCurrency(potentialProfit)}
             </span>
-            <span className="text-[10px] font-bold text-emerald-700 mt-0.5 block">
+            <span className="text-[10px] font-bold text-emerald-700 dark:text-emerald-400 mt-0.5 block">
               {totalCost > 0 ? `${Math.round((potentialProfit / totalCost) * 100)}% ROI` : '0%'}
             </span>
           </div>
         </div>
 
-        <div className="flex items-center justify-between pt-2 border-t border-gray-100">
-          <span className="text-xs text-gray-500 flex items-center gap-1.5">
-            <Package className="w-4 h-4 text-gray-400" />
+        <div className="flex items-center justify-between pt-2 border-t border-gray-100 dark:border-slate-800">
+          <span className="text-xs text-gray-500 dark:text-slate-400 flex items-center gap-1.5">
+            <Package className="w-4 h-4 text-gray-400 dark:text-slate-500" />
             {t('reports.inventoryValuationSubtitle')}
           </span>
 

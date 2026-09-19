@@ -30,7 +30,7 @@ export function CategoryPills({
             className={`text-[11px] px-2.5 py-1 rounded-[5px] font-medium shrink-0 transition-colors ${
               isSelected
                 ? 'bg-emerald-600 text-white shadow-xs'
-                : 'bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 hover:border-gray-300'
+                : 'bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-gray-700 dark:text-slate-200 hover:bg-gray-50 dark:hover:bg-slate-700 hover:border-gray-300 dark:hover:border-slate-600'
             }`}
           >
             {cat === 'all' ? 'All Items' : cat}

@@ -21,7 +21,7 @@ export function Version({ prefix = 'v', suffix = '', className = '', showBadge =
 
   if (showBadge) {
     return (
-      <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-gray-100 text-gray-600 border border-gray-200 ${className}`}>
+      <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-gray-100 dark:bg-slate-800 text-gray-600 dark:text-slate-300 border border-gray-200 dark:border-slate-700 ${className}`}>
         {prefix}{version}{suffix}
       </span>
     )

@@ -19,14 +19,14 @@ export function PageHeader({
   title,
   subtitle,
   icon: Icon,
-  iconColor = 'text-emerald-600',
-  iconBg = 'bg-emerald-50 border-emerald-100/80',
+  iconColor = 'text-emerald-600 dark:text-emerald-400',
+  iconBg = 'bg-emerald-50 dark:bg-emerald-950/40 border-emerald-100/80 dark:border-emerald-800/40',
   action,
   className = '',
 }: PageHeaderProps) {
   return (
     <div
-      className={`flex items-center justify-between min-h-[52px] pb-3 border-b border-gray-200/60 shrink-0 select-none ${className}`}
+      className={`flex items-center justify-between min-h-[52px] pb-3 border-b border-gray-200/60 dark:border-slate-800 shrink-0 select-none ${className}`}
     >
       <div className="flex items-center gap-3">
         <div
@@ -35,11 +35,11 @@ export function PageHeader({
           <Icon className={`w-4.5 h-4.5 ${iconColor}`} />
         </div>
         <div>
-          <h2 className="text-base font-bold text-gray-800 tracking-tight leading-tight">
+          <h2 className="text-base font-bold text-gray-800 dark:text-slate-100 tracking-tight leading-tight">
             {title}
           </h2>
           {subtitle && (
-            <p className="text-xs text-gray-400 mt-0.5 leading-none">
+            <p className="text-xs text-gray-400 dark:text-slate-400 mt-0.5 leading-none">
               {subtitle}
             </p>
           )}

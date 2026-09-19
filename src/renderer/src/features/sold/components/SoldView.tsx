@@ -105,8 +105,8 @@ export function SoldView() {
               flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all border cursor-pointer
               ${
                 filterByCalendar
-                  ? 'bg-[#2F6153] text-white border-[#2F6153] shadow-xs ring-2 ring-[#7CAE9F]/30'
-                  : 'bg-white text-gray-700 hover:bg-gray-50 border-gray-200 shadow-2xs'
+                  ? 'bg-[#2F6153] dark:bg-[#4A7C6F] text-white border-[#2F6153] dark:border-[#4A7C6F] shadow-xs ring-2 ring-[#7CAE9F]/30'
+                  : 'bg-white dark:bg-slate-800 text-gray-700 dark:text-slate-200 hover:bg-gray-50 dark:hover:bg-slate-700 border-gray-200 dark:border-slate-700 shadow-2xs'
               }
             `}
             title="Filter invoices by Titlebar Calendar range"

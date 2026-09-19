@@ -4,8 +4,8 @@ interface Props { isMaximized: boolean }
 
 export function WindowControls({ isMaximized }: Props) {
   const btn =
-    'flex h-[30px] w-[46px] items-center justify-center text-gray-600 ' +
-    'transition-colors hover:bg-gray-100 active:bg-gray-200'
+    'flex h-[30px] w-[46px] items-center justify-center text-gray-600 dark:text-slate-300 ' +
+    'transition-colors hover:bg-gray-100 dark:hover:bg-slate-800 active:bg-gray-200 dark:active:bg-slate-700'
 
   return (
     <div

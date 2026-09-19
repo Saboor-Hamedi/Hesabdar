@@ -83,8 +83,8 @@ export function Modal({
       <div
         style={style}
         className={`
-          relative z-10 w-full ${sizingClass} bg-white rounded-2xl
-          border border-gray-100 shadow-[0_25px_50px_-12px_rgba(0,0,0,0.15)] overflow-hidden
+          relative z-10 w-full ${sizingClass} bg-white dark:bg-slate-900 rounded-2xl
+          border border-gray-100 dark:border-slate-800 shadow-[0_25px_50px_-12px_rgba(0,0,0,0.4)] overflow-hidden
           animate-in fade-in zoom-in-95 duration-150
           print:border-none print:shadow-none print:overflow-visible print:w-auto print:max-w-none print:static
           ${className}
@@ -92,13 +92,13 @@ export function Modal({
       >
         {/* Header with Title, optional top-right Badge, and Minimalist Close Button */}
         <div
-          className={`flex items-start justify-between bg-white shrink-0 no-print ${
+          className={`flex items-start justify-between bg-white dark:bg-slate-900 shrink-0 no-print ${
             compactHeader ? 'px-5 pt-4 pb-2.5' : 'px-6 pt-5 pb-3'
           }`}
         >
           <div className="flex-1 pr-3">
             <h2
-              className={`font-bold text-[#1F2937] tracking-tight leading-snug ${
+              className={`font-bold text-[#1F2937] dark:text-slate-100 tracking-tight leading-snug ${
                 compactHeader ? 'text-base' : 'text-lg sm:text-xl'
               }`}
             >
@@ -106,7 +106,7 @@ export function Modal({
             </h2>
             {subtitle && (
               <p
-                className={`text-[#6B7280] font-normal leading-normal ${
+                className={`text-[#6B7280] dark:text-slate-400 font-normal leading-normal ${
                   compactHeader ? 'text-xs mt-0.5' : 'text-xs sm:text-[13px] mt-1'
                 }`}
               >
@@ -118,7 +118,7 @@ export function Modal({
             {badge && <div className="shrink-0">{badge}</div>}
             <button
               onClick={onClose}
-              className="text-[#9CA3AF] hover:text-[#111827] p-1.5 rounded-lg hover:bg-gray-100 transition-colors focus:outline-none cursor-pointer"
+              className="text-[#9CA3AF] dark:text-slate-400 hover:text-[#111827] dark:hover:text-slate-100 p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors focus:outline-none cursor-pointer"
               aria-label="Close"
             >
               <X className={compactHeader ? 'w-4 h-4' : 'w-5 h-5'} />

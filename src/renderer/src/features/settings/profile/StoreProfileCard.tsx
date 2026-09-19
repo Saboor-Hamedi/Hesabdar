@@ -78,9 +78,9 @@ export function StoreProfileCard({
         </div>
       </div>
 
-      <div className="flex items-center justify-between pt-3 mt-2 border-t border-gray-100">
+      <div className="flex items-center justify-between pt-3 mt-2 border-t border-gray-100 dark:border-slate-800">
         {savedSuccess ? (
-          <span className="text-[11px] text-emerald-600 font-medium flex items-center gap-1">
+          <span className="text-[11px] text-emerald-600 dark:text-emerald-400 font-medium flex items-center gap-1">
             <Check className="w-3.5 h-3.5" /> {t('settings.savedSuccess')}
           </span>
         ) : (

@@ -58,7 +58,7 @@ export function YearlyGraph({ data, height = 220 }: YearlyGraphProps) {
                 y1={y}
                 x2={width - padding.right}
                 y2={y}
-                stroke="#f3f4f6"
+                className="stroke-gray-100 dark:stroke-slate-800"
                 strokeWidth="1"
                 strokeDasharray={ratio === 0 ? 'none' : '3 3'}
               />
@@ -66,7 +66,7 @@ export function YearlyGraph({ data, height = 220 }: YearlyGraphProps) {
                 x={padding.left - 8}
                 y={y + 3}
                 textAnchor="end"
-                className="text-[9px] fill-gray-400 font-mono"
+                className="text-[9px] fill-gray-400 dark:fill-slate-500 font-mono"
               >
                 {Math.round(maxVal * ratio)}
               </text>
@@ -88,7 +88,7 @@ export function YearlyGraph({ data, height = 220 }: YearlyGraphProps) {
                 x={xCenter}
                 y={height - 10}
                 textAnchor="middle"
-                className="text-[9px] fill-gray-500 font-medium"
+                className="text-[9px] fill-gray-500 dark:fill-slate-400 font-medium"
               >
                 {d.label}
               </text>

@@ -1,30 +1,24 @@
-📋 Prompt: Refine "Active Sale" State & Calculator Styling
-Task: Polish the visual hierarchy of the POS screen when items are in the cart and held invoices exist. Reduce color noise and improve workflow clarity.
-1. Tame the Calculator (Critical Visual Fix)
-Issue: The bright orange operator keys (÷, ×, -, +, =) are too loud. They distract from the main task (selling) and clash with the Sage Green brand. Orange typically signals "Warning" or "Stop" in UI design.
+📋 Prompt: Fix Checkout Panel Overflow & "Exact" Badge Layout
+Task: Refactor the Right Sidebar (Checkout Panel) to eliminate vertical scrolling and properly integrate the "Exact Settlement" feature. The panel must fit all elements perfectly within the viewport height without scrolling.
+1. Fix the Layout Overflow (Critical)
+Issue: The checkout section has a vertical scrollbar, causing the "Exact Settlement" badge to be hidden or cut off at the bottom.
 Fix:
-Change Color: Switch operator keys to a Soft Slate Blue (#64748B) or a Muted Sage (#86EFAC with dark text). This keeps them distinct from number keys but harmonious with the theme.
-Equals Button: Make = the only "Action" key. Use the Primary Brand Green (#5A8F7B) to signal "Go/Calculate".
-Clear Button: Keep C as a soft Red/Pink (#FECACA) to indicate destruction/reset.
-Number Keys: Keep them neutral white/light gray.
-2. Refine "Held Invoices" & "Hold Cart" Workflow
-Issue: The yellow badge (Held Invoices 1) looks like an error alert. The "Hold Cart" button is passive.
-Fix:
-Badge Style: Change the "Held Invoices" badge to a Neutral Gray or Blue pill. It’s a utility count, not a warning. Only turn it Red/Yellow if a held invoice is expiring or overdue.
-"Hold Cart" Button: Make this more prominent when the cart has items. Use an outline style with an icon (e.g., ️ Pause icon).
-"Clear" Button: Move this to the far right or make it a text-only link with a trash icon. It’s a destructive action and shouldn't be next to "Hold Cart" where accidental clicks happen. Add a confirmation modal ("Are you sure?") before clearing.
-3. Invoice Table Polish (The "Active" State)
-Issue: The table row for "مسکه تازه حیوانی" is functional but dense.
-Fix:
-Quantity Input: The - 7 + stepper is good. Ensure the input field itself is Monospaced and centered.
-Unit Badge: The "KG" badge is small. Make it slightly larger or use a light background pill so it’s readable at a glance.
-Price Alignment: Ensure "400 AFN" and "2,800 AFN" are strictly right-aligned and use the same font weight.
-Row Height: Increase row height slightly (h-16) to give touch targets (steppers, delete bin) more breathing room.
-4. Checkout Panel: "Exact" Feature
-Observation: I see an "Exact" tag next to "Cash Paid". This is brilliant for speed.
-Enhancement:
-Make "Exact" a clickable button/toggle. When clicked, it auto-fills the "Cash Paid" input with the "Total Payable" amount.
-Visual Feedback: When "Exact" is active, highlight the "Cash Paid" input border in Green to confirm "No Change Needed".
-5. Search Bar Context
-Issue: The search bar shows "شیر خشک نیدو" (Nido Milk Powder) with an 'X' to clear.
-Fix: Ensure that when a user selects an item from search results, the search bar auto-clears and re-focuses. The cashier should never have to manually click 'X' to scan the next item.
+Change the checkout container to use flex flex-col with h-full (or flex-1).
+Set the internal content wrapper to overflow-y-auto only if necessary, but ideally, adjust spacing so everything fits naturally.
+Reduce Vertical Padding: Decrease the gap between "Subtotal", "Discount", and "Total Payable" from gap-4 (16px) to gap-2 (8px) or gap-3 (12px). These fields don't need that much breathing room.
+Compact Inputs: Reduce the height of the "Discount" and "Cash Paid" inputs from h-12 (48px) to h-10 (40px). This saves ~16px of vertical space immediately.
+2. Redesign the "Exact Settlement" Feature
+Current Issue: The "Exact Settlement" box looks like a separate, floating card that gets pushed off-screen. It feels disconnected from the "Cash Paid" input.
+Fix: Integrate it directly into the "Cash Paid" row.
+Layout: Create a single row for payment: [Label: Cash Paid] [Input Field] [Exact Button].
+The "Exact" Button: Instead of a large box below, make "Exact" a small, pill-shaped button or icon inside or next to the Cash Paid input.
+Style: Small green badge with checkmark icon + text "Exact (تکمیل)".
+Interaction: When clicked, it fills the input with the total and turns solid green.
+Alternative (If keeping the box): If you prefer the box style, place it above the "Total Payable" line as a "Quick Actions" bar, or make it a collapsible section that only expands when the user clicks a "Payment Options" link.
+3. Visual Hierarchy & Spacing
+Total Payable: This is the most important number. Give it the most space. Increase its font size slightly and add mt-2 (margin-top) to separate it from the discount field.
+Checkout Button: Ensure the "CHECKOUT (F12)" button is sticky at the bottom (mt-auto) so it’s always visible and clickable, even if the screen is resized.
+Calculator: Ensure the calculator doesn't shrink too much. Set a min-height on the calculator container so the keys remain tappable.
+4. Typography & Alignment
+Numbers: Ensure "1,440 AFN" in Subtotal, Total, and Input are all Right-Aligned and use Monospaced Font.
+Labels: "Subtotal", "Discount", "Total Payable", "Cash Paid" should be Left-Aligned and vertically centered with their respective values/inputs.

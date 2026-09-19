@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect, useCallback } from 'react'
-import { Search, Plus, Check, X, ArrowUpRight, Package } from 'lucide-react'
+import { Search, Plus, Check, X, ArrowUpRight, Package, ArrowLeft } from 'lucide-react'
 import {
   initAndGetCatalog,
   type CatalogItem
@@ -15,6 +15,7 @@ interface CatalogTableModalProps {
   onClose: () => void
   existingProducts: Product[]
   onSelectForCustomize?: (item: CatalogItem) => void
+  onBackToProductModal?: () => void
 }
 
 /** Normalized search index entry — built once when catalog loads, never rebuilt on search */
@@ -38,6 +39,7 @@ export function CatalogTableModal({
   onClose,
   existingProducts,
   onSelectForCustomize,
+  onBackToProductModal,
 }: CatalogTableModalProps) {
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedCategory, setSelectedCategory] = useState<string>('All')
@@ -139,7 +141,7 @@ export function CatalogTableModal({
       title="Standard Commodity Catalog"
       subtitle="Pre-configured Afghan commodities with English, Dari, and Pashto names, units, and standard market pricing."
       badge={
-        <span className="text-xs font-mono font-semibold px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200/60 shadow-2xs">
+        <span className="text-xs font-mono font-semibold px-3 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/50 text-emerald-800 dark:text-emerald-300 border border-emerald-200/60 dark:border-emerald-800/60 shadow-2xs">
           {catalogItems.length} Commodities
         </span>
       }
@@ -149,45 +151,59 @@ export function CatalogTableModal({
     >
       <div className="flex flex-col h-full min-h-0 gap-4">
         {/* Top Header Card matching DebtPaymentModal */}
-        <div className="p-4 bg-gray-50 border border-gray-100 rounded-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shrink-0">
+        <div className="p-4 bg-gray-50 dark:bg-slate-800/60 border border-gray-100 dark:border-slate-800 rounded-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shrink-0">
           <div className="flex items-center gap-3.5">
             <div className="w-11 h-11 rounded-xl bg-[#5A8F7B] text-white flex items-center justify-center font-bold text-base shadow-xs shrink-0">
               <Package className="w-5 h-5" />
             </div>
             <div className="flex flex-col">
-              <span className="text-sm font-bold text-gray-900">Standard Commodity Presets</span>
-              <span className="text-xs text-gray-500 mt-0.5">
+              <span className="text-sm font-bold text-gray-900 dark:text-slate-100">Standard Commodity Presets</span>
+              <span className="text-xs text-gray-500 dark:text-slate-400 mt-0.5">
                 Instant one-click add to inventory or open in form to customize pricing
               </span>
             </div>
           </div>
 
-          <div className="text-end shrink-0">
-            <span className="text-[11px] font-semibold text-gray-500 uppercase tracking-[0.05em] block">
-              Inventory In Stock
-            </span>
-            <span className="text-sm font-bold font-mono text-emerald-800 mt-0.5 block">
-              {existingProducts.length} Active Items
-            </span>
+          <div className="flex items-center gap-3 shrink-0">
+            {onBackToProductModal && (
+              <Button
+                variant="secondary"
+                onClick={() => {
+                  onClose()
+                  onBackToProductModal()
+                }}
+                icon={<ArrowLeft className="w-3.5 h-3.5 rtl:rotate-180" />}
+              >
+                Back to Product Form
+              </Button>
+            )}
+            <div className="text-end">
+              <span className="text-[11px] font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-[0.05em] block">
+                Inventory In Stock
+              </span>
+              <span className="text-sm font-bold font-mono text-emerald-800 dark:text-emerald-300 mt-0.5 block">
+                {existingProducts.length} Active Items
+              </span>
+            </div>
           </div>
         </div>
 
         {/* Prominent Full-Width Search Input */}
         <div className="relative w-full shrink-0">
-          <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+          <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 dark:text-slate-500 pointer-events-none" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search commodity by English name, نام دری, نوم په پښتو, barcode (1001-1028), or category..."
-            className="w-full h-10 pl-10 pr-9 text-xs bg-gray-50 hover:bg-gray-100/70 focus:bg-white rounded-xl border border-gray-200 focus:border-[#5A8F7B] focus:ring-2 focus:ring-[#5A8F7B]/20 outline-none transition-all placeholder:text-gray-400 shadow-2xs"
+            className="w-full h-10 pl-10 pr-9 text-xs bg-gray-50 dark:bg-slate-800/80 hover:bg-gray-100/70 dark:hover:bg-slate-800 focus:bg-white dark:focus:bg-slate-800 text-gray-900 dark:text-slate-100 rounded-xl border border-gray-200 dark:border-slate-700 focus:border-[#5A8F7B] focus:ring-2 focus:ring-[#5A8F7B]/20 outline-none transition-all placeholder:text-gray-400 dark:placeholder:text-slate-500 shadow-2xs"
             autoFocus
           />
           {searchQuery && (
             <button
               type="button"
               onClick={() => setSearchQuery('')}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 p-0.5 rounded cursor-pointer"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-slate-500 hover:text-gray-600 dark:hover:text-slate-300 p-0.5 rounded cursor-pointer"
             >
               <X className="w-3.5 h-3.5" />
             </button>
@@ -204,7 +220,7 @@ export function CatalogTableModal({
               className={`text-xs font-medium px-3 py-1 rounded-lg transition-colors whitespace-nowrap cursor-pointer ${
                 selectedCategory === cat
                   ? 'bg-[#5A8F7B] text-white shadow-2xs font-semibold'
-                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200/80'
+                  : 'bg-gray-100 dark:bg-slate-800 text-gray-600 dark:text-slate-300 hover:bg-gray-200/80 dark:hover:bg-slate-700 border border-transparent dark:border-slate-700/60'
               }`}
             >
               {cat}
@@ -213,9 +229,9 @@ export function CatalogTableModal({
         </div>
 
         {/* Fixed Height Data Table Container */}
-        <div className="flex-1 min-h-0 overflow-y-auto border border-gray-200 rounded-xl bg-white shadow-2xs">
+        <div className="flex-1 min-h-0 overflow-y-auto border border-gray-200 dark:border-slate-800 rounded-xl bg-white dark:bg-slate-900 shadow-2xs">
           <table className="w-full text-left border-collapse text-xs">
-            <thead className="bg-[#F8F9FA] sticky top-0 z-10 border-b border-gray-200 text-gray-500 uppercase tracking-wider text-[10px] font-semibold select-none">
+            <thead className="bg-[#F8F9FA] dark:bg-slate-800/95 sticky top-0 z-10 border-b border-gray-200 dark:border-slate-800 text-gray-500 dark:text-slate-400 uppercase tracking-wider text-[10px] font-semibold select-none">
               <tr>
                 <th className="py-2.5 px-3 w-16">Barcode</th>
                 <th className="py-2.5 px-3">Commodity Names (English / دری / پښتو)</th>
@@ -226,10 +242,10 @@ export function CatalogTableModal({
                 <th className="py-2.5 px-3 w-36 text-center">Action</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100">
+            <tbody className="divide-y divide-gray-100 dark:divide-slate-800">
               {filteredItems.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="py-16 text-center text-gray-400">
+                  <td colSpan={7} className="py-16 text-center text-gray-400 dark:text-slate-500">
                     <p className="text-xs">No commodities matching &quot;{searchQuery}&quot;</p>
                   </td>
                 </tr>
@@ -239,39 +255,39 @@ export function CatalogTableModal({
                   return (
                     <tr
                       key={item.id}
-                      className="hover:bg-gray-50/80 transition-colors group"
+                      className="hover:bg-gray-50/80 dark:hover:bg-slate-800/60 transition-colors group"
                     >
-                      <td className="py-2.5 px-3 font-mono text-[11px] text-gray-500 font-medium">
+                      <td className="py-2.5 px-3 font-mono text-[11px] text-gray-500 dark:text-slate-400 font-medium">
                         {item.barcode}
                       </td>
                       <td className="py-2.5 px-3">
                         <div className="flex items-baseline gap-2">
-                          <span className="font-semibold text-gray-900">{item.name_fa}</span>
-                          <span className="text-[11px] text-gray-500">/ {item.name_en}</span>
-                          <span className="text-[11px] text-gray-400">({item.name_ps})</span>
+                          <span className="font-semibold text-gray-900 dark:text-slate-100">{item.name_fa}</span>
+                          <span className="text-[11px] text-gray-500 dark:text-slate-400">/ {item.name_en}</span>
+                          <span className="text-[11px] text-gray-400 dark:text-slate-500">({item.name_ps})</span>
                         </div>
                       </td>
                       <td className="py-2.5 px-3">
-                        <span className="inline-block px-2 py-0.5 text-[10px] font-medium rounded-full bg-gray-100 text-gray-700">
+                        <span className="inline-block px-2 py-0.5 text-[10px] font-medium rounded-full bg-gray-100 dark:bg-slate-800 text-gray-700 dark:text-slate-300 border border-gray-200/40 dark:border-slate-700">
                           {item.category}
                         </span>
                       </td>
                       <td className="py-2.5 px-3 text-center">
-                        <span className="font-mono text-[11px] text-gray-600 bg-gray-50 px-1.5 py-0.5 rounded border border-gray-200/50">
+                        <span className="font-mono text-[11px] text-gray-600 dark:text-slate-300 bg-gray-50 dark:bg-slate-800 px-1.5 py-0.5 rounded border border-gray-200/50 dark:border-slate-700">
                           {item.unit}
                         </span>
                       </td>
-                      <td className="py-2.5 px-3 text-right font-mono text-[11px] text-gray-600">
+                      <td className="py-2.5 px-3 text-right font-mono text-[11px] text-gray-600 dark:text-slate-300">
                         {item.suggested_cost}
                       </td>
-                      <td className="py-2.5 px-3 text-right font-mono text-[11px] font-semibold text-emerald-800">
+                      <td className="py-2.5 px-3 text-right font-mono text-[11px] font-semibold text-emerald-800 dark:text-emerald-400">
                         {item.suggested_price}
                       </td>
                       <td className="py-2.5 px-3 text-center">
                         <div className="flex items-center justify-center gap-1.5">
                           {inInventory ? (
-                            <div className="flex items-center gap-1 text-[11px] text-emerald-800 font-medium bg-emerald-50 px-2 py-1 rounded-md border border-emerald-200/60">
-                              <Check className="w-3.5 h-3.5 text-emerald-700" />
+                            <div className="flex items-center gap-1 text-[11px] text-emerald-800 dark:text-emerald-300 font-medium bg-emerald-50 dark:bg-emerald-950/50 px-2 py-1 rounded-md border border-emerald-200/60 dark:border-emerald-800/60">
+                              <Check className="w-3.5 h-3.5 text-emerald-700 dark:text-emerald-400" />
                               <span>In Store</span>
                             </div>
                           ) : (
@@ -288,7 +304,7 @@ export function CatalogTableModal({
                             type="button"
                             onClick={() => handleCustomize(item)}
                             title="Open in form to edit price/stock"
-                            className="p-1 rounded text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors cursor-pointer"
+                            className="p-1 rounded text-gray-400 dark:text-slate-400 hover:text-gray-700 dark:hover:text-slate-200 hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
                           >
                             <ArrowUpRight className="w-3.5 h-3.5" />
                           </button>
@@ -303,11 +319,23 @@ export function CatalogTableModal({
         </div>
 
         {/* Footer Actions matching DebtPaymentModal */}
-        <div className="flex items-center justify-between pt-4 border-t border-gray-100 shrink-0">
-          <span className="text-[11px] text-gray-400">
+        <div className="flex items-center justify-between pt-4 border-t border-gray-100 dark:border-slate-800 shrink-0">
+          <span className="text-[11px] text-gray-400 dark:text-slate-400">
             Showing {filteredItems.length} of {catalogItems.length} standard commodities • Click Add to register instantly
           </span>
           <div className="flex items-center gap-3">
+            {onBackToProductModal && (
+              <Button
+                variant="secondary"
+                onClick={() => {
+                  onClose()
+                  onBackToProductModal()
+                }}
+                icon={<ArrowLeft className="w-3.5 h-3.5 rtl:rotate-180" />}
+              >
+                Back to Product Form
+              </Button>
+            )}
             <Button variant="ghost" onClick={onClose}>
               Close
             </Button>

@@ -37,14 +37,14 @@ export function ProductGrid({
 
       {/* Grid Content */}
       {products.length === 0 ? (
-        <div className="flex-1 flex flex-col items-center justify-center p-8 bg-white border border-gray-200/90 rounded-[5px] text-center shadow-xs">
-          <div className="w-12 h-12 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center mb-3">
+        <div className="flex-1 flex flex-col items-center justify-center p-8 bg-white dark:bg-slate-900 border border-gray-200/90 dark:border-slate-800 rounded-[5px] text-center shadow-xs">
+          <div className="w-12 h-12 rounded-full bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mb-3">
             <PackagePlus className="w-6 h-6" />
           </div>
-          <h3 className="text-sm font-bold text-gray-800 mb-1">
+          <h3 className="text-sm font-bold text-gray-800 dark:text-slate-100 mb-1">
             {selectedCategory === 'all' ? 'No products added yet' : `No products in ${selectedCategory}`}
           </h3>
-          <p className="text-xs text-gray-400 max-w-sm mb-4">
+          <p className="text-xs text-gray-400 dark:text-slate-500 max-w-sm mb-4">
             Add products with their price, stock amount, and unit of measure to start selling.
           </p>
           <Button

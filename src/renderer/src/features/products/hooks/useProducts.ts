@@ -63,6 +63,11 @@ export function useProducts() {
     setIsModalOpen(true)
   }, [])
 
+  // Re-open existing modal without resetting current form draft (seamless transition)
+  const reopenModal = useCallback(() => {
+    setIsModalOpen(true)
+  }, [])
+
   // Open modal pre-filled from standard catalog item
   const openCreateModalWithCatalogItem = useCallback((item: CatalogItem) => {
     setEditingProduct(null)
@@ -207,6 +212,7 @@ export function useProducts() {
     errors,
     openCreateModal,
     openCreateModalWithCatalogItem,
+    reopenModal,
     openEditModal,
     closeModal,
     submitProduct,

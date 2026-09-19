@@ -28,7 +28,7 @@ export function ProductsTable({
       header: t('products.barcode'),
       sortable: true,
       render: (p) => (
-        <span className="font-mono text-gray-500 text-[11px]">{p.barcode || '—'}</span>
+        <span className="font-mono text-gray-500 dark:text-slate-400 text-[11px]">{p.barcode || '—'}</span>
       ),
     },
     {
@@ -37,8 +37,8 @@ export function ProductsTable({
       sortable: true,
       render: (p) => (
         <div className="flex flex-col">
-          <span className="font-medium text-gray-800">{p.name_fa}</span>
-          <div className="flex items-center gap-1.5 text-[10px] text-gray-400">
+          <span className="font-medium text-gray-800 dark:text-slate-100">{p.name_fa}</span>
+          <div className="flex items-center gap-1.5 text-[10px] text-gray-400 dark:text-slate-500">
             {p.name_en && <span>{p.name_en}</span>}
             {p.name_en && p.name_ps && <span>•</span>}
             {p.name_ps && <span>{p.name_ps}</span>}
@@ -50,7 +50,7 @@ export function ProductsTable({
       key: 'category_name',
       header: t('products.category'),
       render: (p) => (
-        <span className="px-2 py-0.5 rounded-[5px] bg-gray-100 text-gray-700 text-[10px] font-medium">
+        <span className="px-2 py-0.5 rounded-[5px] bg-gray-100 dark:bg-slate-800 text-gray-700 dark:text-slate-300 border border-gray-200/50 dark:border-slate-700 text-[10px] font-medium">
           {p.category_name || 'General'}
         </span>
       ),
@@ -59,14 +59,14 @@ export function ProductsTable({
       key: 'unit',
       header: t('products.unit'),
       align: 'center',
-      render: (p) => <span className="text-[11px] text-gray-500 uppercase">{p.unit}</span>,
+      render: (p) => <span className="text-[11px] text-gray-500 dark:text-slate-400 uppercase">{p.unit}</span>,
     },
     {
       key: 'cost_price',
       header: t('products.cost'),
       align: 'end',
       sortable: true,
-      render: (p) => <span className="font-mono text-gray-600">{formatCurrency(p.cost_price)}</span>,
+      render: (p) => <span className="font-mono text-gray-600 dark:text-slate-300">{formatCurrency(p.cost_price)}</span>,
     },
     {
       key: 'sell_price',
@@ -74,7 +74,7 @@ export function ProductsTable({
       align: 'end',
       sortable: true,
       render: (p) => (
-        <span className="font-mono font-semibold text-emerald-700">{formatCurrency(p.sell_price)}</span>
+        <span className="font-mono font-semibold text-emerald-700 dark:text-emerald-400">{formatCurrency(p.sell_price)}</span>
       ),
     },
     {
@@ -88,10 +88,10 @@ export function ProductsTable({
           <div className="flex items-center justify-end gap-1.5">
             <span
               className={`font-mono font-medium px-2 py-0.5 rounded-[5px] text-[11px] inline-flex items-center gap-1 ${
-                isLow ? 'bg-amber-50 text-amber-700' : 'bg-gray-100 text-gray-800'
+                isLow ? 'bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800/60' : 'bg-gray-100 dark:bg-slate-800 text-gray-800 dark:text-slate-200 border border-gray-200/50 dark:border-slate-700'
               }`}
             >
-              {isLow && <AlertTriangle className="w-2.5 h-2.5 text-amber-600" />}
+              {isLow && <AlertTriangle className="w-2.5 h-2.5 text-amber-600 dark:text-amber-400" />}
               {p.stock_qty}
             </span>
             <div className="flex items-center gap-0.5">
@@ -99,7 +99,7 @@ export function ProductsTable({
                 type="button"
                 onClick={() => onAdjustStock(p.id, -1)}
                 title="Decrease amount"
-                className="w-5 h-5 flex items-center justify-center rounded-[5px] border border-gray-200 hover:bg-gray-100 text-gray-600 text-xs transition-colors cursor-pointer"
+                className="w-5 h-5 flex items-center justify-center rounded-[5px] border border-gray-200 dark:border-slate-700 hover:bg-gray-100 dark:hover:bg-slate-700 text-gray-600 dark:text-slate-300 text-xs transition-colors cursor-pointer"
               >
                 -
               </button>
@@ -107,7 +107,7 @@ export function ProductsTable({
                 type="button"
                 onClick={() => onAdjustStock(p.id, 1)}
                 title="Increase amount"
-                className="w-5 h-5 flex items-center justify-center rounded-[5px] border border-gray-200 hover:bg-gray-100 text-gray-600 text-xs transition-colors cursor-pointer"
+                className="w-5 h-5 flex items-center justify-center rounded-[5px] border border-gray-200 dark:border-slate-700 hover:bg-gray-100 dark:hover:bg-slate-700 text-gray-600 dark:text-slate-300 text-xs transition-colors cursor-pointer"
               >
                 +
               </button>
@@ -126,7 +126,7 @@ export function ProductsTable({
             type="button"
             onClick={() => onEditProduct(p)}
             title="Edit product details & prices"
-            className="p-1 rounded-[5px] text-gray-500 hover:text-emerald-700 hover:bg-emerald-50 transition-colors cursor-pointer"
+            className="p-1 rounded-[5px] text-gray-500 dark:text-slate-400 hover:text-emerald-700 dark:hover:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-slate-800 transition-colors cursor-pointer"
           >
             <Pencil className="w-3.5 h-3.5" />
           </button>
@@ -134,7 +134,7 @@ export function ProductsTable({
             type="button"
             onClick={() => onRemoveProduct(p.id)}
             title={t('common.delete')}
-            className="p-1 rounded-[5px] text-gray-400 hover:text-red-600 hover:bg-red-50 transition-colors cursor-pointer"
+            className="p-1 rounded-[5px] text-gray-400 dark:text-slate-400 hover:text-red-600 dark:hover:text-rose-400 hover:bg-red-50 dark:hover:bg-rose-950/30 transition-colors cursor-pointer"
           >
             <Trash2 className="w-3.5 h-3.5" />
           </button>

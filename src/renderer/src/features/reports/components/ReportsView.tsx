@@ -112,20 +112,20 @@ export function ReportsView() {
       />
 
       {/* Active Calendar Filter Indicator */}
-      <div className="flex items-center justify-between bg-emerald-50/50 border border-emerald-200/50 px-3.5 py-2 rounded-lg text-xs text-emerald-900">
+      <div className="flex items-center justify-between bg-emerald-50/50 dark:bg-emerald-950/30 border border-emerald-200/50 dark:border-emerald-800/50 px-3.5 py-2 rounded-lg text-xs text-emerald-900 dark:text-emerald-300">
         <div className="flex items-center gap-2">
-          <Calendar className="w-3.5 h-3.5 text-emerald-700" />
+          <Calendar className="w-3.5 h-3.5 text-emerald-700 dark:text-emerald-400" />
           <span>
             Financial statements filtered by:{' '}
-            <strong className="capitalize font-semibold text-emerald-800">
+            <strong className="capitalize font-semibold text-emerald-800 dark:text-emerald-200">
               {activePreset.replace(/_/g, ' ')}
             </strong>
           </span>
-          <span className="text-emerald-600 text-[11px]">
+          <span className="text-emerald-600 dark:text-emerald-400 text-[11px]">
             ({filteredSales.length} matching transactions)
           </span>
         </div>
-        <span className="text-[10px] text-emerald-700/80">
+        <span className="text-[10px] text-emerald-700/80 dark:text-emerald-400/80">
           Change period via the Dual Calendar in the title bar
         </span>
       </div>

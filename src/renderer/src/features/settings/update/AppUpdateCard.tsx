@@ -95,7 +95,7 @@ export function AppUpdateCard() {
   }
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200/70 p-5 shadow-xs transition-all">
+    <div className="bg-white dark:bg-slate-900 rounded-xl border border-gray-200/70 dark:border-slate-800 p-5 shadow-xs transition-all">
       <div className="flex items-start justify-between gap-4">
         <div className="flex items-center gap-3">
           <div className="p-2 rounded-lg bg-[#5A8F7B]/10 text-[#5A8F7B]">
@@ -103,10 +103,10 @@ export function AppUpdateCard() {
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h3 className="text-sm font-semibold text-gray-800">Software Updates</h3>
+              <h3 className="text-sm font-semibold text-gray-800 dark:text-slate-100">Software Updates</h3>
               <Version showBadge />
             </div>
-            <p className="text-xs text-gray-400 mt-0.5">
+            <p className="text-xs text-gray-400 dark:text-slate-500 mt-0.5">
               Check for new features, improvements, and security updates
             </p>
           </div>
@@ -152,21 +152,21 @@ export function AppUpdateCard() {
         <div className="mt-4">
 
         {status === 'not-available' && (
-          <div className="flex items-center gap-2 text-xs text-emerald-700 bg-emerald-50 p-3 rounded-lg border border-emerald-100">
-            <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+          <div className="flex items-center gap-2 text-xs text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/40 p-3 rounded-lg border border-emerald-100 dark:border-emerald-800/40">
+            <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
             <span>Hesabdar is up to date (version <Version prefix="" />).</span>
           </div>
         )}
 
         {status === 'available' && updateInfo && (
-          <div className="flex flex-col gap-2 text-xs text-blue-900 bg-blue-50/80 p-3.5 rounded-lg border border-blue-100">
+          <div className="flex flex-col gap-2 text-xs text-blue-900 dark:text-blue-200 bg-blue-50/80 dark:bg-blue-950/40 p-3.5 rounded-lg border border-blue-100 dark:border-blue-800/40">
             <div className="flex items-center gap-2 font-semibold">
-              <ArrowUpCircle className="w-4 h-4 text-blue-600" />
+              <ArrowUpCircle className="w-4 h-4 text-blue-600 dark:text-blue-400" />
               <span>A new version is available: v{updateInfo.version}</span>
             </div>
             {updateInfo.releaseNotes && (
               <div
-                className="text-[11px] text-blue-800/80 max-h-24 overflow-y-auto pl-6 border-l-2 border-blue-200 mt-1"
+                className="text-[11px] text-blue-800/80 dark:text-blue-300/80 max-h-24 overflow-y-auto pl-6 border-l-2 border-blue-200 dark:border-blue-700 mt-1"
                 dangerouslySetInnerHTML={{ __html: String(updateInfo.releaseNotes) }}
               />
             )}
@@ -174,8 +174,8 @@ export function AppUpdateCard() {
         )}
 
         {status === 'downloading' && (
-          <div className="flex flex-col gap-2 bg-gray-50 p-3.5 rounded-lg border border-gray-200/80">
-            <div className="flex items-center justify-between text-xs font-medium text-gray-700">
+          <div className="flex flex-col gap-2 bg-gray-50 dark:bg-slate-800 p-3.5 rounded-lg border border-gray-200/80 dark:border-slate-700">
+            <div className="flex items-center justify-between text-xs font-medium text-gray-700 dark:text-slate-200">
               <span className="flex items-center gap-1.5">
                 <Download className="w-3.5 h-3.5 text-[#5A8F7B] animate-bounce" />
                 Downloading update...
@@ -184,14 +184,14 @@ export function AppUpdateCard() {
             </div>
 
             {/* Progress Bar */}
-            <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
+            <div className="w-full bg-gray-200 dark:bg-slate-700 rounded-full h-2 overflow-hidden">
               <div
                 className="bg-[#5A8F7B] h-2 rounded-full transition-all duration-300"
                 style={{ width: `${progress?.percent ?? 0}%` }}
               />
             </div>
 
-            <div className="flex items-center justify-between text-[11px] text-gray-400">
+            <div className="flex items-center justify-between text-[11px] text-gray-400 dark:text-slate-500">
               <span className="flex items-center gap-1">
                 <HardDrive className="w-3 h-3" />
                 {formatBytes(progress?.transferred ?? 0)} / {formatBytes(progress?.total ?? 0)}
@@ -202,25 +202,25 @@ export function AppUpdateCard() {
         )}
 
         {status === 'downloaded' && (
-          <div className="flex items-center justify-between text-xs text-emerald-800 bg-emerald-50 p-3.5 rounded-lg border border-emerald-200">
+          <div className="flex items-center justify-between text-xs text-emerald-800 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/40 p-3.5 rounded-lg border border-emerald-200 dark:border-emerald-800/50">
             <div className="flex items-center gap-2">
-              <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+              <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
               <span className="font-semibold">
                 Update v{updateInfo?.version || ''} is downloaded and ready!
               </span>
             </div>
-            <span className="text-[11px] text-emerald-600">
+            <span className="text-[11px] text-emerald-600 dark:text-emerald-400">
               Restart will take a few seconds
             </span>
           </div>
         )}
 
         {status === 'error' && (
-          <div className="flex items-start gap-2 text-xs text-rose-700 bg-rose-50 p-3 rounded-lg border border-rose-100">
+          <div className="flex items-start gap-2 text-xs text-rose-700 dark:text-rose-300 bg-rose-50 dark:bg-rose-950/40 p-3 rounded-lg border border-rose-100 dark:border-rose-900/50">
             <AlertCircle className="w-4 h-4 text-rose-500 shrink-0 mt-0.5" />
             <div className="flex-1">
               <p className="font-semibold">Failed to check or download update</p>
-              <p className="text-[11px] text-rose-600 mt-0.5">{errorMessage}</p>
+              <p className="text-[11px] text-rose-600 dark:text-rose-400 mt-0.5">{errorMessage}</p>
             </div>
           </div>
         )}

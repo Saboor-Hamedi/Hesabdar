@@ -78,12 +78,12 @@ export function Pagination({
 
   return (
     <div
-      className={`flex flex-wrap items-center justify-between gap-3 px-2 py-2 text-xs text-gray-600 select-none ${className}`}
+      className={`flex flex-wrap items-center justify-between gap-3 px-2 py-2 text-xs text-gray-600 dark:text-slate-300 select-none ${className}`}
     >
       {/* Left: Records summary & optional page size */}
       <div className="flex items-center gap-3">
         {showInfo && (
-          <span className="font-normal text-gray-500">
+          <span className="font-normal text-gray-500 dark:text-slate-400">
             {t('table.showingToOf', {
               from: fromIndex,
               to: toIndex,
@@ -93,7 +93,7 @@ export function Pagination({
         )}
 
         {showPageSizeSelector && onPageSizeChange && (
-          <div className="flex items-center gap-1.5 text-gray-500">
+          <div className="flex items-center gap-1.5 text-gray-500 dark:text-slate-400">
             <span className="hidden sm:inline text-[11px]">{t('table.perPage', 'per page')}:</span>
             <select
               value={pageSize}
@@ -102,10 +102,10 @@ export function Pagination({
                 onPageSizeChange(newSize)
                 onPageChange(1)
               }}
-              className="h-7 px-2 py-0.5 text-xs font-medium bg-white border border-gray-200 rounded-[5px] text-gray-700 hover:border-gray-300 focus:outline-none focus:border-[#4A7C6F] focus:ring-1 focus:ring-[#4A7C6F]/20 cursor-pointer transition-colors"
+              className="h-7 px-2 py-0.5 text-xs font-medium bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-[5px] text-gray-700 dark:text-slate-200 hover:border-gray-300 dark:hover:border-slate-600 focus:outline-none focus:border-[#4A7C6F] dark:focus:border-[#5A8F7B] focus:ring-1 focus:ring-[#4A7C6F]/20 cursor-pointer transition-colors"
             >
               {pageSizeOptions.map((opt) => (
-                <option key={opt} value={opt}>
+                <option key={opt} value={opt} className="bg-white dark:bg-slate-800 text-gray-800 dark:text-slate-200">
                   {opt}
                 </option>
               ))}
@@ -122,7 +122,7 @@ export function Pagination({
           onClick={() => onPageChange(1)}
           disabled={safeCurrentPage === 1}
           title="First Page"
-          className="flex h-7 w-7 items-center justify-center rounded-[5px] border border-gray-200 bg-white text-gray-600 hover:bg-gray-50 hover:text-gray-900 active:scale-[0.96] disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:text-gray-600 transition-all cursor-pointer"
+          className="flex h-7 w-7 items-center justify-center rounded-[5px] border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-gray-600 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-700 hover:text-gray-900 dark:hover:text-white active:scale-[0.96] disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-white dark:disabled:hover:bg-slate-800 disabled:hover:text-gray-600 dark:disabled:hover:text-slate-300 transition-all cursor-pointer"
         >
           <ChevronsLeft className="w-3.5 h-3.5" />
         </button>
@@ -133,7 +133,7 @@ export function Pagination({
           onClick={() => onPageChange(safeCurrentPage - 1)}
           disabled={safeCurrentPage === 1}
           title="Previous Page"
-          className="flex h-7 w-7 items-center justify-center rounded-[5px] border border-gray-200 bg-white text-gray-600 hover:bg-gray-50 hover:text-gray-900 active:scale-[0.96] disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:text-gray-600 transition-all cursor-pointer"
+          className="flex h-7 w-7 items-center justify-center rounded-[5px] border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-gray-600 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-700 hover:text-gray-900 dark:hover:text-white active:scale-[0.96] disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-white dark:disabled:hover:bg-slate-800 disabled:hover:text-gray-600 dark:disabled:hover:text-slate-300 transition-all cursor-pointer"
         >
           <ChevronLeft className="w-3.5 h-3.5" />
         </button>
@@ -145,7 +145,7 @@ export function Pagination({
               return (
                 <span
                   key={`ellipsis-${idx}`}
-                  className="flex h-7 w-6 items-center justify-center text-gray-400 font-medium select-none text-[11px]"
+                  className="flex h-7 w-6 items-center justify-center text-gray-400 dark:text-slate-500 font-medium select-none text-[11px]"
                 >
                   •••
                 </span>
@@ -160,8 +160,8 @@ export function Pagination({
                 onClick={() => onPageChange(p)}
                 className={`flex h-7 min-w-[28px] px-1.5 items-center justify-center rounded-[5px] text-xs font-medium transition-all cursor-pointer ${
                   isCurrent
-                    ? 'bg-[#4A7C6F] text-white font-semibold shadow-xs border border-[#4A7C6F]'
-                    : 'bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 hover:border-gray-300'
+                    ? 'bg-[#4A7C6F] dark:bg-[#5A8F7B] text-white font-semibold shadow-xs border border-[#4A7C6F] dark:border-[#5A8F7B]'
+                    : 'bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-gray-700 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-700 hover:border-gray-300 dark:hover:border-slate-600'
                 }`}
               >
                 {p}
@@ -176,7 +176,7 @@ export function Pagination({
           onClick={() => onPageChange(safeCurrentPage + 1)}
           disabled={safeCurrentPage === totalPages}
           title="Next Page"
-          className="flex h-7 w-7 items-center justify-center rounded-[5px] border border-gray-200 bg-white text-gray-600 hover:bg-gray-50 hover:text-gray-900 active:scale-[0.96] disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:text-gray-600 transition-all cursor-pointer"
+          className="flex h-7 w-7 items-center justify-center rounded-[5px] border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-gray-600 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-700 hover:text-gray-900 dark:hover:text-white active:scale-[0.96] disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-white dark:disabled:hover:bg-slate-800 disabled:hover:text-gray-600 dark:disabled:hover:text-slate-300 transition-all cursor-pointer"
         >
           <ChevronRight className="w-3.5 h-3.5" />
         </button>
@@ -187,7 +187,7 @@ export function Pagination({
           onClick={() => onPageChange(totalPages)}
           disabled={safeCurrentPage === totalPages}
           title="Last Page"
-          className="flex h-7 w-7 items-center justify-center rounded-[5px] border border-gray-200 bg-white text-gray-600 hover:bg-gray-50 hover:text-gray-900 active:scale-[0.96] disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:text-gray-600 transition-all cursor-pointer"
+          className="flex h-7 w-7 items-center justify-center rounded-[5px] border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-gray-600 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-700 hover:text-gray-900 dark:hover:text-white active:scale-[0.96] disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-white dark:disabled:hover:bg-slate-800 disabled:hover:text-gray-600 dark:disabled:hover:text-slate-300 transition-all cursor-pointer"
         >
           <ChevronsRight className="w-3.5 h-3.5" />
         </button>

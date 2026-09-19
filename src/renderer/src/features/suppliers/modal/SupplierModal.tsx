@@ -37,7 +37,7 @@ export function SupplierModal({
       title="Vendor &amp; Wholesale Supplier Registry"
       subtitle="Register new wholesale merchandise supplier, company contacts, and credit line."
       badge={
-        <span className="text-xs font-semibold px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200/60 shadow-2xs">
+        <span className="text-xs font-semibold px-3 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/50 text-emerald-800 dark:text-emerald-300 border border-emerald-200/60 dark:border-emerald-800/60 shadow-2xs">
           Accounts Payable
         </span>
       }
@@ -48,16 +48,16 @@ export function SupplierModal({
       <form onSubmit={onSubmit} className="flex flex-col justify-between h-full gap-6">
         <div className="flex flex-col gap-5">
           {/* Top Profile Header Card matching DebtPaymentModal */}
-          <div className="p-4 bg-gray-50 border border-gray-100 rounded-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shrink-0">
+          <div className="p-4 bg-gray-50 dark:bg-slate-800/60 border border-gray-100 dark:border-slate-800 rounded-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shrink-0">
             <div className="flex items-center gap-3.5">
               <div className="w-11 h-11 rounded-xl bg-[#5A8F7B] text-white flex items-center justify-center font-bold text-base shadow-xs shrink-0">
                 {initials}
               </div>
               <div className="flex flex-col">
-                <span className="text-sm font-bold text-gray-900">
+                <span className="text-sm font-bold text-gray-900 dark:text-slate-100">
                   {form.name || 'New Wholesale Vendor'}
                 </span>
-                <div className="flex items-center gap-2 mt-0.5 text-xs text-gray-500">
+                <div className="flex items-center gap-2 mt-0.5 text-xs text-gray-500 dark:text-slate-400">
                   <span>{form.company || 'Private Distributor'}</span>
                   <span>•</span>
                   <span className="font-mono">{form.phone || 'No phone entered'}</span>
@@ -66,12 +66,12 @@ export function SupplierModal({
             </div>
 
             <div className="text-end shrink-0">
-              <span className="text-[11px] font-semibold text-gray-500 uppercase tracking-[0.05em] block">
+              <span className="text-[11px] font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-[0.05em] block">
                 Opening Payable Balance
               </span>
               <span
                 className={`text-xl font-bold font-mono mt-0.5 block ${
-                  currentPayable > 0 ? 'text-amber-700' : 'text-gray-600'
+                  currentPayable > 0 ? 'text-amber-700 dark:text-amber-400' : 'text-gray-600 dark:text-slate-400'
                 }`}
               >
                 {currentPayable > 0 ? formatCurrency(currentPayable) : '0 AFN (Clean Account)'}
@@ -80,9 +80,9 @@ export function SupplierModal({
           </div>
 
           {/* Section 1: Vendor Profile & Contact Information in Structured Deck */}
-          <div className="p-5 border border-gray-100 rounded-xl bg-gray-50/50 flex flex-col gap-4">
+          <div className="p-5 border border-gray-100 dark:border-slate-800 rounded-xl bg-gray-50/50 dark:bg-slate-800/40 flex flex-col gap-4">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-gray-800 uppercase tracking-[0.05em] flex items-center gap-1.5">
+              <span className="text-xs font-bold text-gray-800 dark:text-slate-200 uppercase tracking-[0.05em] flex items-center gap-1.5">
                 <Building2 className="w-4 h-4 text-[#5A8F7B]" />
                 Vendor Profile &amp; Company Details
               </span>
@@ -119,14 +119,14 @@ export function SupplierModal({
           </div>
 
           {/* Section 2: Financial Ledger & Opening Debt in Structured Deck */}
-          <div className="p-5 border border-gray-100 rounded-xl bg-gray-50/50 flex flex-col gap-4">
+          <div className="p-5 border border-gray-100 dark:border-slate-800 rounded-xl bg-gray-50/50 dark:bg-slate-800/40 flex flex-col gap-4">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-gray-800 uppercase tracking-[0.05em] flex items-center gap-1.5">
+              <span className="text-xs font-bold text-gray-800 dark:text-slate-200 uppercase tracking-[0.05em] flex items-center gap-1.5">
                 <Wallet className="w-4 h-4 text-[#5A8F7B]" />
                 Opening Payable Balance &amp; Credit Terms
               </span>
               {currentPayable > 0 && (
-                <span className="text-xs font-mono font-bold text-amber-800 bg-amber-50 border border-amber-200/70 px-2.5 py-0.5 rounded-full">
+                <span className="text-xs font-mono font-bold text-amber-800 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/40 border border-amber-200/70 dark:border-amber-800/60 px-2.5 py-0.5 rounded-full">
                   Opening Payable: {formatCurrency(currentPayable)}
                 </span>
               )}
@@ -146,13 +146,13 @@ export function SupplierModal({
 
               {/* Quick Banknote Presets */}
               <div className="flex items-center gap-2 flex-wrap pt-1">
-                <span className="text-[11px] text-gray-500 font-medium">Quick Amounts:</span>
+                <span className="text-[11px] text-gray-500 dark:text-slate-400 font-medium">Quick Amounts:</span>
                 {[0, 5000, 10000, 25000, 50000, 100000].map((chip) => (
                   <button
                     key={chip}
                     type="button"
                     onClick={() => onChangeForm((f) => ({ ...f, balance: chip }))}
-                    className="px-3 py-1 rounded-full text-xs font-mono font-medium bg-white text-gray-700 hover:bg-[#5A8F7B] hover:text-white border border-gray-200 transition-all cursor-pointer active:scale-95 shadow-2xs"
+                    className="px-3 py-1 rounded-full text-xs font-mono font-medium bg-white dark:bg-slate-800 text-gray-700 dark:text-slate-200 hover:bg-[#5A8F7B] hover:text-white dark:hover:bg-[#5A8F7B] dark:hover:text-white border border-gray-200 dark:border-slate-700 transition-all cursor-pointer active:scale-95 shadow-2xs"
                   >
                     {chip === 0 ? 'No Debt (0)' : `${chip.toLocaleString()} AFN`}
                   </button>
@@ -163,8 +163,8 @@ export function SupplierModal({
         </div>
 
         {/* Modal Actions matching DebtPaymentModal */}
-        <div className="flex items-center justify-between pt-5 border-t border-gray-100 shrink-0">
-          <span className="text-[11px] text-gray-400">
+        <div className="flex items-center justify-between pt-5 border-t border-gray-100 dark:border-slate-800 shrink-0">
+          <span className="text-[11px] text-gray-400 dark:text-slate-500">
             Wholesale invoices from this supplier will be tracked in Accounts Payable.
           </span>
           <div className="flex items-center gap-3">

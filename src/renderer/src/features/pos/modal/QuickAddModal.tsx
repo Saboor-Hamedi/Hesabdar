@@ -51,7 +51,7 @@ export function QuickAddModal({
       title="Quick POS Item Entry"
       subtitle="Register a new store product instantly and attach it to the current transaction."
       badge={
-        <span className="text-xs font-semibold px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200/60 shadow-2xs">
+        <span className="text-xs font-semibold px-3 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/50 text-emerald-800 dark:text-emerald-300 border border-emerald-200/60 dark:border-emerald-800/60 shadow-2xs">
           Fast Register
         </span>
       }
@@ -61,16 +61,16 @@ export function QuickAddModal({
     >
       <form onSubmit={onSubmit} className="flex flex-col gap-5">
         {/* Top Profile Header Card matching DebtPaymentModal */}
-        <div className="p-4 bg-gray-50 border border-gray-100 rounded-xl flex items-center justify-between gap-3 shrink-0">
+        <div className="p-4 bg-gray-50 dark:bg-slate-800/60 border border-gray-100 dark:border-slate-800 rounded-xl flex items-center justify-between gap-3 shrink-0">
           <div className="flex items-center gap-3.5">
             <div className="w-11 h-11 rounded-xl bg-[#5A8F7B] text-white flex items-center justify-center font-bold text-base shadow-xs shrink-0">
               <Package className="w-5 h-5" />
             </div>
             <div className="flex flex-col">
-              <span className="text-sm font-bold text-gray-900">
+              <span className="text-sm font-bold text-gray-900 dark:text-slate-100">
                 {form.name || 'New Merchandise Item'}
               </span>
-              <div className="flex items-center gap-2 mt-0.5 text-xs text-gray-500">
+              <div className="flex items-center gap-2 mt-0.5 text-xs text-gray-500 dark:text-slate-400">
                 <span>Unit: {form.unit}</span>
                 <span>•</span>
                 <span>Qty: {form.amount}</span>
@@ -79,17 +79,17 @@ export function QuickAddModal({
           </div>
 
           <div className="text-end shrink-0">
-            <span className="text-[11px] font-semibold text-gray-500 uppercase tracking-[0.05em] block">
+            <span className="text-[11px] font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-[0.05em] block">
               POS Price
             </span>
-            <span className="text-xl font-bold font-mono text-emerald-700 mt-0.5 block">
+            <span className="text-xl font-bold font-mono text-emerald-700 dark:text-emerald-400 mt-0.5 block">
               {form.price > 0 ? formatCurrency(form.price) : '0 AFN'}
             </span>
           </div>
         </div>
 
         {/* Form Inputs in Structured Deck */}
-        <div className="p-5 border border-gray-100 rounded-xl bg-gray-50/50 flex flex-col gap-4">
+        <div className="p-5 border border-gray-100 dark:border-slate-800 rounded-xl bg-gray-50/50 dark:bg-slate-800/40 flex flex-col gap-4">
           <Input
             label="Item Name"
             placeholder="e.g. Basmati Rice, White Sugar, Tea..."
@@ -111,13 +111,13 @@ export function QuickAddModal({
             />
 
             <div className="flex flex-col gap-1.5">
-              <label className="text-[11px] font-semibold uppercase tracking-[0.05em] text-[#6B7280] select-none">
+              <label className="text-[11px] font-semibold uppercase tracking-[0.05em] text-[#6B7280] dark:text-slate-400 select-none">
                 {t('products.unit')}
               </label>
               <select
                 value={form.unit}
                 onChange={(e) => onChangeForm((f) => ({ ...f, unit: e.target.value as UnitType }))}
-                className="w-full h-9 px-3 text-xs rounded-lg transition-all duration-150 bg-white hover:bg-gray-50 text-[#1F2937] border border-gray-200 focus:border-[#5A8F7B]/40 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#5A8F7B]/20 cursor-pointer shadow-2xs"
+                className="w-full h-9 px-3 text-xs rounded-lg transition-all duration-150 bg-white dark:bg-slate-900 hover:bg-gray-50 dark:hover:bg-slate-800 text-[#1F2937] dark:text-slate-100 border border-gray-200 dark:border-slate-700 focus:border-[#5A8F7B]/40 focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-[#5A8F7B]/20 cursor-pointer shadow-2xs"
               >
                 <option value="pcs">{t('products.unitPcs')}</option>
                 <option value="kg">{t('products.unitKg')}</option>
@@ -153,8 +153,8 @@ export function QuickAddModal({
         </div>
 
         {/* Modal Actions */}
-        <div className="flex items-center justify-between pt-4 border-t border-gray-100">
-          <span className="text-[11px] text-gray-400">
+        <div className="flex items-center justify-between pt-4 border-t border-gray-100 dark:border-slate-800">
+          <span className="text-[11px] text-gray-400 dark:text-slate-500">
             Item will be added directly into inventory &amp; the POS register.
           </span>
           <div className="flex items-center gap-3">

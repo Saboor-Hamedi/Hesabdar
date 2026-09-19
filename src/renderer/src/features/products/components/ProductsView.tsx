@@ -14,6 +14,7 @@ import { CatalogTableModal } from '../catalog/CatalogTableModal'
  */
 export function ProductsView() {
   const { t } = useTranslation()
+  const [returnToProductModal, setReturnToProductModal] = useState(false)
   const [isCatalogOpen, setIsCatalogOpen] = useState(false)
   const {
     products,
@@ -24,6 +25,7 @@ export function ProductsView() {
     setForm,
     openCreateModal,
     openCreateModalWithCatalogItem,
+    reopenModal,
     openEditModal,
     closeModal,
     submitProduct,
@@ -42,8 +44,11 @@ export function ProductsView() {
           <div className="flex items-center gap-2.5">
             <Button
               variant="secondary"
-              onClick={() => setIsCatalogOpen(true)}
-              icon={<BookOpen className="w-3.5 h-3.5 text-emerald-800" />}
+              onClick={() => {
+                setReturnToProductModal(false)
+                setIsCatalogOpen(true)
+              }}
+              icon={<BookOpen className="w-3.5 h-3.5 text-emerald-800 dark:text-emerald-400" />}
             >
               {t('products.browseCatalog', 'Commodity Catalog')}
             </Button>
@@ -70,10 +75,21 @@ export function ProductsView() {
       {/* 3. Standard Commodity Catalog Table Modal */}
       <CatalogTableModal
         isOpen={isCatalogOpen}
-        onClose={() => setIsCatalogOpen(false)}
+        onClose={() => {
+          setIsCatalogOpen(false)
+          setReturnToProductModal(false)
+        }}
         existingProducts={products}
         onSelectForCustomize={(item) => {
           openCreateModalWithCatalogItem(item)
+        }}
+        onBackToProductModal={() => {
+          setIsCatalogOpen(false)
+          if (returnToProductModal) {
+            reopenModal()
+          } else {
+            openCreateModal()
+          }
         }}
       />
 
@@ -86,7 +102,10 @@ export function ProductsView() {
         editingProduct={editingProduct}
         onChangeForm={setForm}
         onSubmit={submitProduct}
-        onOpenCatalog={() => setIsCatalogOpen(true)}
+        onOpenCatalog={() => {
+          setReturnToProductModal(true)
+          setIsCatalogOpen(true)
+        }}
       />
     </div>
   )

@@ -40,7 +40,7 @@ export function TitleBar() {
           window.titlebarAPI?.maximize?.()
         }
       }}
-      className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between select-none border-b border-gray-200/60 bg-white/95 backdrop-blur-sm"
+      className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between select-none border-b border-gray-200/60 dark:border-slate-800 bg-white/95 dark:bg-slate-900/95 backdrop-blur-sm"
       style={{ height: TITLEBAR_HEIGHT, WebkitAppRegion: 'drag' } as React.CSSProperties}
     >
       <TitleBarIcons />
@@ -51,7 +51,7 @@ export function TitleBar() {
           className="absolute left-1/2 -translate-x-1/2 flex items-center gap-1.5"
           style={{ WebkitAppRegion: 'drag' } as React.CSSProperties}
         >
-          <span className="text-[11px] font-semibold text-[#4A7C6F] tracking-wide">
+          <span className="text-[11px] font-semibold text-[#4A7C6F] dark:text-[#68A590] tracking-wide">
             {ownerName}
           </span>
         </div>

@@ -93,11 +93,11 @@ export function ProductModal({
       }
       badge={
         isEditing ? (
-          <span className="text-xs font-mono font-semibold px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200/60 shadow-2xs">
+          <span className="text-xs font-mono font-semibold px-3 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/50 text-emerald-800 dark:text-emerald-300 border border-emerald-200/60 dark:border-emerald-800/60 shadow-2xs">
             Product #{editingProduct?.id}
           </span>
         ) : (
-          <span className="text-xs font-semibold px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200/60 shadow-2xs">
+          <span className="text-xs font-semibold px-3 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/50 text-emerald-800 dark:text-emerald-300 border border-emerald-200/60 dark:border-emerald-800/60 shadow-2xs">
             Inventory Master
           </span>
         )
@@ -109,16 +109,16 @@ export function ProductModal({
       <form onSubmit={onSubmit} className="flex flex-col justify-between h-full gap-6">
         <div className="flex flex-col gap-5">
           {/* Top Profile Header Card matching DebtPaymentModal */}
-          <div className="p-4 bg-gray-50 border border-gray-100 rounded-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shrink-0">
+          <div className="p-4 bg-gray-50 dark:bg-slate-800/60 border border-gray-100 dark:border-slate-800 rounded-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shrink-0">
             <div className="flex items-center gap-3.5">
               <div className="w-11 h-11 rounded-xl bg-[#5A8F7B] text-white flex items-center justify-center font-bold text-base shadow-xs shrink-0">
                 <Package className="w-5 h-5" />
               </div>
               <div className="flex flex-col">
-                <span className="text-sm font-bold text-gray-900">
+                <span className="text-sm font-bold text-gray-900 dark:text-slate-100">
                   {form.name_fa || form.name_en || (isEditing ? 'Product Master Record' : 'New Merchandise Entry')}
                 </span>
-                <div className="flex items-center gap-2 mt-0.5 text-xs text-gray-500">
+                <div className="flex items-center gap-2 mt-0.5 text-xs text-gray-500 dark:text-slate-400">
                   <span className="font-mono">{form.barcode ? `Barcode: ${form.barcode}` : 'No Barcode Assigned'}</span>
                   <span>•</span>
                   <span>Unit: {form.unit}</span>
@@ -127,16 +127,16 @@ export function ProductModal({
             </div>
 
             <div className="text-end shrink-0">
-              <span className="text-[11px] font-semibold text-gray-500 uppercase tracking-[0.05em] block">
+              <span className="text-[11px] font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-[0.05em] block">
                 {form.sell_price > 0 ? 'Selling Price' : 'Inventory Price'}
               </span>
               <span
                 className={`text-xl font-bold font-mono mt-0.5 block ${
                   form.sell_price > form.cost_price
-                    ? 'text-emerald-700'
+                    ? 'text-emerald-700 dark:text-emerald-400'
                     : form.sell_price > 0
-                      ? 'text-amber-700'
-                      : 'text-gray-600'
+                      ? 'text-amber-700 dark:text-amber-400'
+                      : 'text-gray-600 dark:text-slate-400'
                 }`}
               >
                 {form.sell_price > 0 ? `${form.sell_price.toLocaleString()} AFN` : '0 AFN'}
@@ -145,9 +145,9 @@ export function ProductModal({
           </div>
 
           {!isEditing && onOpenCatalog && (
-            <div className="flex items-center justify-between px-4 py-2.5 bg-emerald-50/70 border border-emerald-200/60 rounded-xl">
-              <div className="flex items-center gap-2 text-xs text-emerald-950 font-medium">
-                <BookOpen className="w-4 h-4 text-emerald-700" />
+            <div className="flex items-center justify-between px-4 py-2.5 bg-emerald-50/70 dark:bg-emerald-950/40 border border-emerald-200/60 dark:border-emerald-800/60 rounded-xl">
+              <div className="flex items-center gap-2 text-xs text-emerald-950 dark:text-emerald-300 font-medium">
+                <BookOpen className="w-4 h-4 text-emerald-700 dark:text-emerald-400" />
                 <span>Standard Afghan commodities available with names, units &amp; barcodes.</span>
               </div>
               <button
@@ -156,7 +156,7 @@ export function ProductModal({
                   onClose()
                   onOpenCatalog()
                 }}
-                className="text-xs font-semibold text-emerald-800 hover:text-emerald-950 underline underline-offset-2 cursor-pointer transition-colors"
+                className="text-xs font-semibold text-emerald-800 dark:text-emerald-400 hover:text-emerald-950 dark:hover:text-emerald-200 underline underline-offset-2 cursor-pointer transition-colors"
               >
                 Browse Catalog Table &rarr;
               </button>
@@ -164,7 +164,7 @@ export function ProductModal({
           )}
 
           {/* Section 1: Item Names across Languages in Structured Deck */}
-          <div className="p-5 border border-gray-100 rounded-xl bg-gray-50/50 flex flex-col gap-4">
+          <div className="p-5 border border-gray-100 dark:border-slate-800 rounded-xl bg-gray-50/50 dark:bg-slate-800/40 flex flex-col gap-4">
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               {/* English Name */}
               <Input
@@ -205,13 +205,13 @@ export function ProductModal({
               />
 
               <div className="flex flex-col gap-1.5">
-                <label className="text-[11px] font-semibold uppercase tracking-[0.05em] text-[#6B7280] select-none">
+                <label className="text-[11px] font-semibold uppercase tracking-[0.05em] text-[#6B7280] dark:text-slate-400 select-none">
                   {t('products.unit')}
                 </label>
                 <select
                   value={form.unit}
                   onChange={(e) => onChangeForm((f) => ({ ...f, unit: e.target.value as UnitType }))}
-                  className="w-full h-9 px-3 text-xs rounded-lg transition-all duration-150 bg-white hover:bg-gray-50 text-[#1F2937] border border-gray-200 focus:border-[#5A8F7B]/40 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#5A8F7B]/20 cursor-pointer shadow-2xs"
+                  className="w-full h-9 px-3 text-xs rounded-lg transition-all duration-150 bg-white dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-slate-700 text-[#1F2937] dark:text-slate-100 border border-gray-200 dark:border-slate-700 focus:border-[#5A8F7B]/40 focus:bg-white dark:focus:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-[#5A8F7B]/20 cursor-pointer shadow-2xs"
                 >
                   <option value="pcs">{t('products.unitPcs')}</option>
                   <option value="kg">{t('products.unitKg')}</option>
@@ -223,7 +223,7 @@ export function ProductModal({
               </div>
 
               <div className="flex flex-col gap-1.5">
-                <label className="text-[11px] font-semibold uppercase tracking-[0.05em] text-[#6B7280] select-none">
+                <label className="text-[11px] font-semibold uppercase tracking-[0.05em] text-[#6B7280] dark:text-slate-400 select-none">
                   {t('products.category')}
                 </label>
                 <input
@@ -236,16 +236,16 @@ export function ProductModal({
                       category_id: e.target.value ? Number(e.target.value) : undefined,
                     }))
                   }
-                  className="w-full h-9 px-3 text-xs rounded-lg transition-all duration-150 bg-white hover:bg-gray-50 text-[#1F2937] placeholder:text-gray-400 border border-gray-200 focus:border-[#5A8F7B]/40 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#5A8F7B]/20 shadow-2xs"
+                  className="w-full h-9 px-3 text-xs rounded-lg transition-all duration-150 bg-white dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-slate-700 text-[#1F2937] dark:text-slate-100 placeholder:text-gray-400 dark:placeholder:text-slate-500 border border-gray-200 dark:border-slate-700 focus:border-[#5A8F7B]/40 focus:bg-white dark:focus:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-[#5A8F7B]/20 shadow-2xs"
                 />
               </div>
             </div>
           </div>
 
           {/* Section 2: Pricing & Stock Inventory in Structured Deck */}
-          <div className="p-5 border border-gray-100 rounded-xl bg-gray-50/50 flex flex-col gap-4">
+          <div className="p-5 border border-gray-100 dark:border-slate-800 rounded-xl bg-gray-50/50 dark:bg-slate-800/40 flex flex-col gap-4">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-gray-800 uppercase tracking-[0.05em]">
+              <span className="text-xs font-bold text-gray-800 dark:text-slate-200 uppercase tracking-[0.05em]">
                 Pricing &amp; Stock Quantities
               </span>
               {form.sell_price > 0 && (
@@ -253,14 +253,14 @@ export function ProductModal({
                   <span
                     className={`text-xs font-mono font-semibold px-2.5 py-0.5 rounded-full border ${
                       form.sell_price > form.cost_price
-                        ? 'text-emerald-800 bg-emerald-50 border-emerald-200/70'
-                        : 'text-amber-800 bg-amber-50 border-amber-200/70'
+                        ? 'text-emerald-800 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/50 border-emerald-200/70 dark:border-emerald-800/60'
+                        : 'text-amber-800 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/50 border-amber-200/70 dark:border-amber-800/60'
                     }`}
                   >
                     Gain: {form.sell_price - form.cost_price} AFN ({Math.round(((form.sell_price - form.cost_price) / form.sell_price) * 100)}% margin)
                   </span>
                   {form.stock_qty > 0 && (
-                    <span className="text-xs font-mono text-gray-500 bg-white px-2.5 py-0.5 rounded-full border border-gray-200">
+                    <span className="text-xs font-mono text-gray-500 dark:text-slate-300 bg-white dark:bg-slate-800 px-2.5 py-0.5 rounded-full border border-gray-200 dark:border-slate-700">
                       Stock Value: {(form.cost_price * form.stock_qty).toLocaleString()} AFN
                     </span>
                   )}
@@ -318,8 +318,8 @@ export function ProductModal({
         </div>
 
         {/* Modal Actions matching DebtPaymentModal */}
-        <div className="flex items-center justify-between pt-5 border-t border-gray-100 shrink-0">
-          <span className="text-[11px] text-gray-400">
+        <div className="flex items-center justify-between pt-5 border-t border-gray-100 dark:border-slate-800 shrink-0">
+          <span className="text-[11px] text-gray-400 dark:text-slate-400">
             {isEditing
               ? 'Changes will be updated instantly across inventory and POS.'
               : 'Window remains open for continuous, rapid inventory entry.'}

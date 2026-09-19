@@ -111,7 +111,7 @@ export function DataTable<T>({
         <div className="flex items-center justify-between gap-3 shrink-0 mb-2.5">
           {searchable ? (
             <div className="relative w-64">
-              <Search className="absolute start-2.5 top-2.5 w-3.5 h-3.5 text-gray-400" />
+              <Search className="absolute start-2.5 top-2.5 w-3.5 h-3.5 text-gray-400 dark:text-slate-500" />
               <input
                 type="text"
                 value={search}
@@ -120,7 +120,7 @@ export function DataTable<T>({
                   setPage(1)
                 }}
                 placeholder={resolvedPlaceholder}
-                className="w-full h-8.5 ps-8 pe-2.5 text-xs rounded-lg border border-gray-200 bg-white placeholder:text-gray-400 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors shadow-2xs"
+                className="w-full h-8.5 ps-8 pe-2.5 text-xs rounded-lg border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-gray-900 dark:text-slate-100 placeholder:text-gray-400 dark:placeholder:text-slate-500 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors shadow-2xs"
               />
             </div>
           ) : (
@@ -132,13 +132,13 @@ export function DataTable<T>({
 
       {/* Main Table Wrapper with Sticky Header and Scrollable Body */}
       <div
-        className={`rounded-xl border border-gray-200/90 bg-white shadow-xs overflow-auto ${
+        className={`rounded-xl border border-gray-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs overflow-auto ${
           fullHeight ? 'flex-1 min-h-0' : ''
         }`}
       >
         <table className="w-full border-collapse text-xs min-w-[640px]">
           {/* Sticky Table Header */}
-          <thead className="sticky top-0 z-10 bg-gray-50/95 backdrop-blur-xs text-[11px] font-semibold text-gray-600 border-b border-gray-200 shadow-[0_1px_2px_rgba(0,0,0,0.03)]">
+          <thead className="sticky top-0 z-10 bg-gray-50/95 dark:bg-slate-800/95 backdrop-blur-xs text-[11px] font-semibold text-gray-600 dark:text-slate-300 border-b border-gray-200 dark:border-slate-800 shadow-[0_1px_2px_rgba(0,0,0,0.03)]">
             <tr>
               {columns.map((c) => (
                 <th
@@ -148,7 +148,7 @@ export function DataTable<T>({
                     width: c.width,
                   }}
                   className={`px-3.5 py-2.5 font-medium ${alignClass(c.align)} ${
-                    c.sortable ? 'cursor-pointer select-none hover:text-gray-900 transition-colors' : ''
+                    c.sortable ? 'cursor-pointer select-none hover:text-gray-900 dark:hover:text-white transition-colors' : ''
                   }`}
                   onClick={() =>
                     c.sortable &&
@@ -162,7 +162,7 @@ export function DataTable<T>({
                   <div className="inline-flex items-center gap-1.5">
                     <span>{c.header}</span>
                     {sort?.key === c.key && (
-                      <span className="text-[10px] text-emerald-700 font-bold">
+                      <span className="text-[10px] text-emerald-700 dark:text-emerald-400 font-bold">
                         {sort.dir === 'asc' ? '↑' : '↓'}
                       </span>
                     )}
@@ -173,10 +173,10 @@ export function DataTable<T>({
           </thead>
 
           {/* Table Body (Scrollable rows) */}
-          <tbody className="divide-y divide-gray-100">
+          <tbody className="divide-y divide-gray-100 dark:divide-slate-800">
             {paginated.length === 0 ? (
               <tr>
-                <td colSpan={columns.length} className="px-4 py-12 text-center text-gray-400 text-xs">
+                <td colSpan={columns.length} className="px-4 py-12 text-center text-gray-400 dark:text-slate-500 text-xs">
                   {resolvedEmpty}
                 </td>
               </tr>
@@ -184,7 +184,7 @@ export function DataTable<T>({
               paginated.map((row) => (
                 <tr
                   key={rowKey(row)}
-                  className="hover:bg-emerald-50/30 transition-colors duration-100"
+                  className="hover:bg-emerald-50/30 dark:hover:bg-slate-800/60 transition-colors duration-100"
                 >
                   {columns.map((c) => (
                     <td
@@ -193,7 +193,7 @@ export function DataTable<T>({
                         minWidth: c.minWidth,
                         width: c.width,
                       }}
-                      className={`px-3.5 py-2.5 text-gray-700 ${alignClass(c.align)}`}
+                      className={`px-3.5 py-2.5 text-gray-700 dark:text-slate-300 ${alignClass(c.align)}`}
                     >
                       {c.render ? c.render(row) : String((row as Record<string, unknown>)[String(c.key)] ?? '')}
                     </td>

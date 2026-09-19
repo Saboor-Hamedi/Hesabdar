@@ -206,7 +206,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
       <div className={`flex flex-col gap-1.5 ${containerClassName}`}>
         {/* Uppercase 11px tracking-wide label */}
         {label && (
-          <label className="text-[11px] font-semibold uppercase tracking-[0.05em] text-[#6B7280] select-none flex items-center justify-between">
+          <label className="text-[11px] font-semibold uppercase tracking-[0.05em] text-[#6B7280] dark:text-slate-400 select-none flex items-center justify-between">
             <span>
               {label}
               {props.required && !label.includes('*') && (
@@ -220,7 +220,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         <div className="relative flex items-center">
           {/* Start icon slot */}
           {startIcon && (
-            <div className="absolute start-3 pointer-events-none text-gray-400">
+            <div className="absolute start-3 pointer-events-none text-gray-400 dark:text-slate-500">
               {startIcon}
             </div>
           )}
@@ -236,8 +236,8 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
               ${isNumber ? 'font-mono [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none' : ''}
               ${
                 variant === 'light'
-                  ? 'bg-[#F9FAFB] hover:bg-[#F3F4F6] text-[#1F2937] placeholder:text-gray-400 border border-transparent focus:border-[#5A8F7B]/40 focus:bg-white'
-                  : 'bg-white text-[#1F2937] placeholder:text-gray-400 border border-gray-200 hover:border-gray-300 focus:border-[#5A8F7B]/50'
+                  ? 'bg-[#F9FAFB] dark:bg-slate-800/80 hover:bg-[#F3F4F6] dark:hover:bg-slate-800 text-[#1F2937] dark:text-slate-100 placeholder:text-gray-400 dark:placeholder:text-slate-500 border border-transparent dark:border-slate-700/60 focus:border-[#5A8F7B]/60 focus:bg-white dark:focus:bg-slate-800'
+                  : 'bg-white dark:bg-slate-800 text-[#1F2937] dark:text-slate-100 placeholder:text-gray-400 dark:placeholder:text-slate-500 border border-gray-200 dark:border-slate-700 hover:border-gray-300 dark:hover:border-slate-600 focus:border-[#5A8F7B]/70'
               }
               focus:outline-none focus:ring-2 focus:ring-[#5A8F7B]/20
               ${startIcon ? 'ps-8' : ''}
@@ -252,7 +252,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
                   ? 'border-rose-400 focus:border-rose-500 focus:ring-rose-400/20'
                   : ''
               }
-              ${props.disabled ? 'bg-gray-100 text-gray-400 cursor-not-allowed border-transparent' : ''}
+              ${props.disabled ? 'bg-gray-100 dark:bg-slate-800/50 text-gray-400 dark:text-slate-600 cursor-not-allowed border-transparent' : ''}
               ${className}
             `}
             {...props}
@@ -261,7 +261,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           {/* Static currency or text suffix - 100% solid position */}
           {suffix && (
             <span
-              className={`absolute text-xs font-mono font-medium text-[#6B7280] pointer-events-none select-none ${
+              className={`absolute text-xs font-mono font-medium text-[#6B7280] dark:text-slate-400 pointer-events-none select-none ${
                 showValidationMark ? 'end-7' : 'end-3'
               }`}
             >
@@ -273,16 +273,16 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           {hasValidationIcon && (
             <div className="absolute end-2.5 flex items-center pointer-events-none select-none">
               {validation.isValid ? (
-                <Check className="w-3.5 h-3.5 text-emerald-600 stroke-[2.5]" />
+                <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 stroke-[2.5]" />
               ) : validation.isInvalid ? (
-                <X className="w-3.5 h-3.5 text-rose-500 stroke-[2.5]" />
+                <X className="w-3.5 h-3.5 text-rose-500 dark:text-rose-400 stroke-[2.5]" />
               ) : null}
             </div>
           )}
 
           {/* End icon slot */}
           {endIcon && !suffix && (
-            <div className="absolute end-3 text-gray-400">
+            <div className="absolute end-3 text-gray-400 dark:text-slate-500">
               {endIcon}
             </div>
           )}
@@ -290,9 +290,9 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
 
         {/* Validation error or helper text */}
         {error ? (
-          <span className="text-[11px] text-red-500 leading-tight">{error}</span>
+          <span className="text-[11px] text-red-500 dark:text-red-400 leading-tight">{error}</span>
         ) : helperText ? (
-          <span className="text-[11px] text-[#6B7280] leading-tight">{helperText}</span>
+          <span className="text-[11px] text-[#6B7280] dark:text-slate-400 leading-tight">{helperText}</span>
         ) : null}
       </div>
     )

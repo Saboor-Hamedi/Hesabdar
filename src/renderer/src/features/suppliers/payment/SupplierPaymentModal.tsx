@@ -38,7 +38,7 @@ export function SupplierPaymentModal({
       title="Vendor Debt Settlement &amp; Disbursement Receipt"
       subtitle={`Official transaction receipt and payment settlement for ${supplier.name}`}
       badge={
-        <span className="text-xs font-mono font-semibold px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200/60 shadow-2xs">
+        <span className="text-xs font-mono font-semibold px-3 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/50 text-emerald-800 dark:text-emerald-300 border border-emerald-200/60 dark:border-emerald-800/60 shadow-2xs">
           SUPP-{String(1000 + supplier.id)}
         </span>
       }
@@ -49,14 +49,14 @@ export function SupplierPaymentModal({
       <form onSubmit={onSubmit} className="flex flex-col justify-between h-full gap-6">
         <div className="flex flex-col gap-5">
           {/* Top Vendor Profile Header Card matching DebtPaymentModal */}
-          <div className="p-4 bg-gray-50 border border-gray-100 rounded-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shrink-0">
+          <div className="p-4 bg-gray-50 dark:bg-slate-800/60 border border-gray-100 dark:border-slate-800 rounded-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shrink-0">
             <div className="flex items-center gap-3.5">
               <div className="w-11 h-11 rounded-xl bg-[#5A8F7B] text-white flex items-center justify-center font-bold text-base shadow-xs shrink-0">
                 {initials}
               </div>
               <div className="flex flex-col">
-                <span className="text-sm font-bold text-gray-900">{supplier.name}</span>
-                <div className="flex items-center gap-2 mt-0.5 text-xs text-gray-500">
+                <span className="text-sm font-bold text-gray-900 dark:text-slate-100">{supplier.name}</span>
+                <div className="flex items-center gap-2 mt-0.5 text-xs text-gray-500 dark:text-slate-400">
                   {supplier.company && <span>{supplier.company}</span>}
                   {supplier.company && <span>•</span>}
                   <span className="font-mono">{supplier.phone || 'No phone'}</span>
@@ -65,10 +65,10 @@ export function SupplierPaymentModal({
             </div>
 
             <div className="text-end shrink-0">
-              <span className="text-[11px] font-semibold text-gray-500 uppercase tracking-[0.05em] block">
+              <span className="text-[11px] font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-[0.05em] block">
                 Total Payable Balance
               </span>
-              <span className="text-xl font-bold font-mono text-amber-700 mt-0.5 block">
+              <span className="text-xl font-bold font-mono text-amber-700 dark:text-amber-400 mt-0.5 block">
                 {formatCurrency(currentPayable)}
               </span>
             </div>
@@ -77,14 +77,14 @@ export function SupplierPaymentModal({
           {/* Main 2-Column Settlement Deck */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 flex-1">
             {/* Left Column: Cash Input & Quick Banknote Presets */}
-            <div className="p-5 border border-gray-100 rounded-xl bg-gray-50/50 flex flex-col justify-between gap-4">
+            <div className="p-5 border border-gray-100 dark:border-slate-800 rounded-xl bg-gray-50/50 dark:bg-slate-800/40 flex flex-col justify-between gap-4">
               <div className="flex flex-col gap-3.5">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-gray-800 flex items-center gap-1.5 uppercase tracking-[0.05em]">
+                  <span className="text-xs font-bold text-gray-800 dark:text-slate-200 flex items-center gap-1.5 uppercase tracking-[0.05em]">
                     <Wallet className="w-4 h-4 text-[#5A8F7B]" />
                     Cash Amount Dispatched
                   </span>
-                  <span className="text-xs font-mono text-gray-500">Currency: AFN</span>
+                  <span className="text-xs font-mono text-gray-500 dark:text-slate-400">Currency: AFN</span>
                 </div>
 
                 <Input
@@ -112,7 +112,7 @@ export function SupplierPaymentModal({
                       key={chip}
                       type="button"
                       onClick={() => onChangeAmount(chip)}
-                      className="px-3 py-1 rounded-full text-xs font-mono font-medium bg-white text-gray-700 hover:bg-[#5A8F7B] hover:text-white border border-gray-200 transition-all cursor-pointer active:scale-95 shadow-2xs"
+                      className="px-3 py-1 rounded-full text-xs font-mono font-medium bg-white dark:bg-slate-800 text-gray-700 dark:text-slate-200 hover:bg-[#5A8F7B] hover:text-white dark:hover:bg-[#5A8F7B] dark:hover:text-white border border-gray-200 dark:border-slate-700 transition-all cursor-pointer active:scale-95 shadow-2xs"
                     >
                       {chip.toLocaleString()} AFN
                     </button>
@@ -122,29 +122,29 @@ export function SupplierPaymentModal({
             </div>
 
             {/* Right Column: Ledger Accounting Settlement Breakdown */}
-            <div className="p-5 border border-gray-100 rounded-xl bg-gray-50/50 flex flex-col justify-between gap-4">
+            <div className="p-5 border border-gray-100 dark:border-slate-800 rounded-xl bg-gray-50/50 dark:bg-slate-800/40 flex flex-col justify-between gap-4">
               <div className="flex flex-col gap-3">
-                <span className="text-xs font-bold text-gray-800 uppercase tracking-[0.05em] flex items-center gap-1.5">
+                <span className="text-xs font-bold text-gray-800 dark:text-slate-200 uppercase tracking-[0.05em] flex items-center gap-1.5">
                   <Coins className="w-4 h-4 text-[#5A8F7B]" />
                   Accounts Payable Summary
                 </span>
 
-                <div className="bg-white border border-gray-200/80 rounded-xl p-3.5 flex flex-col gap-2.5 shadow-2xs">
-                  <div className="flex items-center justify-between text-xs text-gray-600">
+                <div className="bg-white dark:bg-slate-900 border border-gray-200/80 dark:border-slate-800 rounded-xl p-3.5 flex flex-col gap-2.5 shadow-2xs">
+                  <div className="flex items-center justify-between text-xs text-gray-600 dark:text-slate-400">
                     <span>Initial Debt to Vendor:</span>
-                    <span className="font-mono font-semibold text-gray-900">{formatCurrency(currentPayable)}</span>
+                    <span className="font-mono font-semibold text-gray-900 dark:text-slate-100">{formatCurrency(currentPayable)}</span>
                   </div>
-                  <div className="flex items-center justify-between text-xs text-emerald-800">
+                  <div className="flex items-center justify-between text-xs text-emerald-800 dark:text-emerald-400">
                     <span>Payment Dispatched:</span>
-                    <span className="font-mono font-semibold text-emerald-700">- {formatCurrency(amount)}</span>
+                    <span className="font-mono font-semibold text-emerald-700 dark:text-emerald-400">- {formatCurrency(amount)}</span>
                   </div>
-                  <div className="border-t border-gray-100 pt-2 flex items-center justify-between text-xs font-bold">
-                    <span className="text-gray-800">Remaining Payable:</span>
-                    <span className="font-mono text-base text-gray-900">{formatCurrency(remaining)}</span>
+                  <div className="border-t border-gray-100 dark:border-slate-800 pt-2 flex items-center justify-between text-xs font-bold">
+                    <span className="text-gray-800 dark:text-slate-200">Remaining Payable:</span>
+                    <span className="font-mono text-base text-gray-900 dark:text-slate-100">{formatCurrency(remaining)}</span>
                   </div>
                 </div>
 
-                <div className="p-3 bg-emerald-50/50 border border-emerald-200/60 rounded-xl flex items-center gap-2 text-xs text-emerald-900">
+                <div className="p-3 bg-emerald-50/50 dark:bg-emerald-950/30 border border-emerald-200/60 dark:border-emerald-800/50 rounded-xl flex items-center gap-2 text-xs text-emerald-900 dark:text-emerald-300">
                   <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
                   <span>
                     {remaining === 0
@@ -158,8 +158,8 @@ export function SupplierPaymentModal({
         </div>
 
         {/* Modal Actions matching DebtPaymentModal */}
-        <div className="flex items-center justify-between pt-5 border-t border-gray-100 shrink-0">
-          <span className="text-[11px] text-gray-400">
+        <div className="flex items-center justify-between pt-5 border-t border-gray-100 dark:border-slate-800 shrink-0">
+          <span className="text-[11px] text-gray-400 dark:text-slate-500">
             Payment records will be timestamped and updated in supplier accounts.
           </span>
           <div className="flex items-center gap-3">

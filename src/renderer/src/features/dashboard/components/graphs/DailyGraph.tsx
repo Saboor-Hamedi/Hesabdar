@@ -78,7 +78,7 @@ export function DailyGraph({ data, height = 220 }: DailyGraphProps) {
                 y1={y}
                 x2={width - padding.right}
                 y2={y}
-                stroke="#f3f4f6"
+                className="stroke-gray-100 dark:stroke-slate-800"
                 strokeWidth="1"
                 strokeDasharray={ratio === 0 ? 'none' : '3 3'}
               />
@@ -86,7 +86,7 @@ export function DailyGraph({ data, height = 220 }: DailyGraphProps) {
                 x={padding.left - 8}
                 y={y + 3}
                 textAnchor="end"
-                className="text-[9px] fill-gray-400 font-mono"
+                className="text-[9px] fill-gray-400 dark:fill-slate-500 font-mono"
               >
                 {Math.round(maxVal * ratio)}
               </text>
@@ -110,7 +110,7 @@ export function DailyGraph({ data, height = 220 }: DailyGraphProps) {
                 x={c.x}
                 y={height - 10}
                 textAnchor="middle"
-                className="text-[9px] fill-gray-400 font-mono"
+                className="text-[9px] fill-gray-400 dark:fill-slate-500 font-mono"
               >
                 {c.data.label}
               </text>
@@ -121,10 +121,9 @@ export function DailyGraph({ data, height = 220 }: DailyGraphProps) {
               cx={c.x}
               cy={c.yRev}
               r={hoveredPoint?.point === c.data ? 5 : 3.5}
-              fill="#ffffff"
               stroke="#2D7A66"
               strokeWidth="2.5"
-              className="cursor-pointer transition-all duration-100"
+              className="cursor-pointer transition-all duration-100 fill-white dark:fill-slate-900"
               onMouseEnter={(e) => {
                 const rect = e.currentTarget.getBoundingClientRect()
                 setHoveredPoint({ point: c.data, x: rect.left + rect.width / 2, y: rect.top })

@@ -206,28 +206,28 @@ export function SystemClockPicker({
           border cursor-pointer select-none
           ${
             isOpen
-              ? 'bg-[#EAF3EF] text-[#2F6153] border-[#7CAE9F] shadow-xs ring-1 ring-[#7CAE9F]/40'
-              : 'bg-white/80 hover:bg-white text-gray-700 hover:text-gray-900 border-gray-200/90 shadow-2xs'
+              ? 'bg-[#EAF3EF] dark:bg-[#5A8F7B]/25 text-[#2F6153] dark:text-[#7EBCA8] border-[#7CAE9F] dark:border-[#5A8F7B]/50 shadow-xs ring-1 ring-[#7CAE9F]/40'
+              : 'bg-white/80 dark:bg-slate-800/90 hover:bg-white dark:hover:bg-slate-800 text-gray-700 dark:text-slate-200 hover:text-gray-900 dark:hover:text-white border-gray-200/90 dark:border-slate-700 shadow-2xs'
           }
         `}
         style={{ WebkitAppRegion: 'no-drag' } as React.CSSProperties}
         title="Live System Clock & Time Details"
       >
         <div className="relative flex items-center justify-center">
-          <Clock className="w-3.5 h-3.5 text-[#4A7C6F] shrink-0" />
+          <Clock className="w-3.5 h-3.5 text-[#4A7C6F] dark:text-[#68A590] shrink-0" />
           <span className="absolute -top-0.5 -right-0.5 flex h-1.5 w-1.5">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
             <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500" />
           </span>
         </div>
 
-        <span className="font-mono text-[11px] text-gray-800 font-semibold tracking-tight">
+        <span className="font-mono text-[11px] text-gray-800 dark:text-slate-200 font-semibold tracking-tight">
           {triggerLabel}
         </span>
 
         <ChevronDown
-          className={`w-3 h-3 text-gray-400 transition-transform duration-150 ${
-            isOpen ? 'rotate-180 text-[#2F6153]' : ''
+          className={`w-3 h-3 text-gray-400 dark:text-slate-400 transition-transform duration-150 ${
+            isOpen ? 'rotate-180 text-[#2F6153] dark:text-[#7EBCA8]' : ''
           }`}
         />
       </button>
@@ -238,30 +238,30 @@ export function SystemClockPicker({
           onDoubleClick={(e) => e.stopPropagation()}
           onMouseDown={(e) => e.stopPropagation()}
           onClick={(e) => e.stopPropagation()}
-          className="absolute top-full right-0 mt-2 z-[9999] w-[360px] bg-white rounded-xl shadow-2xl border border-gray-200/90 text-gray-800 text-xs overflow-hidden select-none animate-in fade-in zoom-in-95 duration-100"
+          className="absolute top-full right-0 mt-2 z-[9999] w-[360px] bg-white dark:bg-slate-900 rounded-xl shadow-2xl border border-gray-200/90 dark:border-slate-800 text-gray-800 dark:text-slate-200 text-xs overflow-hidden select-none animate-in fade-in zoom-in-95 duration-100"
           style={{ WebkitAppRegion: 'no-drag' } as React.CSSProperties}
         >
           {/* Header: Clean, neutral style matching DualCalendarPicker */}
-          <div className="px-3.5 py-2 bg-gray-50/90 border-b border-gray-100 flex items-center justify-between gap-2">
+          <div className="px-3.5 py-2 bg-gray-50/90 dark:bg-slate-800/80 border-b border-gray-100 dark:border-slate-800 flex items-center justify-between gap-2">
             <div className="flex items-center gap-1.5">
               <span className="w-2 h-2 rounded-full bg-emerald-600 shrink-0" />
-              <span className="text-[11px] font-semibold text-gray-800 tracking-tight">
+              <span className="text-[11px] font-semibold text-gray-800 dark:text-slate-200 tracking-tight">
                 System Time & Clock
               </span>
-              <span className="text-[10px] text-gray-400 font-mono ml-1">
+              <span className="text-[10px] text-gray-400 dark:text-slate-400 font-mono ml-1">
                 {timeZoneInfo.offset}
               </span>
             </div>
 
             {/* 12H / 24H View Mode Switcher Tabs (Same tab styling as DualCalendarPicker) */}
-            <div className="flex items-center bg-gray-200/70 p-0.5 rounded-lg text-[11px]">
+            <div className="flex items-center bg-gray-200/70 dark:bg-slate-800 p-0.5 rounded-lg text-[11px]">
               <button
                 type="button"
                 onClick={() => setIs24Hour(false)}
                 className={`px-2.5 py-0.5 rounded-md font-medium transition-all cursor-pointer ${
                   !is24Hour
-                    ? 'bg-white text-[#2F6153] shadow-2xs font-semibold'
-                    : 'text-gray-500 hover:text-gray-800'
+                    ? 'bg-white dark:bg-slate-700 text-[#2F6153] dark:text-[#7EBCA8] shadow-2xs font-semibold'
+                    : 'text-gray-500 dark:text-slate-400 hover:text-gray-800 dark:hover:text-slate-200'
                 }`}
               >
                 12H
@@ -271,8 +271,8 @@ export function SystemClockPicker({
                 onClick={() => setIs24Hour(true)}
                 className={`px-2.5 py-0.5 rounded-md font-medium transition-all cursor-pointer ${
                   is24Hour
-                    ? 'bg-white text-[#2F6153] shadow-2xs font-semibold'
-                    : 'text-gray-500 hover:text-gray-800'
+                    ? 'bg-white dark:bg-slate-700 text-[#2F6153] dark:text-[#7EBCA8] shadow-2xs font-semibold'
+                    : 'text-gray-500 dark:text-slate-400 hover:text-gray-800 dark:hover:text-slate-200'
                 }`}
               >
                 24H
@@ -282,7 +282,7 @@ export function SystemClockPicker({
 
           {/* Clock Visuals: Analog Dial + Digital Readout */}
           <div className="p-3.5 flex flex-col gap-3">
-            <div className="flex items-center justify-between gap-3 bg-gray-50/60 p-3 rounded-xl border border-gray-200/70">
+            <div className="flex items-center justify-between gap-3 bg-gray-50/60 dark:bg-slate-800/40 p-3 rounded-xl border border-gray-200/70 dark:border-slate-700/60">
               {/* Precision SVG Analog Clock Dial */}
               <div className="relative w-24 h-24 shrink-0 flex items-center justify-center">
                 <svg className="w-full h-full drop-shadow-xs" viewBox="0 0 100 100">
@@ -291,7 +291,7 @@ export function SystemClockPicker({
                     cx="50"
                     cy="50"
                     r="47"
-                    className="fill-white stroke-gray-200"
+                    className="fill-white dark:fill-slate-800 stroke-gray-200 dark:stroke-slate-700"
                     strokeWidth="2.5"
                   />
                   {/* Inner Track */}
@@ -299,7 +299,7 @@ export function SystemClockPicker({
                     cx="50"
                     cy="50"
                     r="43"
-                    className="fill-none stroke-emerald-900/10"
+                    className="fill-none stroke-emerald-900/10 dark:stroke-emerald-400/20"
                     strokeWidth="0.5"
                   />
 
@@ -332,7 +332,7 @@ export function SystemClockPicker({
                     y1="50"
                     x2={50 + 24 * Math.sin((clockDetails.hourAngle * Math.PI) / 180)}
                     y2={50 - 24 * Math.cos((clockDetails.hourAngle * Math.PI) / 180)}
-                    stroke="#1f2937"
+                    className="stroke-gray-800 dark:stroke-slate-200"
                     strokeWidth="3.2"
                     strokeLinecap="round"
                   />
@@ -343,7 +343,7 @@ export function SystemClockPicker({
                     y1="50"
                     x2={50 + 34 * Math.sin((clockDetails.minuteAngle * Math.PI) / 180)}
                     y2={50 - 34 * Math.cos((clockDetails.minuteAngle * Math.PI) / 180)}
-                    stroke="#4b5563"
+                    className="stroke-gray-600 dark:stroke-slate-400"
                     strokeWidth="2.2"
                     strokeLinecap="round"
                   />
@@ -363,33 +363,33 @@ export function SystemClockPicker({
                   />
 
                   {/* Center Pivot Jewel */}
-                  <circle cx="50" cy="50" r="2.8" className="fill-emerald-700" />
-                  <circle cx="50" cy="50" r="1" className="fill-white" />
+                  <circle cx="50" cy="50" r="2.8" className="fill-emerald-700 dark:fill-emerald-500" />
+                  <circle cx="50" cy="50" r="1" className="fill-white dark:fill-slate-900" />
                 </svg>
               </div>
 
               {/* Large Digital Display Card */}
-              <div className="flex-1 flex flex-col items-center justify-center p-2.5 rounded-xl bg-white border border-gray-200/80 shadow-2xs">
-                <span className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest mb-0.5">
+              <div className="flex-1 flex flex-col items-center justify-center p-2.5 rounded-xl bg-white dark:bg-slate-800 border border-gray-200/80 dark:border-slate-700 shadow-2xs">
+                <span className="text-[10px] font-semibold text-gray-400 dark:text-slate-400 uppercase tracking-widest mb-0.5">
                   Standard Time
                 </span>
 
                 <div className="flex items-baseline gap-1 font-mono">
-                  <span className="text-2xl font-bold tracking-tight text-gray-900">
+                  <span className="text-2xl font-bold tracking-tight text-gray-900 dark:text-slate-100">
                     {clockDetails.hoursStr}
                   </span>
-                  <span className="text-xl font-light text-emerald-600">:</span>
-                  <span className="text-2xl font-bold tracking-tight text-gray-900">
+                  <span className="text-xl font-light text-emerald-600 dark:text-emerald-400">:</span>
+                  <span className="text-2xl font-bold tracking-tight text-gray-900 dark:text-slate-100">
                     {clockDetails.minutesStr}
                   </span>
-                  <span className="text-xl font-light text-emerald-600">:</span>
-                  <span className="text-2xl font-bold tracking-tight text-emerald-600">
+                  <span className="text-xl font-light text-emerald-600 dark:text-emerald-400">:</span>
+                  <span className="text-2xl font-bold tracking-tight text-emerald-600 dark:text-emerald-400">
                     {clockDetails.secondsStr}
                   </span>
                 </div>
 
                 {!is24Hour && (
-                  <span className="mt-1 px-2 py-0.2 rounded-full text-[10px] font-bold tracking-wider bg-emerald-50 text-emerald-800 border border-emerald-200/60">
+                  <span className="mt-1 px-2 py-0.2 rounded-full text-[10px] font-bold tracking-wider bg-emerald-50 dark:bg-emerald-950/50 text-emerald-800 dark:text-emerald-300 border border-emerald-200/60 dark:border-emerald-800/50">
                     {clockDetails.ampm}
                   </span>
                 )}
@@ -397,29 +397,29 @@ export function SystemClockPicker({
             </div>
 
             {/* Dual Calendar Date Readout Card (Matches Shamsi Card in Calendar) */}
-            <div className="w-full bg-emerald-50/40 rounded-xl p-3 border border-emerald-200/60 flex flex-col gap-2">
+            <div className="w-full bg-emerald-50/40 dark:bg-slate-800/60 rounded-xl p-3 border border-emerald-200/60 dark:border-slate-700 flex flex-col gap-2">
               {/* Shamsi Row */}
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-emerald-600" />
-                  <span className="text-[11px] font-semibold text-emerald-950">
+                  <span className="w-2 h-2 rounded-full bg-emerald-600 shrink-0" />
+                  <span className="text-[11px] font-semibold text-emerald-950 dark:text-emerald-300">
                     {clockDetails.shamsiText}
                   </span>
                 </div>
-                <span className="text-[10px] font-medium text-emerald-800 bg-emerald-100/70 px-1.5 py-0.5 rounded">
+                <span className="text-[10px] font-medium text-emerald-800 dark:text-emerald-300 bg-emerald-100/70 dark:bg-emerald-950/60 px-1.5 py-0.5 rounded">
                   هجری شمسی
                 </span>
               </div>
 
               {/* Gregorian Row */}
-              <div className="flex items-center justify-between pt-1.5 border-t border-emerald-200/50">
+              <div className="flex items-center justify-between pt-1.5 border-t border-emerald-200/50 dark:border-slate-700/60">
                 <div className="flex items-center gap-1.5">
-                  <CalendarIcon className="w-3.5 h-3.5 text-gray-400" />
-                  <span className="text-[11px] font-medium text-gray-700">
+                  <CalendarIcon className="w-3.5 h-3.5 text-gray-400 dark:text-slate-400" />
+                  <span className="text-[11px] font-medium text-gray-700 dark:text-slate-300">
                     {clockDetails.gregText}
                   </span>
                 </div>
-                <span className="text-[10px] font-medium text-gray-500 bg-gray-100 px-1.5 py-0.5 rounded">
+                <span className="text-[10px] font-medium text-gray-500 dark:text-slate-400 bg-gray-100 dark:bg-slate-700 px-1.5 py-0.5 rounded">
                   Gregorian
                 </span>
               </div>
@@ -427,32 +427,32 @@ export function SystemClockPicker({
           </div>
 
           {/* Footer Bar: Matches exact style and height as DualCalendarPicker footer */}
-          <div className="px-3.5 py-2.5 bg-gray-50 border-t border-gray-100 flex items-center justify-between">
+          <div className="px-3.5 py-2.5 bg-gray-50 dark:bg-slate-800/70 border-t border-gray-100 dark:border-slate-800 flex items-center justify-between">
             <button
               type="button"
               onClick={handleCopyTimestamp}
-              className="h-6 flex items-center gap-1.5 text-[11px] font-medium text-gray-600 hover:text-gray-900 px-2 py-0.5 rounded-md hover:bg-gray-200/60 transition-colors cursor-pointer"
+              className="h-6 flex items-center gap-1.5 text-[11px] font-medium text-gray-600 dark:text-slate-300 hover:text-gray-900 dark:hover:text-white px-2 py-0.5 rounded-md hover:bg-gray-200/60 dark:hover:bg-slate-700 transition-colors cursor-pointer"
               title="Copy formatted timestamp to clipboard"
             >
               {copied ? (
                 <>
-                  <Check className="w-3 h-3 text-emerald-600" />
-                  <span className="text-emerald-700 font-semibold">Copied!</span>
+                  <Check className="w-3 h-3 text-emerald-600 dark:text-emerald-400" />
+                  <span className="text-emerald-700 dark:text-emerald-300 font-semibold">Copied!</span>
                 </>
               ) : (
                 <>
-                  <Copy className="w-3 h-3 text-gray-500" />
+                  <Copy className="w-3 h-3 text-gray-500 dark:text-slate-400" />
                   <span>Copy Timestamp</span>
                 </>
               )}
             </button>
 
             <div className="flex items-center gap-2">
-              <span className="text-[10px] text-gray-400 select-none">Press Esc to close</span>
+              <span className="text-[10px] text-gray-400 dark:text-slate-500 select-none">Press Esc to close</span>
               <button
                 type="button"
                 onClick={handleClose}
-                className="h-6 px-3 bg-gray-900 hover:bg-black active:scale-95 text-white font-medium rounded-md text-[11px] transition-all cursor-pointer shadow-2xs"
+                className="h-6 px-3 bg-gray-900 dark:bg-[#4A7C6F] hover:bg-black dark:hover:bg-[#3d665b] active:scale-95 text-white font-medium rounded-md text-[11px] transition-all cursor-pointer shadow-2xs"
               >
                 Done
               </button>

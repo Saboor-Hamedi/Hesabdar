@@ -287,7 +287,7 @@ export function ItemEntryBar({
   const lineTotal = Math.round(amount * price * 100) / 100
 
   return (
-    <div className="bg-white border border-gray-200/70 rounded-[8px] p-3.5 shadow-[0_1px_3px_rgba(0,0,0,0.04)] flex flex-col gap-3">
+    <div className="bg-white dark:bg-slate-900 border border-gray-200/70 dark:border-slate-800 rounded-[8px] p-3.5 shadow-[0_1px_3px_rgba(0,0,0,0.04)] flex flex-col gap-3">
       {/* Row 1: Full-width Item Search & Barcode Lookup */}
       <div className="flex items-center gap-2">
         <div ref={dropdownRef} className="relative flex-1">
@@ -310,15 +310,15 @@ export function ItemEntryBar({
               }}
               onKeyDown={handleSearchKeyDown}
               placeholder={`${t('pos.scanPlaceholder')} (F2)`}
-              className="w-full h-10 ps-9 pe-8 text-xs rounded-[8px] border border-gray-200/80 bg-[#FAFAFA] text-[#1F2937] placeholder:text-[#9CA3AF] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#4A7C6F]/20 font-medium transition-all shadow-[0_1px_2px_rgba(0,0,0,0.02)]"
+              className="w-full h-10 ps-9 pe-8 text-xs rounded-[8px] border border-gray-200/80 dark:border-slate-700 bg-[#FAFAFA] dark:bg-slate-800 text-[#1F2937] dark:text-slate-100 placeholder:text-[#9CA3AF] dark:placeholder:text-slate-400 focus:bg-white dark:focus:bg-slate-800/90 focus:outline-none focus:ring-2 focus:ring-[#4A7C6F]/20 font-medium transition-all shadow-[0_1px_2px_rgba(0,0,0,0.02)]"
             />
-            <Search className="w-4 h-4 text-[#9CA3AF] absolute start-3 pointer-events-none" />
+            <Search className="w-4 h-4 text-[#9CA3AF] dark:text-slate-400 absolute start-3 pointer-events-none" />
 
             {searchQuery ? (
               <button
                 type="button"
                 onClick={handleClearSelection}
-                className="absolute end-2 p-1 text-gray-400 hover:text-gray-600 rounded-[5px]"
+                className="absolute end-2 p-1 text-gray-400 dark:text-slate-400 hover:text-gray-600 dark:hover:text-slate-200 rounded-[5px]"
               >
                 <X className="w-3.5 h-3.5" />
               </button>
@@ -327,9 +327,9 @@ export function ItemEntryBar({
 
           {/* Autocomplete Dropdown: only when query is active */}
           {isDropdownOpen && searchQuery.trim().length > 0 && (
-            <div className="absolute z-50 left-0 right-0 mt-1.5 bg-white border border-gray-200/80 rounded-[8px] shadow-lg max-h-56 overflow-y-auto divide-y divide-gray-100 animate-in fade-in zoom-in-95 duration-100">
+            <div className="absolute z-50 left-0 right-0 mt-1.5 bg-white dark:bg-slate-900 border border-gray-200/80 dark:border-slate-700 rounded-[8px] shadow-lg max-h-56 overflow-y-auto divide-y divide-gray-100 dark:divide-slate-800 animate-in fade-in zoom-in-95 duration-100">
               {filteredProducts.length === 0 ? (
-                <div className="p-3 text-center text-xs text-[#9CA3AF]">
+                <div className="p-3 text-center text-xs text-[#9CA3AF] dark:text-slate-400">
                   <p>No matching commodity found.</p>
                 </div>
               ) : (
@@ -345,40 +345,40 @@ export function ItemEntryBar({
                       onMouseEnter={() => setHighlightedIndex(idx)}
                       className={`p-2.5 flex items-center justify-between cursor-pointer text-xs transition-colors ${
                         isHighlighted
-                          ? 'bg-[#4A7C6F]/10 text-[#1F2937]'
+                          ? 'bg-[#4A7C6F]/10 dark:bg-[#4A7C6F]/25 text-[#1F2937] dark:text-slate-100'
                           : isSelected
-                            ? 'bg-gray-50 font-medium'
-                            : 'hover:bg-gray-50'
+                            ? 'bg-gray-50 dark:bg-slate-800/60 font-medium text-[#1F2937] dark:text-slate-100'
+                            : 'hover:bg-gray-50 dark:hover:bg-slate-800/50 text-[#1F2937] dark:text-slate-200'
                       }`}
                     >
                       <div className="flex flex-col min-w-0 pr-2">
                         <div className="flex items-center gap-2">
-                          <span className="font-medium text-[#1F2937] truncate">
+                          <span className="font-medium text-[#1F2937] dark:text-slate-100 truncate">
                             {p.name_fa}
                           </span>
                           {p.name_en && (
-                            <span className="text-[10px] text-[#9CA3AF] truncate">
+                            <span className="text-[10px] text-[#9CA3AF] dark:text-slate-400 truncate">
                               ({p.name_en})
                             </span>
                           )}
-                          <span className="text-[9px] px-1.5 py-0.2 rounded-[4px] bg-gray-100 text-[#6B7280] uppercase font-mono">
+                          <span className="text-[9px] px-1.5 py-0.2 rounded-[4px] bg-gray-100 dark:bg-slate-800 text-[#6B7280] dark:text-slate-300 uppercase font-mono border border-transparent dark:border-slate-700">
                             {p.unit}
                           </span>
                         </div>
-                        <div className="flex items-center gap-2 text-[10px] text-[#9CA3AF] font-mono mt-0.5">
+                        <div className="flex items-center gap-2 text-[10px] text-[#9CA3AF] dark:text-slate-400 font-mono mt-0.5">
                           <span>{p.barcode || `#${p.id}`}</span>
                           <span>•</span>
-                          <span className={isLow ? 'text-amber-700 font-medium' : ''}>
+                          <span className={isLow ? 'text-amber-700 dark:text-amber-400 font-medium' : ''}>
                             Stock: {p.stock_qty} {p.unit}
                           </span>
                         </div>
                       </div>
 
                       <div className="text-end shrink-0">
-                        <span className="font-mono font-medium text-xs text-[#1F2937] block">
+                        <span className="font-mono font-medium text-xs text-[#1F2937] dark:text-slate-100 block">
                           {formatCurrency(p.sell_price)}
                         </span>
-                        <span className="text-[9px] text-[#9CA3AF]">per {p.unit}</span>
+                        <span className="text-[9px] text-[#9CA3AF] dark:text-slate-400">per {p.unit}</span>
                       </div>
                     </div>
                   )
@@ -391,19 +391,19 @@ export function ItemEntryBar({
 
       {/* Staged Product Indicator (Visible when item is chosen) */}
       {selectedProduct && (
-        <div className="flex items-center justify-between px-3 py-1.5 bg-[#4A7C6F]/10 border border-[#4A7C6F]/20 rounded-[7px] text-xs animate-in fade-in duration-150">
+        <div className="flex items-center justify-between px-3 py-1.5 bg-[#4A7C6F]/10 dark:bg-[#4A7C6F]/20 border border-[#4A7C6F]/20 dark:border-[#4A7C6F]/30 rounded-[7px] text-xs animate-in fade-in duration-150">
           <div className="flex items-center gap-2 truncate">
-            <span className="font-semibold text-[#2E4F46] truncate">
+            <span className="font-semibold text-[#2E4F46] dark:text-[#7EBCA8] truncate">
               {selectedProduct.name_fa || selectedProduct.name_en}
             </span>
-            <span className="text-[10px] px-1.5 py-0.2 rounded bg-white text-gray-600 font-mono border border-gray-200">
+            <span className="text-[10px] px-1.5 py-0.2 rounded bg-white dark:bg-slate-800 text-gray-600 dark:text-slate-300 font-mono border border-gray-200 dark:border-slate-700">
               {selectedProduct.barcode || `#${selectedProduct.id}`}
             </span>
           </div>
           <button
             type="button"
             onClick={handleClearSelection}
-            className="text-[11px] text-gray-400 hover:text-rose-600 p-0.5 rounded cursor-pointer transition-colors"
+            className="text-[11px] text-gray-400 hover:text-rose-600 dark:text-slate-400 dark:hover:text-rose-400 p-0.5 rounded cursor-pointer transition-colors"
             title="Clear selection"
           >
             <X className="w-3.5 h-3.5" />
@@ -414,10 +414,10 @@ export function ItemEntryBar({
       {/* Row 2: Merged Cohesive Toolbar (Qty + Unit Price + Line Total) + Add Button */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
         {/* Unified Toolbar with internal dividers */}
-        <div className="flex-1 h-10 rounded-[8px] bg-[#FAFAFA] border border-gray-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.03)] flex items-stretch divide-x divide-gray-200/70 rtl:divide-x-reverse overflow-hidden">
+        <div className="flex-1 h-10 rounded-[8px] bg-[#FAFAFA] dark:bg-slate-800/90 border border-gray-200/80 dark:border-slate-700 shadow-[0_1px_3px_rgba(0,0,0,0.03)] flex items-stretch divide-x divide-gray-200/70 dark:divide-slate-700 rtl:divide-x-reverse overflow-hidden">
           {/* Part 1: Quantity input */}
           <div className="flex-1 px-3 flex items-center justify-between min-w-[110px]">
-            <span className="text-[11px] text-[#6B7280] font-medium tracking-wide shrink-0 select-none">
+            <span className="text-[11px] text-[#6B7280] dark:text-slate-400 font-medium tracking-wide shrink-0 select-none">
               {t('pos.qty')}
             </span>
             <input
@@ -434,29 +434,29 @@ export function ItemEntryBar({
                 }
               }}
               placeholder="1"
-              className="w-16 text-center text-xs font-mono font-medium text-[#1F2937] bg-transparent focus:outline-none"
+              className="w-16 text-center text-xs font-mono font-medium text-[#1F2937] dark:text-slate-100 bg-transparent focus:outline-none"
             />
-            <span className="text-[10px] text-[#9CA3AF] uppercase font-mono shrink-0 select-none">
+            <span className="text-[10px] text-[#9CA3AF] dark:text-slate-400 uppercase font-mono shrink-0 select-none">
               {unit}
             </span>
           </div>
 
           {/* Part 2: Unit Price (Clean readout) */}
           <div className="flex-1 px-3 flex flex-col justify-center select-none min-w-[95px]">
-            <span className="text-[9px] text-[#9CA3AF] uppercase font-medium tracking-wider leading-tight">
+            <span className="text-[9px] text-[#9CA3AF] dark:text-slate-400 uppercase font-medium tracking-wider leading-tight">
               {t('pos.unitPrice')}
             </span>
-            <span className="font-mono text-xs text-[#1F2937] font-medium truncate leading-tight mt-0.5">
+            <span className="font-mono text-xs text-[#1F2937] dark:text-slate-100 font-medium truncate leading-tight mt-0.5">
               {price ? formatCurrency(price) : '0 AFN'}
             </span>
           </div>
 
           {/* Part 3: Line Total (Clean subtle highlight) */}
-          <div className="flex-1 px-3 flex flex-col justify-center select-none min-w-[95px] bg-[#F3F4F6]/50">
-            <span className="text-[9px] text-[#6B7280] uppercase font-medium tracking-wider leading-tight">
+          <div className="flex-1 px-3 flex flex-col justify-center select-none min-w-[95px] bg-[#F3F4F6]/50 dark:bg-slate-800/50">
+            <span className="text-[9px] text-[#6B7280] dark:text-slate-400 uppercase font-medium tracking-wider leading-tight">
               {t('pos.lineTotal')}
             </span>
-            <span className="font-mono text-xs font-semibold text-[#1F2937] truncate leading-tight mt-0.5">
+            <span className="font-mono text-xs font-semibold text-[#1F2937] dark:text-slate-100 truncate leading-tight mt-0.5">
               {lineTotal ? formatCurrency(lineTotal) : '0 AFN'}
             </span>
           </div>
